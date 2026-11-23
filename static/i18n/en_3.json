@@ -1,6 +1,4 @@
 {
-"En service : ": "In service: ",
-"En une phrase :": "In one sentence:",
 "En vrac": "Loose",
 "En vrac : tout ce que la scène fait penser, sans filtrer.": "Brain dump: everything the scene makes you think of, unfiltered.",
 "En vérification": "Under verification",
@@ -1415,5 +1413,8 @@
 "Les termes techniques (en anglais) et leur équivalent français ; le vocabulaire de l'analyse fonctionnelle.": "The technical terms (in English) and their French equivalent; the vocabulary of functional analysis.",
 "Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results.",
 "Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
-"Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority."
+"Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority.",
+"Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
+"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them.",
+"Les échelles de 1 à 10": "The 1-to-10 scales"
 }
