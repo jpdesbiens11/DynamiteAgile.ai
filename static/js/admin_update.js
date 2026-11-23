@@ -38,7 +38,7 @@
         await DA.adminUpdateData.render(content, part);
         if (part === "data") {  // D-B-105: the backups of the Spaces (ex-« Sauvegardes ») live with the data
           const backups = el("div", { class: "up-backups" });
-          content.append(el("h2", { class: "up-sep" }, "Sauvegardes des Spaces (.zip)"), backups);
+          content.append(el("h2", { class: "up-sep" }, "Sauvegardes .zip d'un Space (anciennes et automatiques)"), backups);
           await DA.adminExtra.loaders.backups(backups);
         }
       }

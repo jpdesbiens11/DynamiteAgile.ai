@@ -69,8 +69,10 @@
   /* ---------- Project actions: backup, delete ---------- */
   function projectActions(project, refresh) {
     return [
-      el("a", { class: "btn btn-small", href: "/api/admin/projects/" + project.id + "/backup.zip", download: "",
-        title: "Télécharger une sauvegarde complète (une copie reste aussi sur le serveur)" }, "Sauvegarder"),
+      el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.127-space-transfer",  // 0.60.127 (D-O-140)
+        title: "Update et sauvegardes → Données, avec ce Space coché",
+        onclick: () => { if (DA.adminUpdateData) DA.adminUpdateData.preselect(project.key); location.hash = "#/admin/update/data"; } },
+      "Sauvegarder ou transférer…"),
       project.is_archived ? el("button", { type: "button", class: "btn btn-small btn-danger", onclick: () => deleteDialog(project, refresh) }, "Supprimer…") : null,
     ];
   }
@@ -168,7 +170,9 @@
     const key = el("input", { type: "text", maxlength: 10, placeholder: "Clé d'origine", autocomplete: "off" });
     key.addEventListener("input", () => { key.value = key.value.toUpperCase(); });
     body.append(el("div", { class: "panel" }, el("h2", null, "Restaurer depuis un fichier"),
-      el("p", { class: "muted" }, "La restauration crée toujours un NOUVEAU Space (jamais par-dessus un Space existant). "
+      el("p", { class: "muted" }, "Pour sauvegarder ou faire passer un Space d'une plateforme à l'autre, utilisez l'export scellé ci-dessus "
+        + "(il emporte aussi les comptes). Ici : relire une sauvegarde .zip déjà faite (Space supprimé, ancienne sauvegarde). "
+        + "La restauration crée toujours un NOUVEAU Space (jamais par-dessus un Space existant). "
         + "Laissez la clé vide pour reprendre celle d'origine, si elle est libre."),
       el("div", { class: "form-row" }, field("Fichier de sauvegarde (.zip)", file), field("Nouvelle clé (optionnel)", key),
         el("button", { type: "button", class: "btn btn-primary", onclick: async () => {

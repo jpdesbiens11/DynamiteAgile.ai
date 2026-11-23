@@ -173,6 +173,9 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.127** (2026-11-23) : Admin — « Sauvegarder ou transférer… » (liste et Fiche des Spaces) ouvre Update et sauvegardes → Données
+  avec ce Space coché (`static/js/admin_update_data.js` `preselect`) : un seul endroit pour sauvegarder ou transférer un Space ;
+  aller-retour d'un Space vérifié par `tests/test_space_roundtrip.py` (D-O-140).
 - **0.60.126** (2026-11-23) : Diamond — l'export de l'**Arbre fonctionnel** (Excel, draw.io, PowerPoint) porte les **briques** et les
   **compétences** (`modules/diamond/export_bricks.py` : colonne « Brique », feuille « Briques technologiques », colonne des briques
   reliée aux fonctions dans les diagrammes) (D-O-139). Tests : `tests/test_diamond_tree_export_bricks.py`.

@@ -1,0 +1,45 @@
+{
+  "version": "0.60.127",
+  "date": "2026-11-23",
+  "summary": {
+    "fr": "Admin : un seul endroit pour sauvegarder ou transférer un Space (Update et sauvegardes → Données, le Space coché depuis sa Fiche) ; aller-retour d'un Space vérifié par un test.",
+    "en": "Admin: one place to back up or transfer a Space (Update and backups → Data, the Space ticked from its card); the round trip of a Space checked by a test."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Admin : sauvegarder ou transférer un Space depuis un seul endroit",
+      "why": "Il y avait deux chemins pour sauvegarder un Space. « Sauvegarder ou transférer… » (liste et Fiche des Spaces) ouvre maintenant Update et sauvegardes → Données avec ce Space seul coché : le paquet scellé emporte le Space et les comptes qui y travaillent. Les sauvegardes .zip déjà faites se relisent juste en dessous. Un test vérifie que sauvegarde, suppression et restauration redonnent un Space identique, Diamond compris.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.127.json",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/admin_extra.js",
+        "static/js/admin_spacecard.js",
+        "static/js/admin_update.js",
+        "static/js/admin_update_data.js",
+        "tests/test_open_v060.py",
+        "tests/test_space_roundtrip.py"
+      ]
+    }
+  ]
+}

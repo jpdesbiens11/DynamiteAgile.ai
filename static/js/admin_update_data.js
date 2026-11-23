@@ -32,13 +32,17 @@
     a.remove();
   }
 
+  let only = null;  // 0.60.127 (D-O-140): the Space chosen on its card (« Sauvegarder ou transférer… »), ticked alone
+
   async function exportBox(t, part) {
     const pass = passphrase("Phrase de passe");
     const again = passphrase("Phrase de passe, de nouveau");
     let spaces = null;
     if (part === "data") {
       const projects = (await api.get("/api/admin/projects")).projects;
-      spaces = projects.map((p) => el("label", { class: "up-type" }, el("input", { type: "checkbox", value: p.key, checked: true }),
+      const chosen = only;
+      only = null;
+      spaces = projects.map((p) => el("label", { class: "up-type" }, el("input", { type: "checkbox", value: p.key, checked: !chosen || p.key === chosen }),
         " " + p.key + " — " + p.name));
     }
     const result = el("div", { "aria-live": "polite" });
@@ -126,6 +130,7 @@
   }
 
   DA.adminUpdateData = {
+    preselect(key) { only = key; },
     async render(box, part) {
       const t = TEXT[part];
       const grid = el("div", { class: "up-steps" });
