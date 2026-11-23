@@ -125,6 +125,24 @@ def layout(sheet, meta):
     return it
 
 
+def picture(data, mime):
+    """0.60.129 (D-O-142): the page of a sheet that has its own picture -- that picture, centred on A4 landscape -- or None when
+    the PDF cannot hold it (a CMYK JPEG, an interlaced PNG: the template is drawn instead)."""
+    size = _image_size(data, mime)
+    if not size or not size[0] or not size[1]:
+        return None
+    if mime == "image/jpeg":
+        j = jpeg_info(data)
+        if not j or j[2] not in (1, 3):
+            return None
+    elif not png_to_rgb(data, [8_000_000]):
+        return None
+    pad = 24
+    k = min((W - 2 * pad) / size[0], (H - 2 * pad) / size[1])
+    dw, dh = size[0] * k, size[1] * k
+    return [("rect", 0, 0, W, H, "#ffffff", None, 0), ("image", (W - dw) / 2, (H - dh) / 2, dw, dh, data, mime)]
+
+
 def _fit(text, size, max_w):
     text = str(text or "")
     while text and width(text, "I", size) * SCALE > max_w:

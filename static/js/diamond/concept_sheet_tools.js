@@ -2,6 +2,8 @@
    - the sheet on the platform's template (the server draws it: /sheets/<id>/sheet.svg and .pdf); « PNG » turns the SVG into a
      picture in the browser (a canvas: nothing leaves the page);
    - « Importer un lot (.zip) »: the cards (.md) of a brainstorm with the picture and the PDF of each sheet; preview, then import;
+     0.60.129 (D-O-142): a file named by the code of an existing sheet (CB-1.1_croquis.png) goes on that sheet; one ticked line per
+     sheet or file; a sheet with its own picture is shown and exported (PNG, PDF) as that picture;
    - « IA : une branche »: the prompt of every brick to define under one secondary function of the tree, to iterate with the
      assistant branch by branch; its answer comes back through « Importer la réponse de l'IA » (concept_ai.js). */
 (function () {
@@ -15,14 +17,14 @@
   const slug = (s) => s.code + "_" + String(s.title || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 50);
 
-  /* The SVG of the template drawn at 2x on a canvas, saved as PNG */
-  async function savePng(ctx, s) {
+  /* The SVG of the template drawn at 2x on a canvas, saved as PNG; or the sheet's own picture at its size (0.60.129) */
+  async function savePng(ctx, s, own) {
     try {
       const img = new Image();  // the same-origin URL itself: the page's CSP refuses a blob: image, and the canvas stays clean
-      await new Promise((ok, ko) => { img.onload = ok; img.onerror = () => ko(new Error("Feuille illisible : rechargez la page.")); img.src = sheetUrl(ctx, s, "svg"); });
+      await new Promise((ok, ko) => { img.onload = ok; img.onerror = () => ko(new Error("Feuille illisible : rechargez la page.")); img.src = own ? fileUrl(ctx, s) : sheetUrl(ctx, s, "svg"); });
       const canvas = document.createElement("canvas");
-      canvas.width = 2246;
-      canvas.height = 1588;
+      canvas.width = own ? img.naturalWidth : 2246;
+      canvas.height = own ? img.naturalHeight : 1588;
       canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         const a = el("a", { href: URL.createObjectURL(blob), download: slug(s) + ".png" });
@@ -42,10 +44,11 @@
         el("img", { class: "dm-sheet-scan", src, alt: "Feuille " + s.code, loading: "lazy" }));
     const links = el("div", { class: "dm-actions dm-sheet-files", "data-new": "0.60.125-sheet-files" },
       s.attachment_id && !picture ? el("a", { class: "btn btn-small", href: fileUrl(ctx, s), target: "_blank", rel: "noopener" }, "Ouvrir le scan (PDF)") : null,
-      s.pdf_id ? el("a", { class: "btn btn-small", href: fileUrl(ctx, s, "pdf"), target: "_blank", rel: "noopener" }, "PDF") : null,
-      !s.attachment_id ? el("button", { type: "button", class: "btn btn-small", "data-tip": "La feuille au gabarit, en image",
-        onclick: () => savePng(ctx, s) }, "PNG") : null,
-      !s.attachment_id ? el("a", { class: "btn btn-small", href: sheetUrl(ctx, s, "pdf"), "data-tip": "La feuille au gabarit, A4 paysage" }, "PDF") : null);
+      s.pdf_id ? el("a", { class: "btn btn-small", href: fileUrl(ctx, s, "pdf"), target: "_blank", rel: "noopener" }, picture ? "PDF joint" : "PDF") : null,
+      !s.attachment_id || picture ? el("button", { type: "button", class: "btn btn-small", "data-new": picture ? "0.60.129-sheet-image-export" : null,
+        "data-tip": picture ? "L'image de la feuille" : "La feuille au gabarit, en image", onclick: () => savePng(ctx, s, picture) }, "PNG") : null,
+      !s.attachment_id || picture ? el("a", { class: "btn btn-small", href: sheetUrl(ctx, s, "pdf"),
+        "data-tip": picture ? "L'image de la feuille, A4 paysage" : "La feuille au gabarit, A4 paysage" }, "PDF") : null);
     return [thumb, links];
   }
 
@@ -57,16 +60,21 @@
     const extras = el("input", { type: "checkbox" });
     const result = el("div", { role: "status" });
     const go = el("button", { type: "button", class: "btn btn-primary", disabled: "" }, "Importer");
-    const url = (mode) => D.base(ctx) + "/sheets/import?mode=" + mode + (target.value ? "&cid=" + target.value : "") + (extras.checked ? "&extras=1" : "");
-    const invalidate = () => { go.disabled = true; clear(result); };
+    const ticks = new Map();  // 0.60.129 (D-O-142): key of a line → its checkbox
+    const skipped = () => [...ticks].filter(([, box]) => !box.checked).map(([key]) => key);
+    const url = (mode) => D.base(ctx) + "/sheets/import?mode=" + mode + (target.value ? "&cid=" + target.value : "") + (extras.checked ? "&extras=1" : "")
+      + (mode === "apply" && skipped().length ? "&skip=" + encodeURIComponent(JSON.stringify(skipped())) : "");
+    const refresh = () => { go.disabled = ![...ticks.values()].some((box) => box.checked); };
+    const invalidate = () => { go.disabled = true; ticks.clear(); clear(result); };
     [file, target, extras].forEach((x) => x.addEventListener("change", invalidate));
     const check = async () => {
       clear(result);
       if (!file.files.length) { result.append(el("p", { class: "form-error" }, "Choisissez le .zip.")); return; }
       try {
         const r = await api.upload(url("preview"), file.files[0]);
-        result.append(preview(r));
-        go.disabled = !r.counts.new;
+        ticks.clear();
+        result.append(preview(r, ticks, refresh));
+        refresh();
       } catch (err) { result.append(el("p", { class: "form-error", role: "alert" }, err.message)); }
     };
     let close = null;
@@ -75,7 +83,8 @@
       try {
         const r = await api.upload(url("apply"), file.files[0]);
         close();
-        toast(r.created + " feuille(s) de concept importée(s).", "success");
+        toast(r.created + " feuille(s) créée(s), " + r.attached + " fichier(s) posé(s) sur des feuilles existantes. Sauvegarde du Space : "
+          + r.backup + ".", "success");
         done();
       } catch (err) { go.disabled = false; toast(err.message, "error"); }
     });
@@ -83,6 +92,9 @@
       el("p", { class: "muted" }, "Un .zip : les cartes au format de la plateforme (.md : « ## CB-3.2 — Titre », « **Principle:** … », "
         + "la description, puis une ligne par « + », « − » et « ? », « **Badge:** … ») et l'image (PNG, JPEG) et le PDF de chaque feuille, "
         + "nommés par leur code (CB-3.2_bras.png). Rien n'est écrasé : une feuille du même titre déjà dans la brique est laissée."),
+      el("p", { class: "muted", "data-new": "0.60.129-sheets-attach" }, "Une image ou un PDF sans carte dont le nom commence par le code d'une "
+        + "feuille existante (CB-1.1_croquis_ia.png) va sur cette feuille : il remplace son image (l'ancienne reste dans les pièces jointes), "
+        + "aucune feuille n'est créée. Une sauvegarde du Space est faite avant d'importer."),
       field("Fichier .zip", file), field("Brique", target),
       el("label", { class: "check" }, extras, "Importer aussi les images sans numéro de feuille (synthèse d'une brique) comme feuilles"),
       result, el("div", { class: "form-actions" }, el("button", { type: "button", class: "btn", onclick: () => close() }, "Annuler"),
@@ -90,15 +102,32 @@
     document.querySelectorAll(".modal").forEach((m) => m.classList.add("modal-wide"));
   }
 
-  function preview(r) {
-    const label = { new: "Nouvelle", exists: "Déjà là", refused: "Refusée" };
-    const badge = { new: "badge-ok", exists: "badge-neutral", refused: "badge-off" };
-    return el("div", { class: "dm-import-preview" },
-      el("p", null, el("strong", null, "Aperçu : "), r.cards + " carte(s), " + r.files + " fichier(s) — " + r.counts.new + " nouvelle(s), "
-        + r.counts.exists + " déjà là, " + r.counts.refused + " refusée(s)."),
-      r.entries.length ? DA.table(["Feuille", "Brique", "Fichiers", "Statut"], r.entries.map((e) => el("tr", null,
-        el("td", null, e.code ? el("span", { class: "dm-code" }, e.code + " ") : null, e.title),
-        el("td", null, e.brick || "—"), el("td", { class: "muted" }, (e.files || []).join(", ") || "—"),
+  /* The preview: one line per sheet to create or file to put on a sheet, ticked (0.60.129, D-O-142) */
+  function preview(r, ticks, refresh) {
+    const label = { new: "Nouvelle", attach: "Sur la feuille", exists: "Déjà là", refused: "Refusée" };
+    const badge = { new: "badge-ok", attach: "badge-info", exists: "badge-neutral", refused: "badge-off" };
+    const what = (e) => {
+      if (!e.action) return e.status === "new" ? "nouvelle feuille " + (e.kind === "scan" ? "Scan" : "IA") : "—";
+      return (e.action === "pdf" ? "PDF" : "image") + " → " + e.code + (e.replaces ? " (remplace " + (e.action === "pdf" ? "le PDF actuel)" : "l'image actuelle)") : "");
+    };
+    const box = (e) => {
+      if (e.status !== "new" && e.status !== "attach") return null;
+      const b = el("input", { type: "checkbox", checked: true, "aria-label": "Importer " + (e.files[0] || e.title) });
+      b.addEventListener("change", refresh);
+      ticks.set(e.key, b);
+      return b;
+    };
+    const all = el("input", { type: "checkbox", checked: true, "aria-label": "Tout cocher" });
+    all.addEventListener("change", () => { ticks.forEach((b) => { b.checked = all.checked; }); refresh(); });
+    return el("div", { class: "dm-import-preview", "data-new": "0.60.129-sheets-attach-preview" },
+      el("p", null, el("strong", null, "Aperçu : "), r.cards + " carte(s), " + r.files + " fichier(s) — " + r.counts.new + " nouvelle(s) feuille(s), "
+        + r.counts.attach + " fichier(s) sur des feuilles existantes, " + r.counts.exists + " déjà là, " + r.counts.refused + " refusé(s)."),
+      (r.warnings || []).length ? el("ul", { class: "dm-import-warnings", role: "note" }, r.warnings.map((w) => el("li", null, "⚠ " + w))) : null,
+      r.entries.length ? DA.table([all, "Fichier ou feuille", "Action", "Brique", "Statut"], r.entries.map((e) => el("tr", null,
+        el("td", null, box(e)),
+        el("td", null, e.code ? el("span", { class: "dm-code" }, e.code + " ") : null, e.action ? e.files[0] : e.title,
+          !e.action && (e.files || []).length ? el("div", { class: "muted" }, e.files.join(", ")) : null),
+        el("td", null, what(e)), el("td", null, e.brick || "—"),
         el("td", null, el("span", { class: "badge " + badge[e.status] }, label[e.status]), e.reason ? el("span", { class: "muted" }, " " + e.reason) : null)))) : null,
       r.left.length ? el("p", { class: "muted" }, "Laissés de côté (sans code de feuille) : " + r.left.join(", ") + ".") : null);
   }

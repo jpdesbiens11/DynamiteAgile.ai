@@ -1416,5 +1416,6 @@
 "Binning des LED pour une couleur constante d'un produit à l'autre": "LED binning for constant color from one product to the next",
 "Bleu": "Blue",
 "Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
-"Bloc de code": "Code block"
+"Bloc de code": "Code block",
+"Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator"
 }

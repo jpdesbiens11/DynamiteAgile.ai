@@ -386,6 +386,7 @@
 "Rien à importer : ce Space a déjà tout ce que contient la réponse.": "Nothing to import: this Space already has everything the answer contains.",
 "Rien à importer : ce Space a déjà tout ce que contient le fichier. Correctif : choisissez « Tout remplacer » pour repartir du fichier, ou importez un fichier avec les parties qui manquent.": "Nothing to import: this Space already has everything the file contains. Fix: choose “Replace all” to start over from the file, or import a file with the missing parts.",
 "Rien à importer : ces feuilles sont déjà dans le Space, ou refusées (voir l'aperçu).": "Nothing to import: these sheets are already in the Space, or refused (see the preview).",
+"Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).": "Nothing to import: these sheets are already in the Space, refused or unticked (see the preview).",
 "Rien à importer : collez du texte, un tableau ou une image.": "Nothing to import: paste text, a table or an image.",
 "Rien à marquer comme lu. Correctif : envoyez « ids » (liste) ou « all »: true.": "Nothing to mark as read. Fix: send “ids” (list) or “all”: true.",
 "Rien à refuser : la règle ne propose aucune classe pour cette ligne et aucune n'est confirmée. Correctif : « Confirmer CC » ou « Confirmer SC » si la ligne en demande une malgré la règle.": "Nothing to refuse: the rule proposes no class for this line and none is confirmed. Fix: « Confirm CC » or « Confirm SC » if the line needs one despite the rule.",
@@ -966,6 +967,7 @@
 "Sur chaque item, un commentaire de chacun : où on en est, ce qui aide, ce qui bloque, ce qu'on ajuste.": "On each item, a comment from each person: where things stand, what helps, what blocks, what we adjust.",
 "Sur l'Accueil, repérez votre rôle dans DEMO (Editor) et dans vos Spaces. Qui est l'Assignee de ce ticket ?": "On Home, find your role in DEMO (Editor) and in your Spaces. Who is the Assignee of this ticket?",
 "Sur l'ancien serveur : « Site complet » → phrase de passe → « Exporter (.zip scellé) ». Le paquet contient le code, une copie exacte de la base (comptes et mots de passe compris) et les fichiers. La configuration du serveur et ses certificats ne voyagent pas : l'IT les prépare sur le nouveau serveur.": "On the old server: “Full site” → passphrase → “Export (sealed .zip)”. The package contains the code, an exact copy of the database (accounts and passwords included) and the files. The server configuration and its certificates do not travel: IT prepares them on the new server.",
+"Sur la feuille": "On the sheet",
 "Sur le nouveau serveur : installez la plateforme, connectez-vous avec l'admin initial, puis « Site complet » → « Importer un paquet scellé… ». Ce volet refuse tout site qui a déjà d'autres comptes : il ne remplace jamais un site en service.": "On the new server: install the platform, log in with the initial admin, then “Full site” → “Import a sealed package…”. This panel refuses any site that already has other accounts: it never replaces a site in service.",
 "Sur le parcours A, à vitesse normale.": "On course A, at normal speed.",
 "Sur le poste qui fait tourner la plateforme : double-clic sur": "On the computer running the platform: double-click on",
@@ -1247,7 +1249,7 @@
 "Tout ce qui vous attend dans le Space de votre produit.": "Everything waiting for you in your product's Space.",
 "Tout ce qui vous attend, dans tous vos Spaces": "Everything waiting for you, in all your Spaces",
 "Tout ce qui vous attend, dans tous vos Spaces, et vos Messages (@mentions)": "Everything that awaits you, across all your Spaces, and your Messages (@mentions)",
-"Tout cocher": "Check all",
+"Tout cocher": "Tick all",
 "Tout déplier": "Unfold all",
 "Tout est marqué vu pour ": "Everything is marked seen for ",
 "Tout est rangé": "Everything is filed",
@@ -1415,6 +1417,5 @@
 "Un cookie volé ne s'ouvre pas depuis un autre poste": "A stolen cookie does not open from another workstation",
 "Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
 "Un doigt, une appli": "One finger, one app",
-"Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures.",
-"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST."
+"Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures."
 }
