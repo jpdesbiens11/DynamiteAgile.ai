@@ -653,8 +653,10 @@
 "Sauvegarde du code et des données, puis écriture du nouveau code": "Backup of the code and data, then writing the new code",
 "Sauvegarde supprimée.": "Backup deleted.",
 "Sauvegarder et remplacer": "Back up and replace",
+"Sauvegarder ou transférer…": "Back up or transfer…",
 "Sauvegarder, récupérer ou ajouter des Spaces": "Back up, recover or add Spaces",
 "Sauvegardes": "Backups",
+"Sauvegardes .zip d'un Space (anciennes et automatiques)": "Space .zip backups (older and automatic)",
 "Sauvegardes conservées sur le serveur": "Backups kept on the server",
 "Savoir combien coûte chaque phase, préparer une réclamation sans rien retaper, et respecter les congés de chacun.": "Know how much each phase costs, prepare a claim without retyping anything, and respect everyone's leave.",
 "Savoir quel essai prouve quoi, avec quel critère et quel moyen, et arriver au laboratoire de certification sans surprise.": "Know which test proves what, with which criterion and which means, and arrive at the certification lab without surprises.",
@@ -1412,7 +1414,5 @@
 "Un congé santé peut être accordé sous approbation, sans être déduit de la banque de vacances [à confirmer].": "Health leave can be granted with approval, without being deducted from the vacation bank [to be confirmed].",
 "Un cookie volé ne s'ouvre pas depuis un autre poste": "A stolen cookie does not open from another workstation",
 "Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
-"Un doigt, une appli": "One finger, one app",
-"Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures.",
-"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST."
+"Un doigt, une appli": "One finger, one app"
 }

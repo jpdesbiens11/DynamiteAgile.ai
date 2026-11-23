@@ -1,6 +1,6 @@
 /* Admin → Spaces → « Fiche » of ONE Space (core lot v0.34, D-B-133): #/admin/projects/<id>.
    Renommer (name, description; the key never changes), Dupliquer (everything, next free key), Enregistrer sous… (key,
-   name, the tabs to take), Sauvegarder (.zip), Archiver / Désarchiver, Supprimer (archived only, backup first),
+   name, the tabs to take), « Sauvegarder ou transférer… » (→ Update et sauvegardes → Données, 0.60.127), Archiver / Désarchiver, Supprimer (archived only, backup first),
    members, and what the Space holds tab by tab. Copies reuse « Copier / composer un Space » (D-B-099): always a new Space, nothing existing is touched. */
 (function () {
   "use strict";
@@ -74,8 +74,10 @@
       p.key === "DEMO" ? null : el("a", { class: "btn", href: "/api/starter/export?space=" + encodeURIComponent(p.key) + "&download=1",
         download: "", "data-new": "0.60.43-export-starter", "data-tip": "Ce Space comme fichier Project Starter : le modèle qu'un assistant IA "
           + "suit pour préparer le prochain produit (⚙ Admin → Spaces → Commencer → Modèle)" }, "Exporter comme modèle (IA)"),
-      el("a", { class: "btn", href: "/api/admin/projects/" + p.id + "/backup.zip", download: "",
-        "data-tip": "Sauvegarde complète du Space (une copie reste sur le serveur) ; se restaure dans Update et sauvegardes" }, "Sauvegarder (.zip)"),
+      el("button", { type: "button", class: "btn", "data-new": "0.60.127-space-transfer",  // 0.60.127 (D-O-140): one place for it
+        "data-tip": "Update et sauvegardes → Données, avec ce Space coché : paquet scellé, avec les comptes qui y travaillent",
+        onclick: () => { if (DA.adminUpdateData) DA.adminUpdateData.preselect(p.key); location.hash = "#/admin/update/data"; } },
+      "Sauvegarder ou transférer…"),
       el("button", { type: "button", class: "btn", onclick: async () => {
         try {
           await api.patch("/api/admin/projects/" + p.id, { is_archived: !p.is_archived });
