@@ -119,9 +119,17 @@
             Array.from({ length: max }, (_, i) => {
               const s = list[i];
               return el("td", { class: s && s.status === "selected" ? "dm-morpho-on" : s && s.status === "dropped" ? "dm-morpho-off" : null },
-                s ? [el("span", { class: "dm-code" }, s.code), " " + s.title] : el("span", { class: "muted" }, "—"));
+                s ? [thumb(ctx, s), el("span", { class: "dm-code" }, s.code), " " + s.title] : el("span", { class: "muted" }, "—"));
             }));
         })))));
+  }
+
+  /* 0.60.125 (D-O-138): the picture of a sheet in its cell -- the deposited picture, or the sheet drawn on the template */
+  function thumb(ctx, s) {
+    if (s.attachment_id && !String(s.file_mime || "").startsWith("image/")) return null;
+    const src = D.base(ctx) + "/sheets/" + s.id + (s.attachment_id ? "/file" : "/sheet.svg");
+    return el("a", { href: A.href(ctx, "concepts/CB-" + s.concept_number) },
+      el("img", { class: "dm-morpho-thumb", src, alt: "", loading: "lazy", "data-new": "0.60.125-morpho-pictures" }));
   }
 
   function openCreate(ctx, state, done) {

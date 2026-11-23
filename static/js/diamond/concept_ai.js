@@ -61,4 +61,5 @@
   }
 
   D.sheetAiButtons = sheetAiButtons;
+  D.aiImportDialog = importDialog;  // 0.60.125 (D-O-138): « IA : une branche » brings its answer back here
 })();

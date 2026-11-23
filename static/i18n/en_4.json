@@ -1,4 +1,12 @@
 {
+"Les équipes de forage, par quarts": "The drilling crews, by shift",
+"Les étapes et les points de décision go / kill expliqués par l'auteur de la méthode.": "The steps and the go / kill decision points explained by the method's author.",
+"Les études de marché et les plans chiffrés trompent pour une rupture : les usages et les clients se découvrent en vendant.": "Market studies and detailed plans mislead for a disruption: uses and customers are discovered by selling.",
+"Les étudiants de l'équipe": "The team's students",
+"Lessons learned : DFMEA et field returns d'un produit semblable ou précédent": "Lessons learned: DFMEA and field feedback from a similar or previous product",
+"Level visé": "Target Level",
+"Level visé ": "Target level ",
+"Leçons apprises : DFMEA et retours terrain d'un produit semblable ou précédent": "Lessons learned: DFMEA and field feedback from a similar or previous product",
 "Libellé": "Label",
 "Libellé CC": "CC label",
 "Libellé SC": "SC label",
@@ -655,6 +663,7 @@
 "Nouvelle clé (optionnel)": "New key (optional)",
 "Nouvelle compétence": "New competency",
 "Nouvelle configuration de ligne": "New line configuration",
+"Nouvelle feuille": "New sheet",
 "Nouvelle feuille de concept": "New concept sheet",
 "Nouvelle fonction": "New function",
 "Nouvelle fonction : verbe + complément": "New function: verb + complement",
@@ -1401,8 +1410,5 @@
 "Question trop vague (« améliorer le produit ») : la reformuler.": "Question too vague (“improve the product”): rephrase it.",
 "Question à laquelle il répond": "Question it answers",
 "Questionner et supprimer": "Question and delete",
-"Questions / réponses client": "Customer Q&A",
-"Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
-"Questions fréquentes": "FAQ",
-"Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ "
+"Questions / réponses client": "Customer Q&A"
 }

@@ -34,6 +34,7 @@ from . import migrations_a, migrations_b  # noqa: E402
 from . import pdf_pages  # noqa: E402  (0.60.123, D-O-136)
 from . import ai_io, ai_prompts, ai_prompts_process, cp_io, dfmea_io, pfmea_io  # noqa: E402,F401 (0.60.104, D-O-116)
 from . import concept_ai, concept_pugh, concept_sheets, concepts  # noqa: E402 (0.60.105, D-O-117)
+from . import concept_cards, concept_sheet_api  # noqa: E402 (0.60.125, D-O-138: sheets by batch, the sheet on its template)
 from . import rt  # noqa: E402 (0.60.111, D-O-124: « ↔ IA », the round trip of every page)
 from . import competencies, competency_catalog, competency_export, competency_profiles, concept_freeze  # noqa: E402 (0.60.116, D-O-129: competencies, frozen bricks)
 from . import actions, capability, char_export, characteristics, classes_api, company_pn, control_plans, impact, pfmea, pfmea_ai, pn_ai, prio, process, costs, costs_budget, costs_import, costs_prompt, dfmea, dfmea_complete, example, export_api, functions, parts, risks, story, story_ai, story_docx, structure
@@ -88,6 +89,7 @@ ROUTES = [
     ("POST", P + r"/concepts/link", concepts.api_link, "user"),
     ("POST", P + r"/concepts/order", concepts.api_move, "user"),
     ("GET", P + r"/concepts/prompt", concept_ai.api_prompt, "user"),
+    ("GET", P + r"/concepts/branch-prompt", concept_ai.api_branch_prompt, "user"),  # 0.60.125 (D-O-138)
     ("POST", P + r"/concepts/ai", concept_ai.api_import, "user"),
     ("GET", CB, concepts.api_get, "user"),
     ("PATCH", CB, concepts.api_update, "user"),
@@ -96,6 +98,9 @@ ROUTES = [
     ("POST", CB + r"/sheets", concept_sheets.api_create, "user"),
     ("GET", P + r"/sheets", concept_sheets.api_list, "user"),
     ("POST", P + r"/sheets/upload", concept_sheets.api_upload, "user"),
+    ("POST", P + r"/sheets/import", concept_cards.api_import, "user"),  # 0.60.125 (D-O-138): a .zip of cards, pictures and PDF
+    ("GET", SH + r"/sheet\.svg", concept_sheet_api.api_svg, "user"),
+    ("GET", SH + r"/sheet\.pdf", concept_sheet_api.api_pdf, "user"),
     ("PATCH", SH, concept_sheets.api_update, "user"),
     ("POST", SH + r"/archive", concept_sheets.api_archive, "user"),
     ("GET", SH + r"/file", concept_sheets.api_file, "user"),

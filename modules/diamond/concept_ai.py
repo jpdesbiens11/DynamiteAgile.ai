@@ -5,6 +5,8 @@ the assistant of the company, iterates with it, then pastes its answer back in �
   GET  /concepts/prompt              the bricks of the tree: which functions share a brick, existing concept or to define
   GET  /concepts/<cid>/prompt        the concept sheets of one brick: several candidate solutions, principle, pros, cons
   POST /concepts/ai {file, dry}      the answer, {"concepts": [...], "sheets": [...]}: dry = what would be created
+  GET  /concepts/branch-prompt?fid=  0.60.125 (D-O-138): the sheets of every brick to define of one branch of the tree (a
+                                     secondary function and what is under it), to iterate with the assistant branch by branch
 
 Nothing is ever removed or overwritten: a brick of the same name already in the Space is kept as it is (its new functions
 join it when they have no brick yet), a function already in another brick stays there. What arrives is marked « Brouillon
@@ -25,7 +27,7 @@ ANSWER = {"concepts": [{"name": "Battery module de cylindrical cells en parallè
                         "description": "Porte les fonctions de stockage de l'énergie.", "functions": ["F12", "F13"]}],
           "sheets": [{"concept": "CB-3", "title": "Cold plate sous les cells",
                       "principle": "Un coolant circule dans une cold plate en aluminium collée sous le module.",
-                      "description": "…", "pros": "…", "cons": "…"}]}
+                      "description": "…", "pros": "…", "cons": "…", "questions": "…", "badge": "sans outil"}]}
 
 GUIDE_BRICKS = """Tu es ingénieur(e) produit dans l'équipe du projet « {name} »{description}. Voici l'arbre fonctionnel du produit (F-n :
 fonction ; le retrait montre le niveau : primaire, secondaires, tertiaires ; [Kano] et (type) quand ils sont connus) :
@@ -54,7 +56,10 @@ Elle réalise ces fonctions de l'arbre fonctionnel :
 variantes de détail), en partant du concept initial puis en osant t'en éloigner : un pivot est bienvenu s'il sert mieux les
 besoins. Pour chacune : un titre court qui parle, le principe de fonctionnement en une phrase, une description (ce qu'on
 dessinerait sur la feuille : architecture, matériaux, ordres de grandeur), les avantages et les inconvénients face aux besoins et
-requirements ci-dessus. Nous allons ensuite les comparer en équipe dans une matrice de Pugh. {terms} Rends un seul bloc JSON :
+requirements ci-dessus, les questions ouvertes à vérifier (`questions` : essais, normes, ordres de grandeur à confirmer), et un
+`badge` de deux à quatre mots qui résume l'atout de la feuille (ex. « sans outil »). Une ligne par avantage, inconvénient ou
+question. Nous allons ensuite les comparer en équipe dans une matrice de Pugh ; la plateforme dessine chaque feuille sur son
+gabarit (titre, badge, + / − / ?, cartouche). {terms} Rends un seul bloc JSON :
 
 ```json
 {answer}
@@ -136,6 +141,60 @@ def api_sheet_prompt(ctx):
         if have else "", count=3 if have else 4,
         answer=json.dumps({"sheets": [dict(ANSWER["sheets"][0], concept=C.code(c["number"]))]}, ensure_ascii=False, indent=1))
     return {"prompt": text}
+
+
+GUIDE_BRANCH = """Tu es ingénieur(e) produit dans l'équipe du projet « {name} ». Nous travaillons la branche F{fnum} « {ftext} » de
+l'arbre fonctionnel, brique par brique. Voici ses fonctions et leurs briques technologiques :
+
+{bricks}
+{needs}
+Pour chaque brique **à définir** ci-dessus, propose {count} feuilles de concept **vraiment différentes** (principes physiques
+différents), en partant de son concept initial et des feuilles déjà dessinées, sans les répéter. Pour chacune : `concept` (le code
+de la brique, CB-n), un titre court qui parle, le principe en une phrase, une description (ce qu'on dessinerait : architecture,
+matériaux, ordres de grandeur), les avantages, les inconvénients et les questions ouvertes (une ligne chacun), et un `badge` de
+deux à quatre mots (l'atout de la feuille). Pose-moi d'abord les questions qui te manquent ; nous itérerons ensemble avant que tu
+rendes le bloc. La plateforme dessine chaque feuille sur son gabarit. {terms} Rends un seul bloc JSON :
+
+```json
+{answer}
+```"""
+
+
+def api_branch_prompt(ctx):
+    from modules.agile import common
+    pid = F.access(ctx)
+    fns = F.rows(ctx.conn, pid)
+    root = next((f for f in fns if str(f["id"]) == str((ctx.query or {}).get("fid") or "")), None)
+    if root is None:
+        raise ApiError(400, "Branche inconnue. Correctif : choisissez une fonction de l'arbre.")
+    kids = {}
+    for f in fns:
+        kids.setdefault(f["parent_id"], []).append(f)
+    branch, todo = [], [root]
+    while todo:
+        f = todo.pop(0)
+        branch.append(f)
+        todo += sorted(kids.get(f["id"], []), key=lambda x: (x["position"], x["number"]))
+    ids = {f["id"] for f in branch}
+    bricks = [c for c in C.rows(ctx.conn, pid) if set(c["function_ids"]) & ids]
+    if not bricks:
+        raise ApiError(409, "Aucune brique sur la branche F{}. Correctif : rattachez d'abord ses fonctions à des briques "
+                            "(panneau de la fonction, dans l'arbre).".format(root["number"]))
+    sheets = S.rows(ctx.conn, pid)
+    lines = []
+    for c in bricks:
+        own = [f for f in branch if f["id"] in c["function_ids"]]
+        lines.append("- {} « {} » — {}{} ; fonctions : {}".format(
+            c["code"], c["initial_name"] or c["name"], c["name"], " (concept existant : {})".format(c["reference"]) if c["kind"] == "existing"
+            else " (à définir)", ", ".join("F{} {}".format(f["number"], f["text"]) for f in own)))
+        lines += ["    déjà dessinée : {} {}".format(s["code"], s["title"]) for s in sheets if s["concept_id"] == c["id"]]
+    reqs = _requirements(ctx.conn, pid) if common.is_enabled(ctx.conn, pid) else []
+    first = next((c for c in bricks if c["kind"] == "to_define"), bricks[0])
+    text = GUIDE_BRANCH.format(
+        name=_project(ctx.conn, pid)["name"], fnum=root["number"], ftext=root["text"], bricks="\n".join(lines), terms=terms.RULE_FR,
+        needs=("\nBesoins et requirements du projet (les plus importants) :\n" + "\n".join(reqs) + "\n") if reqs else "",
+        count=3, answer=json.dumps({"sheets": [dict(ANSWER["sheets"][0], concept=first["code"])]}, ensure_ascii=False, indent=1))
+    return {"prompt": text, "bricks": len(bricks), "to_define": sum(1 for c in bricks if c["kind"] == "to_define")}
 
 
 def _read(body):

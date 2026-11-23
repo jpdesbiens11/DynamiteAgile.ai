@@ -429,4 +429,12 @@ MIGRATIONS = [
         ALTER TABLE diamond_competencies ADD COLUMN starter INTEGER NOT NULL DEFAULT 0;
         UPDATE diamond_competencies SET starter = 1 WHERE code IN ('MECH', 'PCB', 'FW', 'PWR', 'TEST');
     """),
+    (21, """
+        -- 0.60.125 (D-O-138): a concept sheet on the template -- its badge (the red ellipse), its open questions (?), the drawing
+        -- placed in the template (figure_id) and the PDF of a sheet imported with its PNG (pdf_id)
+        ALTER TABLE diamond_concept_sheets ADD COLUMN badge TEXT NOT NULL DEFAULT '';
+        ALTER TABLE diamond_concept_sheets ADD COLUMN questions TEXT NOT NULL DEFAULT '';
+        ALTER TABLE diamond_concept_sheets ADD COLUMN figure_id INTEGER REFERENCES attachments(id) ON DELETE SET NULL;
+        ALTER TABLE diamond_concept_sheets ADD COLUMN pdf_id INTEGER REFERENCES attachments(id) ON DELETE SET NULL;
+    """),
 ]

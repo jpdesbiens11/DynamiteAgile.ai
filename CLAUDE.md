@@ -173,6 +173,10 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.125** (2026-11-23) : Diamond — feuilles de concept au **gabarit** de la plateforme (`modules/diamond/concept_sheet_render.py`,
+  `concept_sheet_api.py` : `sheet.svg`, `sheet.pdf`, PNG dans le navigateur), badge, questions, croquis (migration diamond 21) ; **import
+  par lot** d'un .zip de cartes .md + PNG / PDF (`concept_cards.py`, `static/js/diamond/concept_sheet_tools.js`) ; **IA par branche**
+  (`concept_ai.api_branch_prompt`) ; vignettes dans le tableau morphologique (D-O-138). Tests : `tests/test_diamond_concept_cards.py`.
 - **0.60.123** (2026-11-18) : Diamond — export **PDF** de chaque page à côté de « ↔ IA » (`static/js/diamond/pdf.js`,
   `POST …/pdf`, `modules/diamond/pdf_pages.py`), au format des documents Word : page de garde, en-tête et pied de page, Lettre ou
   Tabloïd paysage (`modules/diamond/pdf_doc.py`) ; Golden Nuggets en cartes (`D.pdfBuilders.nuggets`) (D-O-136).
