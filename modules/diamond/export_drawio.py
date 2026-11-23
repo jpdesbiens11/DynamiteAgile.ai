@@ -151,6 +151,11 @@ def tree_page(data, title="Arbre fonctionnel"):
             critical = f["critical"] and data["by_id"][f["parent_id"]]["critical"]
             page.edge(ids[f["parent_id"]], ids[f["id"]], "edgeStyle=elbowEdgeStyle;elbow=horizontal;rounded=1;endArrow=none;"
                       + ("strokeColor=#D64545;strokeWidth=2.6;" if critical else "strokeColor=#5B6573;strokeWidth=1.4;"))
+    extra = []
+    if data.get("concepts"):  # 0.60.126 (D-O-139): the column « Concept initial / Brique technologique », as on the screen
+        from .export_bricks import drawio_bricks
+        levels = max([f["level"] for f in data["tree"] if f["in_tree"] and f["id"] in ids] or [1])
+        extra = drawio_bricks(page, data, ids, ypos, 40 + levels * (W + HGAP) + HGAP, 96, H, W + 20, HEAD + 20, _h)
     right = page.width + 40
     if outside:
         y = nxt[0] + 30
@@ -163,7 +168,8 @@ def tree_page(data, title="Arbre fonctionnel"):
                                     ("rounded=1;fillColor={};strokeColor=#26323F;".format(LEVEL_FILL[3]), "Fonction tertiaire"),
                                     ("rounded=1;fillColor={};strokeColor=#26323F;".format(LEVEL_FILL[4]), "Technique · hors arbre"),
                                     ("rounded=1;fillColor=#FFFFFF;strokeColor=#D64545;strokeWidth=3;", "Fonction critique (chemin critique)"),
-                                    ("text;fontSize=10;fontColor=#5B6573;strokeColor=none;fillColor=none;", "P-n : pièces qui réalisent la fonction")])
+                                    ("text;fontSize=10;fontColor=#5B6573;strokeColor=none;fillColor=none;", "P-n : pièces qui réalisent la fonction")]
+           + extra)
     footer(page, data)
     return page
 

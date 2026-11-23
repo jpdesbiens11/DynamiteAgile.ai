@@ -154,8 +154,10 @@ def story_sheet(book, kit, data):
 
 def tree_sheet(book, kit, data):
     s = book.sheet("Arbre fonctionnel")
-    widths = [8, 58, 12, 10, 12, 13, 14, 9, 16, 40]
+    widths = [8, 58, 12, 10, 12, 13, 14, 9, 16, 34, 40]
     _frame(s, data, "Arbre fonctionnel", widths, kit, "F2C14E")
+    from .export_bricks import brick_cell  # 0.60.126 (D-O-139)
+    brick_of = data.get("brick_of", {})
     lab = data["labels"]
     rows = []
     for f in data["tree"]:
@@ -163,14 +165,14 @@ def tree_sheet(book, kit, data):
         indent = "    " * (f["level"] - 1) if f["in_tree"] else ""
         rows.append([X.code(f), indent + f["text"], X.label_of(f, data), X.code(parent) if parent else "",
                      lab["types"].get(f["ftype"], f["ftype"]), lab["kano"].get(f["kano"], ""), lab["importance"].get(f["importance"], ""),
-                     "Oui" if f["critical"] else "", X.part_codes(data, f["id"]), f["notes"]])
+                     "Oui" if f["critical"] else "", X.part_codes(data, f["id"]), brick_cell(brick_of.get(f["id"])), f["notes"]])
     level_of = {X.code(f): (f["level"] if f["in_tree"] else 4) for f in data["tree"]}
 
     def styles(v):
         lv = level_of[v[0]]
-        return [kit.level_bold[lv], kit.level_bold[lv] if lv <= 2 else kit.level[lv]] + [kit.level[lv]] * 8
+        return [kit.level_bold[lv], kit.level_bold[lv] if lv <= 2 else kit.level[lv]] + [kit.level[lv]] * 9
     _table(s, kit, ["N°", "Fonction (Comment ? → à droite · Pourquoi ? ← à gauche)", "Niveau", "Parent", "Type", "Kano",
-                    "Importance", "Critique", "Pièces", "Notes"], rows, widths, styles)
+                    "Importance", "Critique", "Pièces", "Brique", "Notes"], rows, widths, styles)
 
 
 def structure_sheet(book, kit, data):
@@ -315,8 +317,13 @@ def build(data, only=None):
     """only: "tree" or "structure" -- the table of one screen (0.60.50, D-O-059); None: the whole workbook."""
     book = Book()
     kit = Kit(book)
+    from . import export_bricks
     if only == "tree":
         tree_sheet(book, kit, data)
+        export_bricks.bricks_sheet(book, kit, data)  # 0.60.126 (D-O-139): the bricks and the competencies of the tree
+        if data.get("competencies"):
+            from . import competency_export
+            competency_export.sheets(book, kit, data["competencies"], data)
     elif only == "structure":
         structure_sheet(book, kit, data)
         if data["parts"]:
@@ -325,6 +332,7 @@ def build(data, only=None):
         synthese(book, kit, data)
         story_sheet(book, kit, data)
         tree_sheet(book, kit, data)
+        export_bricks.bricks_sheet(book, kit, data)
         structure_sheet(book, kit, data)
         parts_sheet(book, kit, data)
         risks_sheet(book, kit, data)

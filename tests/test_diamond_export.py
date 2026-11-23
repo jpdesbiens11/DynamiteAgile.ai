@@ -58,12 +58,12 @@ class DiamondExportTest(unittest.TestCase):
             if name.endswith(".xml") or name.endswith(".rels"):
                 ET.fromstring(z.read(name))  # every part is well-formed
         book = z.read("xl/workbook.xml").decode("utf-8")
-        for sheet in ("Synthèse", "Storyline", "Arbre fonctionnel", "Structure", "Pièces × fonctions", "Risques projet", "DFMEA", "Révision"):
+        for sheet in ("Synthèse", "Storyline", "Arbre fonctionnel", "Briques technologiques", "Structure", "Pièces × fonctions", "Risques projet", "DFMEA", "Révision"):
             self.assertIn('name="{}"'.format(sheet), book)  # « Révision »: the stamp of the core
         first = z.read("xl/worksheets/sheet1.xml").decode("utf-8")
         self.assertIn("Co-Intelligence WorkFlow™", first)
         self.assertIn("&amp;KE0602FDynamite&amp;K0E9A9AAgile", first)  # the brand in the printed header
-        dfmea = z.read("xl/worksheets/sheet7.xml").decode("utf-8")  # the Storyline is sheet 2 since 0.60.113
+        dfmea = z.read("xl/worksheets/sheet8.xml").decode("utf-8")  # Storyline sheet 2 (0.60.113), Briques sheet 4 (0.60.126)
         self.assertIn("Prevention Controls", dfmea)
         self.assertIn("Bonnes pratiques (industrie)", dfmea)
         self.assertIn("_xlnm.Print_Titles", book)
@@ -87,7 +87,9 @@ class DiamondExportTest(unittest.TestCase):
             self.assertIn(X.WORKFLOW, text)
             self.assertIn("Dynamite", text)
         tree = ET.tostring(pages[0], encoding="unicode")
-        self.assertEqual(tree.count('edge="1"'), 19)  # every link of the 21 functions' tree (20 in it, 1 outside)
+        links = tree.count('strokeColor=#E0602F;strokeWidth=1.2;')  # 0.60.126 (D-O-139): a function to its brick
+        self.assertGreater(links, 0)
+        self.assertEqual(tree.count('edge="1"') - links, 19)  # every link of the 21 functions' tree (20 in it, 1 outside)
         self.assertIn("Éclairer une surface de travail", tree)
 
     def test_03_word(self):

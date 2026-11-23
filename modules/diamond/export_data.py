@@ -53,6 +53,8 @@ def gather(conn, pid):
             "labels": {"types": F.TYPES, "kano": F.KANO, "importance": F.IMPORTANCE, "levels": F.LEVELS, "kinds": S.KINDS,
                        "sides": S.SIDES, "views": S.VIEWS, "part_kinds": P.KINDS, "categories": R.CATEGORIES,
                        "phases": R.PHASES, "responses": R.RESPONSES, "statuses": R.STATUSES}}
+    from . import export_bricks  # 0.60.126 (D-O-139): the bricks of the tree in its exports
+    data.update(export_bricks.gather(conn, pid))
     data["summary"] = summary(data)
     return data
 
