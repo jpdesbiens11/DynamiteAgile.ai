@@ -1255,6 +1255,7 @@
 "Tout est rangé": "Everything is filed",
 "Tout est traduit.": "Everything is translated.",
 "Tout exporter (": "Export all (",
+"Tout fermer": "Close all",
 "Tout le monde": "Everyone",
 "Tout le plan": "Whole plan",
 "Tout le site revient au ": "The whole site goes back to the ",
@@ -1262,6 +1263,7 @@
 "Tout lire, commenter, poser des questions, exporter": "Read everything, comment, ask questions, export",
 "Tout marquer comme lu": "Mark all as read",
 "Tout marquer vu": "Mark all seen",
+"Tout ouvrir": "Open all",
 "Tout relier au centre : créez des sous-branches.": "Link everything to the center: create sub-branches.",
 "Tout remplacer": "Replace all",
 "Tout replier": "Fold all",
@@ -1413,6 +1415,5 @@
 "Un commentaire dans « Commentaire / suivi » (colonne M) est ajouté à l'historique signé.": "A comment in “Comment / follow-up” (column M) is added to the signed history.",
 "Un congé santé peut être accordé sous approbation, sans être déduit de la banque de vacances [à confirmer].": "Health leave can be granted with approval, without being deducted from the vacation bank [to be confirmed].",
 "Un cookie volé ne s'ouvre pas depuis un autre poste": "A stolen cookie does not open from another workstation",
-"Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
-"Un doigt, une appli": "One finger, one app"
+"Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module."
 }

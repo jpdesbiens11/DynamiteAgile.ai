@@ -103,6 +103,7 @@ ROUTES = [
     ("GET", SH + r"/sheet\.pdf", concept_sheet_api.api_pdf, "user"),
     ("PATCH", SH, concept_sheets.api_update, "user"),
     ("POST", SH + r"/archive", concept_sheets.api_archive, "user"),
+    ("DELETE", SH, concept_sheets.api_delete, "user"),  # 0.60.128 (D-O-141)
     ("GET", SH + r"/file", concept_sheets.api_file, "user"),
     ("GET", P + r"/pugh", concept_pugh.api_list, "user"),  # Goldmine's Pugh matrix, with the bricks and the functions
     ("POST", P + r"/pugh", concept_pugh.api_create, "user"),

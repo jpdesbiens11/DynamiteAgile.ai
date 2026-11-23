@@ -1,12 +1,20 @@
-# Journal de mise à jour — 0.60.127
+# Journal de mise à jour — 0.60.128
+
+- **Version :** 0.60.127 → 0.60.128 (2026-11-23)
+- **Changements :**
+  1. **Diamond : « Feuilles de concept » par branche puis par brique, repliables, avec « IA : cette branche »** (D-O-141).
+  2. **Diamond : « Supprimer » une feuille de concept, à côté d'« Archiver »** (D-O-141).
+- **Base de données :** migration diamond 22 (additive : `sheet_floor` des briques).
+
+## Précédent
+
+### Journal de mise à jour — 0.60.127
 
 - **Version :** 0.60.126 → 0.60.127 (2026-11-23)
 - **Changements :**
   1. **Admin : un seul endroit pour sauvegarder ou transférer un Space — « Sauvegarder ou transférer… » ouvre Update et sauvegardes → Données avec ce Space coché** (D-O-140).
   2. **L'aller-retour d'un Space (sauvegarde, suppression, restauration) est vérifié table par table par un test** (D-O-140).
 - **Base de données :** aucune migration.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.126
 

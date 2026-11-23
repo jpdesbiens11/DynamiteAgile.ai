@@ -82,3 +82,13 @@ html[data-term] .dm-concept-initial { color: var(--acc); }
 .dm-morpho td:has(.dm-morpho-thumb) { min-width: 140px; }
 .dm-morpho-thumb { display: block; width: 150px; max-width: 100%; aspect-ratio: 1.414; object-fit: contain; margin-bottom: .25rem;
   border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
+/* 0.60.128 (D-O-141): « Feuilles de concept » by branch, then by brick, foldable */
+.dm-folds { display: flex; flex-direction: column; gap: .6rem; }
+.dm-fold-tools { align-items: center; }
+.dm-fold { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.dm-fold > summary { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .7rem; cursor: pointer; }
+.dm-fold > summary .btn { margin-left: auto; }
+.dm-fold[open] > summary { border-bottom: 1px solid var(--line); }
+.dm-fold-body { display: flex; flex-direction: column; gap: .5rem; padding: .6rem; }
+.dm-fold .dm-fold { background: var(--surface-2); }
+.dm-fold .dm-fold > .dm-sheets { padding: .6rem; }

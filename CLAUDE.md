@@ -173,6 +173,9 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.128** (2026-11-23) : Diamond — « Feuilles de concept » par branche puis par brique, repliables, « IA : cette branche »
+  (`static/js/diamond/concept_sheet_fold.js`) ; « Supprimer » une feuille (`concept_sheets.api_delete`, migration diamond 22
+  `sheet_floor`) (D-O-141).
 - **0.60.127** (2026-11-23) : Admin — « Sauvegarder ou transférer… » (liste et Fiche des Spaces) ouvre Update et sauvegardes → Données
   avec ce Space coché (`static/js/admin_update_data.js` `preselect`) : un seul endroit pour sauvegarder ou transférer un Space ;
   aller-retour d'un Space vérifié par `tests/test_space_roundtrip.py` (D-O-140).

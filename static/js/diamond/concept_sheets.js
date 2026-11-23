@@ -28,7 +28,12 @@
         el("button", { type: "button", class: "btn btn-small btn-danger", onclick: async () => {
           if (!window.confirm("Archiver la feuille " + s.code + " « " + s.title + " » ?")) return;
           try { await api.post(D.base(ctx) + "/sheets/" + s.id + "/archive", {}); done(); } catch (err) { toast(err.message, "error"); }
-        } }, "Archiver")) : null);
+        } }, "Archiver"),
+        el("button", { type: "button", class: "btn btn-small btn-danger", "data-new": "0.60.128-sheet-delete", onclick: async () => {
+          if (!window.confirm("Supprimer définitivement la feuille " + s.code + " « " + s.title + " » ? Elle ne pourra pas être récupérée "
+            + "(sauf par une sauvegarde du Space). Son numéro ne sera pas redonné.")) return;
+          try { await api.del(D.base(ctx) + "/sheets/" + s.id); toast(s.code + " supprimée.", "success"); done(); } catch (err) { toast(err.message, "error"); }
+        } }, "Supprimer")) : null);
   }
 
   function sheetSection(ctx, state, editable) {
@@ -148,11 +153,8 @@
         el("a", { class: "btn" + (open.length ? "" : " btn-primary"), href: A.href(ctx, "concepts") }, "Briques technologiques")));
         return;
       }
-      const by = new Map();
-      data.sheets.forEach((s) => { const k = "CB-" + s.concept_number; if (!by.has(k)) by.set(k, []); by.get(k).push(s); });
-      by.forEach((list, code) => holder.append(el("section", { class: "dm-cb-section" },
-        el("h2", null, el("a", { href: A.href(ctx, "concepts/" + code) }, code), " " + list[0].concept_name),
-        el("div", { class: "dm-sheets" }, list.map((s) => card(ctx, s, editable, reload, data.labels))))));
+      // 0.60.128 (D-O-141): by branch of the tree, then by brick, each foldable (concept_sheet_fold.js)
+      holder.append(D.sheetsByBranch(ctx, data, cdata, (s) => card(ctx, s, editable, reload, data.labels), editable, reload));
     };
     await draw();
   }

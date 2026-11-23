@@ -170,6 +170,17 @@ class ConceptCardsTest(unittest.TestCase):
         self.assertGreater(res["bricks"], 0)
         self.fails(400, self.admin.get, self.base + "/concepts/branch-prompt?fid=0")
 
+    def test_06_delete_a_sheet(self):
+        """0.60.128 (D-O-141): delete for good; refused for a sheet in a Pugh matrix; its number is not given again."""
+        url = self.base + "/concepts/{}/sheets".format(self.brick["id"])
+        made = self.admin.post(url, {"title": "À effacer"})
+        last = next(s for s in made["sheets"] if s["id"] == made["created"])
+        self.fails(403, self.reader.delete, self.base + "/sheets/{}".format(last["id"]))
+        left = self.admin.delete(self.base + "/sheets/{}".format(last["id"]))["sheets"]
+        self.assertNotIn(last["id"], [s["id"] for s in left])
+        again = self.admin.post(url, {"title": "Après"})
+        self.assertEqual(next(s for s in again["sheets"] if s["id"] == again["created"])["number"], last["number"] + 1)
+
 
 if __name__ == "__main__":
     unittest.main()
