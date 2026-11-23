@@ -104,7 +104,7 @@
   }
 
   /* « IA : une branche » */
-  function openBranch(ctx, data, done) {
+  function openBranch(ctx, data, done, fid) {  // fid: 0.60.128 (D-O-141), the branch chosen from its block
     const fns = data.functions.filter((f) => f.in_tree && f.level === 2);
     const under = (root) => {
       const ids = new Set([root.id]);
@@ -117,6 +117,7 @@
       return el("option", { value: f.id, disabled: !n.length }, "F" + f.number + " " + f.text + " — " + n.length + " brique(s), "
         + n.filter((c) => c.kind === "to_define").length + " à définir");
     }));
+    if (fid) pick.value = String(fid);
     const out = el("div");
     let close = null;
     const copy = async () => {

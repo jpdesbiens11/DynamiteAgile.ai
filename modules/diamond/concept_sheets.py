@@ -74,8 +74,8 @@ def free_number(conn, concept_id, wanted=None):
     if wanted and not conn.execute("SELECT 1 FROM diamond_concept_sheets WHERE concept_id = ? AND number = ?",
                                    (concept_id, int(wanted))).fetchone():
         return int(wanted)
-    return conn.execute("SELECT COALESCE(MAX(number), 0) + 1 FROM diamond_concept_sheets WHERE concept_id = ?",
-                        (concept_id,)).fetchone()[0]
+    return conn.execute("SELECT MAX(COALESCE((SELECT MAX(number) FROM diamond_concept_sheets WHERE concept_id = ?), 0), "
+                        "sheet_floor) + 1 FROM diamond_concepts WHERE id = ?", (concept_id, concept_id)).fetchone()[0]
 
 
 def add(conn, user_id, pid, concept_id, fields, attachment_id=None, number=None, pdf_id=None, figure_id=None):
@@ -157,6 +157,25 @@ def api_archive(ctx):
     ctx.conn.execute("UPDATE diamond_concept_sheets SET archived = 1, updated_by = ?, updated_at = ? WHERE id = ?",
                      (ctx.user["id"], db.utc_now(), s["id"]))
     audit.log_action(ctx.conn, ctx.user["id"], "diamond_sheet_archive", "diamond_concept_sheet", s["id"], {"title": s["title"]}, ctx.ip)
+    return {"sheets": rows(ctx.conn, pid, s["concept_id"])}
+
+
+def api_delete(ctx):
+    """0.60.128 (D-O-141): delete a sheet for good (housekeeping) -- not one a Pugh matrix uses or retained: archive those."""
+    pid = F.access(ctx, "editor")
+    s = _sheet(ctx.conn, pid, validate.int_param(ctx.params, "sid"))
+    from .concept_freeze import guard
+    guard(ctx.conn, pid, s["concept_id"], "Supprimer une feuille de concept")
+    code_ = code(ctx.conn.execute("SELECT number FROM diamond_concepts WHERE id = ?", (s["concept_id"],)).fetchone()[0], s["number"])
+    if s["status"] == "selected":
+        raise ApiError(409, "{} est retenue par une matrice de Pugh. Correctif : archivez-la plutôt.".format(code_))
+    if ctx.conn.execute("SELECT 1 FROM diamond_pugh_option_sheets WHERE sheet_id = ?", (s["id"],)).fetchone():
+        raise ApiError(409, "{} est dans une matrice de Pugh : la supprimer changerait la matrice. Correctif : archivez-la plutôt."
+                       .format(code_))
+    ctx.conn.execute("UPDATE diamond_concepts SET sheet_floor = MAX(sheet_floor, ?) WHERE id = ?", (s["number"], s["concept_id"]))
+    ctx.conn.execute("DELETE FROM diamond_concept_sheets WHERE id = ?", (s["id"],))
+    audit.log_action(ctx.conn, ctx.user["id"], "diamond_sheet_delete", "diamond_concept_sheet", s["id"],
+                     {"code": code_, "title": s["title"]}, ctx.ip)
     return {"sheets": rows(ctx.conn, pid, s["concept_id"])}
 
 

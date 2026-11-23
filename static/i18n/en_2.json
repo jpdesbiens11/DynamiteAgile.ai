@@ -1,5 +1,4 @@
 {
-"Bloc de code": "Code block",
 "Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc secteur 12 V certifié et régulateur de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc « ": "Block “ ",
@@ -63,6 +62,7 @@
 "Briques déjà définies par l'équipe (garde-les, complète seulement) :\n": "Building blocks already defined by the team (keep them, only complete):\n",
 "Briques jugées : ": "Building blocks judged: ",
 "Briques jugées ensemble": "Building blocks judged together",
+"Briques sans fonction de l'arbre": "Bricks without a function of the tree",
 "Briques technologiques": "Technology building blocks",
 "Briques technologiques de ": "Technology building blocks of ",
 "Brouillage 2,4 GHz par le Wi-Fi du bureau": "2.4 GHz interference from the office Wi-Fi",
@@ -1414,5 +1414,7 @@
 "En entreprise aujourd'hui": "In a company today",
 "En faire la fonction primaire": "Make it the primary function",
 "En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
-"En retard": "Overdue"
+"En retard": "Overdue",
+"En service : ": "In service: ",
+"En une phrase :": "In one sentence:"
 }

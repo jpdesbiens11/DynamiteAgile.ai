@@ -437,4 +437,8 @@ MIGRATIONS = [
         ALTER TABLE diamond_concept_sheets ADD COLUMN figure_id INTEGER REFERENCES attachments(id) ON DELETE SET NULL;
         ALTER TABLE diamond_concept_sheets ADD COLUMN pdf_id INTEGER REFERENCES attachments(id) ON DELETE SET NULL;
     """),
+    (22, """
+        -- 0.60.128 (D-O-141): a concept sheet may be deleted; its number is not given again by the automatic numbering
+        ALTER TABLE diamond_concepts ADD COLUMN sheet_floor INTEGER NOT NULL DEFAULT 0;
+    """),
 ]

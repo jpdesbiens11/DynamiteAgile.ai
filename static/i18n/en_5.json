@@ -1,8 +1,4 @@
 {
-"Question déjà enregistrée.": "Question already recorded.",
-"Question trop vague (« améliorer le produit ») : la reformuler.": "Question too vague (“improve the product”): rephrase it.",
-"Question à laquelle il répond": "Question it answers",
-"Questionner et supprimer": "Question and delete",
 "Questions / réponses client": "Customer Q&A",
 "Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
 "Questions fréquentes": "FAQ",
@@ -954,6 +950,7 @@
 "Supprimer ce commentaire et ses réponses ?": "Delete this comment and its replies?",
 "Supprimer définitivement": "Delete permanently",
 "Supprimer définitivement ": "Permanently delete ",
+"Supprimer définitivement la feuille ": "Delete for good the sheet ",
 "Supprimer la matrice « ": "Delete the matrix “",
 "Supprimer la plage": "Delete the range",
 "Supprimer le Space ": "Delete the Space ",
@@ -961,6 +958,7 @@
 "Supprimer le fichier de sauvegarde ": "Delete the backup file ",
 "Supprimer le lien": "Delete the link",
 "Supprimer le ticket": "Delete the ticket",
+"Supprimer une feuille de concept": "Delete a concept sheet",
 "Supprimer « ": "Delete “ ",
 "Supprimer…": "Delete…",
 "Supprimé : ": "Deleted: ",
@@ -1255,6 +1253,7 @@
 "Tout est rangé": "Everything is filed",
 "Tout est traduit.": "Everything is translated.",
 "Tout exporter (": "Export all (",
+"Tout fermer": "Close all",
 "Tout le monde": "Everyone",
 "Tout le plan": "Whole plan",
 "Tout le site revient au ": "The whole site goes back to the ",
@@ -1262,6 +1261,7 @@
 "Tout lire, commenter, poser des questions, exporter": "Read everything, comment, ask questions, export",
 "Tout marquer comme lu": "Mark all as read",
 "Tout marquer vu": "Mark all seen",
+"Tout ouvrir": "Open all",
 "Tout relier au centre : créez des sous-branches.": "Link everything to the center: create sub-branches.",
 "Tout remplacer": "Replace all",
 "Tout replier": "Fold all",
@@ -1414,5 +1414,7 @@
 "Un congé santé peut être accordé sous approbation, sans être déduit de la banque de vacances [à confirmer].": "Health leave can be granted with approval, without being deducted from the vacation bank [to be confirmed].",
 "Un cookie volé ne s'ouvre pas depuis un autre poste": "A stolen cookie does not open from another workstation",
 "Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
-"Un doigt, une appli": "One finger, one app"
+"Un doigt, une appli": "One finger, one app",
+"Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures.",
+"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST."
 }
