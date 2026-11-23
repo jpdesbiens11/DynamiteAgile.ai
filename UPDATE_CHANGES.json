@@ -3,7 +3,7 @@
     {
       "id": "C1",
       "title": "Diamond : les feuilles de concept au gabarit de la plateforme, en PNG et en PDF",
-      "why": "Une idée en texte devient une fiche visuelle qui accélère la discussion d'équipe : chaque feuille est dessinée sur le gabarit « carnet » — titre surligné, badge dans l'ellipse rouge, + / − / ? en couleur, cartouche « Concept sheet CB-n.m » avec la brique, l'auteur, la date. Le croquis déposé prend place dans la zone de dessin. PNG depuis le navigateur, PDF vectoriel A4 paysage (marqué et inscrit au registre).",
+      "why": "Une idée en texte devient une fiche visuelle qui accélère la discussion d'équipe : chaque feuille est dessinée sur le gabarit « carnet » — titre surligné, badge dans l'ellipse rouge, + / − / ? en couleur, cartouche « Concept sheet CB-n.m » avec la brique, l'auteur, la date. Le croquis déposé prend place dans la zone de dessin. PNG depuis le navigateur, PDF vectoriel A4 paysage (marqué et inscrit au registre). Une brique figée le dit, avec « Défiger », là où étaient les boutons de création.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
@@ -41,6 +41,7 @@
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
         "static/js/diamond/concept_ai.js",
+        "static/js/diamond/concept_panel.js",
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",
@@ -89,6 +90,7 @@
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
         "static/js/diamond/concept_ai.js",
+        "static/js/diamond/concept_panel.js",
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",
@@ -137,6 +139,7 @@
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
         "static/js/diamond/concept_ai.js",
+        "static/js/diamond/concept_panel.js",
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",

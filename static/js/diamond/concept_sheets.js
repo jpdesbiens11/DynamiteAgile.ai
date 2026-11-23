@@ -39,9 +39,21 @@
           el("button", { type: "button", class: "btn btn-small btn-primary", onclick: () => openSheet(ctx, c.id, null, state.reload) }, "Feuille numérique"),
           el("button", { type: "button", class: "btn btn-small", onclick: () => openScan(ctx, c.id, state.reload) }, "Scanner une feuille"),
           el("button", { type: "button", class: "btn btn-small", onclick: () => D.openSheetImport(ctx, [c], state.reload) }, "Importer un lot (.zip)")) : null),
+      c.frozen && A.canEdit(ctx) ? frozenNote(ctx, c, state.reload) : null,
       sheets.length ? el("div", { class: "dm-sheets" }, sheets.map((s) => card(ctx, s, editable, state.reload)))
         : el("p", { class: "muted" }, c.kind === "existing" ? "Concept existant : une feuille n'est utile que pour comparer des variantes."
           : "Aucune feuille. Dessinez des solutions vraiment différentes : en séance (scannez les feuilles), dans l'outil, ou avec l'IA."));
+  }
+
+  /* 0.60.125 (D-O-138): a frozen brick takes no new sheet (D-O-129) -- say so where the buttons would be, and offer « Défiger » */
+  function frozenNote(ctx, c, reload) {
+    const crun = async (path, body) => {
+      try { await api.post(D.base(ctx) + path, body || {}); toast(c.code + " défigée : la recherche reprend.", "success"); reload(); }
+      catch (err) { toast(err.message, "error"); }
+    };
+    return el("p", { class: "dm-frozen-note", "data-new": "0.60.125-frozen-sheets" },
+      el("span", { class: "badge badge-ok" }, "Figée"), " Brique figée : pas de nouvelle feuille de concept. Défigez-la pour reprendre la recherche. ",
+      el("button", { type: "button", class: "btn btn-small", onclick: () => D.unfreezeBrick(c, crun) }, "Défiger " + c.code));
   }
 
   /* conceptId null: the sheet's brick is chosen in the form (bricks: those that may still take a sheet) */

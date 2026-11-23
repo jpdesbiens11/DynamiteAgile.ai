@@ -72,6 +72,7 @@
 " ? Ses sessions seront fermées.": " ? Their sessions will be closed.",
 " Accepter": " Accept",
 " Adresse de ce serveur : ": " Address of this server: ",
+" Brique figée : pas de nouvelle feuille de concept. Défigez-la pour reprendre la recherche. ": " Frozen brick: no new concept sheet. Unfreeze it to resume the search. ",
 " Budget Line(s) cochée(s)": " Budget Line(s) checked",
 " Chaque point de contrôle porte le numéro de la caractéristique qu'il protège.": " Each control point carries the number of the characteristic it protects.",
 " Choisissez votre Space par défaut dans l'": " Choose your default Space in the ",
@@ -162,6 +163,7 @@
 " du PFMEA ? Elle reste dans « Rejetées ».": " from the PFMEA? It stays under “Rejected”.",
 " du Space ": " of Space ",
 " du plan ?": " of the plan?",
+" défigée : la recherche reprend.": " unfrozen: the search resumes.",
 " déjà là, ": " already there, ",
 " désactivé": " disabled",
 " en cours": " in progress",
@@ -1408,7 +1410,5 @@
 "Bilan thermique ; modèle thermique et rapport ; choix du heat sink ou du cold plate ; plan d'essai thermique.": "Thermal budget; thermal model and report; choice of the heat sink or cold plate; thermal test plan.",
 "Bilan thermique calculé ou simulé, température de jonction au moins 20 °C sous le maximum du composant": "Thermal budget calculated or simulated, junction temperature at least 20 °C below the component maximum",
 "Binning des LED pour une couleur constante d'un produit à l'autre": "LED binning for constant color from one product to the next",
-"Bleu": "Blue",
-"Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
-"Bloc de code": "Code block"
+"Bleu": "Blue"
 }

@@ -1,4 +1,6 @@
 {
+"Questionner et supprimer": "Question and delete",
+"Questions / réponses client": "Customer Q&A",
 "Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
 "Questions fréquentes": "FAQ",
 "Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
@@ -1408,7 +1410,5 @@
 "Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
 "Un doigt, une appli": "One finger, one app",
 "Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures.",
-"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST.",
-"Un exemple concret…": "A concrete example…",
-"Un extrait des heures des Budget Lines cochées ci-dessus, au gabarit Word de l'outil (le même que Goldmine et Testing) : destinataire et périmètre, sommaire par Budget Line, heures par employé, détail des justifications, attestation, Definitions et Acronyms. Le destinataire personnalise la page de titre et le texte.": "An extract of the hours of the Budget Lines ticked above, in the tool's Word template (the same as Goldmine and Testing): recipient and scope, summary by Budget Line, hours per employee, detail of the justifications, attestation, Definitions and Acronyms. The recipient personalises the title page and the text."
+"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST."
 }

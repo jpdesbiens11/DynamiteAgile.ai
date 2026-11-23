@@ -1,4 +1,6 @@
 {
+"Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
+"Bloc de code": "Code block",
 "Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc secteur 12 V certifié et régulateur de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc « ": "Block “ ",
@@ -1408,7 +1410,5 @@
 "En cours": "In progress",
 "En dernier. Musk a reconnu publiquement que la première ligne de la Model 3 avait été trop automatisée trop tôt, avant les étapes 1 à 4.": "Last. Musk publicly acknowledged that the Model 3's first line had been automated too much, too early, before steps 1 to 4.",
 "En entreprise aujourd'hui": "In a company today",
-"En faire la fonction primaire": "Make it the primary function",
-"En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
-"En retard": "Overdue"
+"En faire la fonction primaire": "Make it the primary function"
 }

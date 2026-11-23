@@ -1,4 +1,6 @@
 {
+"En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
+"En retard": "Overdue",
 "En service : ": "In service: ",
 "En une phrase :": "In one sentence:",
 "En vrac": "Loose",
@@ -1408,7 +1410,5 @@
 "Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
 "Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them.",
 "Les échelles de 1 à 10": "The 1-to-10 scales",
-"Les écrans de configuration, réservés aux administrateurs. Ils n'apparaissent ": "The configuration screens, restricted to administrators. They only appear ",
-"Les écrans de configuration, réservés aux administrateurs. Ils n'apparaissent plus dans les menus des autres comptes : chaque module les regroupe sous « ⚙ Admin » dans sa marge gauche.": "The configuration screens, reserved for administrators. They no longer appear in other accounts' menus: each module groups them under “⚙ Admin” in its left margin.",
-"Les éléments d'une scène et des exemples de storyboards faits en équipe, sans talent de dessin.": "The elements of a scene and examples of storyboards made in a team, with no drawing talent."
+"Les écrans de configuration, réservés aux administrateurs. Ils n'apparaissent ": "The configuration screens, restricted to administrators. They only appear "
 }
