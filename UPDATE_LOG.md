@@ -1,4 +1,13 @@
-# Journal de mise à jour — 0.60.125
+# Journal de mise à jour — 0.60.126
+
+- **Version :** 0.60.125 → 0.60.126 (2026-11-23)
+- **Changements :**
+  1. **Diamond : l'export de l'Arbre fonctionnel (Excel, draw.io, PowerPoint) porte les briques technologiques et les compétences** (D-O-139).
+- **Base de données :** aucune migration.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.125
 
 - **Version :** 0.60.124 → 0.60.125 (2026-11-23)
 - **Changements :**
@@ -7,8 +16,6 @@
   3. **IA : les feuilles d'une branche de l'arbre à la fois ; vignettes dans le tableau morphologique** (D-O-138).
   4. **Brique figée : la page le dit et propose « Défiger » là où étaient les boutons de création** (D-O-138).
 - **Base de données :** migration diamond 21 (additive : badge, questions, figure_id, pdf_id des feuilles de concept).
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.124
 

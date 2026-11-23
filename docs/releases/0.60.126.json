@@ -1,0 +1,44 @@
+{
+  "version": "0.60.126",
+  "date": "2026-11-23",
+  "summary": {
+    "fr": "Diamond : l'export de l'Arbre fonctionnel (Excel, draw.io, PowerPoint) porte les briques technologiques et les compétences, comme à l'écran.",
+    "en": "Diamond: the export of the functional tree (Excel, draw.io, PowerPoint) carries the technology bricks and the competencies, as on the screen."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : les briques et les compétences dans l'export de l'Arbre fonctionnel",
+      "why": "Pour réutiliser l'analyse ailleurs : l'Excel de l'arbre a une colonne « Brique », une feuille « Briques technologiques » (nature, status, responsable, fonctions, concept retenu, compétences) et les feuilles des compétences ; draw.io et PowerPoint dessinent la colonne des briques reliée à ses fonctions, comme à l'écran.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.126.json",
+        "modules/diamond/export_bricks.py",
+        "modules/diamond/export_data.py",
+        "modules/diamond/export_drawio.py",
+        "modules/diamond/export_xlsx.py",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "tests/test_diamond_export.py",
+        "tests/test_diamond_tree_export_bricks.py",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}
