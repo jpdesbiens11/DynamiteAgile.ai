@@ -1,6 +1,6 @@
 # Journal de mise à jour — 0.60.125
 
-- **Version :** 0.60.123 → 0.60.125 (2026-11-23) ; la 0.60.124 (Golden Nuggets en Word et PDF) arrive par sa propre PR.
+- **Version :** 0.60.124 → 0.60.125 (2026-11-23)
 - **Changements :**
   1. **Diamond : feuilles de concept au gabarit de la plateforme (PNG, PDF), avec badge, questions ouvertes et croquis** (D-O-138).
   2. **Feuilles de concept importées par lot : un .zip de cartes .md avec l'image et le PDF de chaque feuille** (D-O-138).
@@ -9,6 +9,14 @@
 - **Base de données :** migration diamond 21 (additive : badge, questions, figure_id, pdf_id des feuilles de concept).
 
 ## Précédent
+
+### Journal de mise à jour — 0.60.124
+
+- **Version :** 0.60.123 → 0.60.124 (2026-11-18)
+- **Changements :**
+  1. **Golden Nuggets : le guide de chaque partie (contexte, problématique, portée, mode d'emploi, contenu des cartes)** (D-O-137).
+  2. **Golden Nuggets : exporter une partie ou les quatre, en PDF ou en Word au gabarit du rapport Diamond** (D-O-137).
+- **Base de données :** aucune migration.
 
 ### Journal de mise à jour — 0.60.123
 

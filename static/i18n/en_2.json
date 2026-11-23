@@ -1,5 +1,4 @@
 {
-"Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
 "Bloc de code": "Code block",
 "Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc secteur 12 V certifié et régulateur de la carte": "Certified 12 V mains adapter and board regulator",
@@ -222,6 +221,7 @@
 "Ce qu'on fait, et quand on saura que ça a marché": "What we do, and when we will know it worked",
 "Ce qu'une revue demanderait": "What a review would ask",
 "Ce que cette compétence apporte, en une phrase": "What this competency brings, in one sentence",
+"Ce que contient chaque carte": "What each card holds",
 "Ce que donne le résultat": "What the result gives",
 "Ce que l'import fait": "What the import does",
 "Ce que la fonction doit tenir, mesurable": "What the function must hold, measurable",
@@ -518,6 +518,7 @@
 "Cochez au moins un jour.": "Check at least one day.",
 "Cochez au moins une Budget Line et un Space.": "Check at least one Budget Line and one Space.",
 "Cochez au moins une brique à juger.": "Tick at least one building block to judge.",
+"Cochez au moins une partie.": "Tick at least one part.",
 "Cochez au moins une section.": "Tick at least one section.",
 "Cochez les meilleures idées pour les évaluer dans une Pugh matrix.": "Check the best ideas to evaluate them in a Pugh matrix.",
 "Coché : la valeur du fichier remplace celle de Goldmine. Décochez ce qui a été corrigé à la main ": "Checked: the file value replaces the Goldmine one. Uncheck what was corrected by hand ",
@@ -573,6 +574,7 @@
 "Comment elle est tenue": "How it is held",
 "Comment greffer des sprints agiles sur un processus à jalons pour des produits physiques.": "How to graft agile sprints onto a milestone-based process for physical products.",
 "Comment justifier le temps et les salaires réclamés : ce qui dicte la feuille de temps.": "How to justify the time and salaries claimed: what dictates the timesheet.",
+"Comment l'utiliser": "How to use it",
 "Comment la fonction peut ne pas être remplie": "How the function can fail to be fulfilled",
 "Comment le mesurer, pour quand, avec quelles ressources…": "How to measure it, by when, with which resources…",
 "Comment les paires changent-elles ?": "How do the pairs change?",
@@ -1410,5 +1412,7 @@
 "En cours": "In progress",
 "En dernier. Musk a reconnu publiquement que la première ligne de la Model 3 avait été trop automatisée trop tôt, avant les étapes 1 à 4.": "Last. Musk publicly acknowledged that the Model 3's first line had been automated too much, too early, before steps 1 to 4.",
 "En entreprise aujourd'hui": "In a company today",
-"En faire la fonction primaire": "Make it the primary function"
+"En faire la fonction primaire": "Make it the primary function",
+"En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
+"En retard": "Overdue"
 }

@@ -116,6 +116,7 @@
 " brique(s) nouvelle(s), ": " new building block(s), ",
 " briques": " building blocks",
 " brouillon(s) acceptés.": " draft(s) accepted.",
+" cartes": " cards",
 " case(s) encore à noter. ": " cell(s) still to score. ",
 " change une cote : tout ce qui cite la C-n (PFMEA, plan de contrôle, étude de capabilité, essai) passe « à revoir » jusqu'à « Revu ».": " changes a dimension: everything that cites the C-n (PFMEA, control plan, capability study, test) becomes “to review” until “Reviewed”.",
 " choix en attente — cliquez à côté ou « Appliquer »": " pending choices — click elsewhere or “Apply”",
@@ -240,6 +241,8 @@
 " page(s) copiée(s) dans ": " page(s) copied to ",
 " page(s) déplacée(s) vers ": " page(s) moved to ",
 " par ": " by ",
+" partie : « ": " part: “ ",
+" parties.": " parts.",
 " peut exporter les pages en PDF / Word.": " can export pages to PDF / Word.",
 " pictogrammes au maximum par scène.": " pictograms at most per scene.",
 " pièce": " part",
@@ -1410,5 +1413,6 @@
 "Bilan thermique ; modèle thermique et rapport ; choix du heat sink ou du cold plate ; plan d'essai thermique.": "Thermal budget; thermal model and report; choice of the heat sink or cold plate; thermal test plan.",
 "Bilan thermique calculé ou simulé, température de jonction au moins 20 °C sous le maximum du composant": "Thermal budget calculated or simulated, junction temperature at least 20 °C below the component maximum",
 "Binning des LED pour une couleur constante d'un produit à l'autre": "LED binning for constant color from one product to the next",
-"Bleu": "Blue"
+"Bleu": "Blue",
+"Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply"
 }

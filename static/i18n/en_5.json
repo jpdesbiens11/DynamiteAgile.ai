@@ -1,4 +1,7 @@
 {
+"Question déjà enregistrée.": "Question already recorded.",
+"Question trop vague (« améliorer le produit ») : la reformuler.": "Question too vague (“improve the product”): rephrase it.",
+"Question à laquelle il répond": "Question it answers",
 "Questionner et supprimer": "Question and delete",
 "Questions / réponses client": "Customer Q&A",
 "Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
@@ -758,6 +761,7 @@
 "Seul un sprint à venir peut être supprimé.": "Only an upcoming sprint can be deleted.",
 "Seule une semaine soumise, pas encore approuvée, peut être retirée.": "Only a submitted week, not yet approved, can be withdrawn.",
 "Seulement dans un site vide : une nouvelle installation où seul l'admin initial existe. Étapes : sceau, Framework ": "Only in an empty site: a new installation where only the initial admin exists. Steps: seal, Framework ",
+"Seulement la partie affichée": "Only the part on screen",
 "Seulement les lignes affichées, pour travailler par petits lots dans Excel": "Only the displayed rows, to work in small batches in Excel",
 "Seulement les nouveautés": "New items only",
 "Seulement maintenant. L'erreur la plus courante d'un bon ingénieur est d'optimiser une chose qui ne devrait pas exister.": "Only now. The most common mistake of a good engineer is to optimize something that should not exist.",

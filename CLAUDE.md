@@ -177,6 +177,12 @@
   `concept_sheet_api.py` : `sheet.svg`, `sheet.pdf`, PNG dans le navigateur), badge, questions, croquis (migration diamond 21) ; **import
   par lot** d'un .zip de cartes .md + PNG / PDF (`concept_cards.py`, `static/js/diamond/concept_sheet_tools.js`) ; **IA par branche**
   (`concept_ai.api_branch_prompt`) ; vignettes dans le tableau morphologique (D-O-138). Tests : `tests/test_diamond_concept_cards.py`.
+- **0.60.124** (2026-11-18) : Golden Nuggets — **guide de chaque partie** (Contexte, Problématique, Portée, Comment l'utiliser,
+  Ce que contient chaque carte ; `static/js/diamond/nuggets_guide.js`) au-dessus des cartes ; export d'**une partie ou des quatre**,
+  avec ou sans les guides, en PDF ou en **Word** (`static/js/diamond/nuggets_export.js`, `D.nuggetBlocks`, `D.docExporters`, bouton
+  « Word » à côté de « PDF ») ; `POST …/docx` (`modules/diamond/docx_pages.py`) : le même document que le PDF au gabarit du rapport
+  Diamond, marque « Co-Intelligence WorkFlow™ » ; bloc `ol` (D-O-137). Tests : `tests/test_diamond_nuggets_export.py`,
+  `node tests/js/nuggets_export.js`.
 - **0.60.123** (2026-11-18) : Diamond — export **PDF** de chaque page à côté de « ↔ IA » (`static/js/diamond/pdf.js`,
   `POST …/pdf`, `modules/diamond/pdf_pages.py`), au format des documents Word : page de garde, en-tête et pied de page, Lettre ou
   Tabloïd paysage (`modules/diamond/pdf_doc.py`) ; Golden Nuggets en cartes (`D.pdfBuilders.nuggets`) (D-O-136).
