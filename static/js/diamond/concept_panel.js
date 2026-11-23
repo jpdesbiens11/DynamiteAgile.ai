@@ -138,5 +138,6 @@
   }
 
   D.brickPicker = brickPicker;
+  D.unfreezeBrick = unfreeze;  // 0.60.125 (D-O-138): also from the brick's page, where its sheets are
   D.conceptPanel = conceptPanel;
 })();

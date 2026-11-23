@@ -75,3 +75,10 @@ html[data-sketch] .dm-concept, html[data-sketch] .dm-cb-card, html[data-sketch] 
 html[data-term] .dm-concept, html[data-term] .dm-cb-card, html[data-term] .dm-sheet { font-family: var(--mono); box-shadow: none; }
 html[data-term] .dm-concept-initial { color: var(--acc); }
 @media (prefers-reduced-motion: reduce) { .dm-cb-card { transition: none; } .dm-cb-card:hover { transform: none; } }
+/* 0.60.125 (D-O-138): the sheet on its template, its files; the pictures of the morphological chart */
+.dm-sheet p { white-space: pre-line; }
+.dm-sheet-visual { display: block; }
+.dm-sheet-files { flex-wrap: wrap; }
+.dm-morpho td:has(.dm-morpho-thumb) { min-width: 140px; }
+.dm-morpho-thumb { display: block; width: 150px; max-width: 100%; aspect-ratio: 1.414; object-fit: contain; margin-bottom: .25rem;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }

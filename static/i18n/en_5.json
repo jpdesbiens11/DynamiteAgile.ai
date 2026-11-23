@@ -1,8 +1,14 @@
 {
+"Question déjà enregistrée.": "Question already recorded.",
+"Question trop vague (« améliorer le produit ») : la reformuler.": "Question too vague (“improve the product”): rephrase it.",
+"Question à laquelle il répond": "Question it answers",
+"Questionner et supprimer": "Question and delete",
+"Questions / réponses client": "Customer Q&A",
 "Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
 "Questions fréquentes": "FAQ",
 "Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
 "Questions fréquentes sur ": "Frequently asked questions about ",
+"Questions ouvertes (?)": "Open questions (?)",
 "Qui a fait Dynamite | Agile, et comment": "Who made Dynamite | Agile, and how",
 "Qui contacter ?": "Who to contact?",
 "Qui dans l'équipe": "Who in the team",
@@ -298,6 +304,7 @@
 "Retirer la scène « ": "Remove the scene “",
 "Retirer la soumission": "Withdraw the submission",
 "Retirer le concept « ": "Remove the concept “",
+"Retirer le croquis actuel": "Remove the current sketch",
 "Retirer le point de contrôle": "Remove the control point",
 "Retirer mon étoile": "Remove my star",
 "Retirer « ": "Remove “",
@@ -382,6 +389,7 @@
 "Rien à confirmer : la norme de ce requirement n'est pas « À vérifier ».": "Nothing to confirm: this requirement's standard is not “To verify”.",
 "Rien à importer : ce Space a déjà tout ce que contient la réponse.": "Nothing to import: this Space already has everything the answer contains.",
 "Rien à importer : ce Space a déjà tout ce que contient le fichier. Correctif : choisissez « Tout remplacer » pour repartir du fichier, ou importez un fichier avec les parties qui manquent.": "Nothing to import: this Space already has everything the file contains. Fix: choose “Replace all” to start over from the file, or import a file with the missing parts.",
+"Rien à importer : ces feuilles sont déjà dans le Space, ou refusées (voir l'aperçu).": "Nothing to import: these sheets are already in the Space, or refused (see the preview).",
 "Rien à importer : collez du texte, un tableau ou une image.": "Nothing to import: paste text, a table or an image.",
 "Rien à marquer comme lu. Correctif : envoyez « ids » (liste) ou « all »: true.": "Nothing to mark as read. Fix: send “ids” (list) or “all”: true.",
 "Rien à refuser : la règle ne propose aucune classe pour cette ligne et aucune n'est confirmée. Correctif : « Confirmer CC » ou « Confirmer SC » si la ligne en demande une malgré la règle.": "Nothing to refuse: the rule proposes no class for this line and none is confirmed. Fix: « Confirm CC » or « Confirm SC » if the line needs one despite the rule.",
@@ -1392,6 +1400,7 @@
 "Un accès à ": "Access to ",
 "Un administrateur fixe le début du plan et crée les tâches (« + Task »), ou mieux : « Exporter Excel », travaille le plan dans Excel, puis « Importer… ».": "An administrator sets the start of the plan and creates the tasks (“+ Task”), or better: “Export Excel”, work the plan in Excel, then “Import…”.",
 "Un assistant IA (Claude ou un autre) vous pose des questions sur votre produit, votre industrie et votre marché, puis vous donne un fichier .json. Ce fichier crée ici un nouveau Space, à côté des exemples : l'équipe, les besoins et requirements, les essais, les codes de temps et les premières pages.": "An AI assistant (Claude or another) asks you questions about your product, your industry and your market, then gives you a .json file. This file creates a new Space here, next to the examples: the team, the needs and requirements, the tests, the time codes and the first pages.",
+"Un avantage par ligne": "One advantage per line",
 "Un bac à sable.": "A sandbox.",
 "Un bloc Ticket montre le status vivant d'un ticket Agile ; un lien mène au requirement.": "A Ticket block shows the live status of an Agile ticket; a link leads to the requirement.",
 "Un caloduc mène la chaleur dans le bras, qui la rayonne.": "A heat pipe carries the heat into the arm, which radiates it.",
@@ -1405,8 +1414,5 @@
 "Un coolant circule dans une cold plate en aluminium collée sous le module.": "A coolant flows in an aluminium cold plate bonded under the module.",
 "Un doigt, une appli": "One finger, one app",
 "Un essai qui casse apprend plus qu'une analyse qui rassure.": "A test that breaks teaches more than an analysis that reassures.",
-"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST.",
-"Un exemple concret…": "A concrete example…",
-"Un extrait des heures des Budget Lines cochées ci-dessus, au gabarit Word de l'outil (le même que Goldmine et Testing) : destinataire et périmètre, sommaire par Budget Line, heures par employé, détail des justifications, attestation, Definitions et Acronyms. Le destinataire personnalise la page de titre et le texte.": "An extract of the hours of the Budget Lines ticked above, in the tool's Word template (the same as Goldmine and Testing): recipient and scope, summary by Budget Line, hours per employee, detail of the justifications, attestation, Definitions and Acronyms. The recipient personalises the title page and the text.",
-"Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)"
+"Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST."
 }

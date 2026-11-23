@@ -2,6 +2,8 @@
 CB-3.2… -- written in the platform (digital), drafted by an AI assistant and kept by a person (ai), or a paper sheet of
 a creativity session, scanned (image or PDF, stored by core/uploads.py and sent back as it is, RawFile(export=False)).
 A sheet becomes « selected » when the Pugh matrix that judged it is decided in its favour (concept_pugh.py).
+0.60.125 (D-O-138): a sheet also has its badge (the red ellipse of the template) and its open questions (?); a digital sheet may
+hold a drawing placed in the template (figure_id, concept_sheet_render.py), a sheet imported as a picture its PDF too (pdf_id).
 """
 from core import audit, db, permissions, uploads, validate
 from core.errors import ApiError
@@ -13,7 +15,7 @@ from . import functions as F
 MODULE = "diamond"
 KINDS = {"digital": "Feuille numérique", "ai": "Générée avec l'IA", "scan": "Scan d'une feuille papier"}
 STATUS = {"open": "Open", "selected": "Selected", "dropped": "Dropped"}
-LIMITS = {"title": 160, "principle": 600, "description": 4000, "pros": 1500, "cons": 1500}
+LIMITS = {"title": 160, "principle": 600, "description": 4000, "pros": 1500, "cons": 1500, "badge": 60, "questions": 1500}
 MAX_SHEETS, MAX_SCAN_MB = 40, 15
 
 
@@ -49,7 +51,7 @@ def _fields(body, partial=False):
         if partial and name not in body:
             continue
         value = str(body.get(name) or "").strip()
-        if name in ("title", "principle"):
+        if name in ("title", "principle", "badge"):
             value = " ".join(value.split())
         if name == "title" and not value:
             raise ApiError(400, "Titre de la feuille obligatoire. Correctif : quelques mots (ex. « Refroidissement par plaque froide »).")
@@ -67,19 +69,44 @@ def _fields(body, partial=False):
     return out
 
 
-def add(conn, user_id, pid, concept_id, fields, attachment_id=None):
+def free_number(conn, concept_id, wanted=None):
+    """The number of a new sheet: `wanted` (CB-3.2 of an imported card) when no sheet of the brick ever had it, else the next."""
+    if wanted and not conn.execute("SELECT 1 FROM diamond_concept_sheets WHERE concept_id = ? AND number = ?",
+                                   (concept_id, int(wanted))).fetchone():
+        return int(wanted)
+    return conn.execute("SELECT COALESCE(MAX(number), 0) + 1 FROM diamond_concept_sheets WHERE concept_id = ?",
+                        (concept_id,)).fetchone()[0]
+
+
+def add(conn, user_id, pid, concept_id, fields, attachment_id=None, number=None, pdf_id=None, figure_id=None):
     n = conn.execute("SELECT COUNT(*) FROM diamond_concept_sheets WHERE concept_id = ? AND archived = 0", (concept_id,)).fetchone()[0]
     if n >= MAX_SHEETS:
         raise ApiError(409, "{} feuilles au maximum par brique. Correctif : archivez les feuilles écartées.".format(MAX_SHEETS))
-    number = conn.execute("SELECT COALESCE(MAX(number), 0) + 1 FROM diamond_concept_sheets WHERE concept_id = ?",
-                          (concept_id,)).fetchone()[0]
+    number = free_number(conn, concept_id, number)
     now = db.utc_now()
     return conn.execute(
         "INSERT INTO diamond_concept_sheets (project_id, concept_id, number, title, kind, principle, description, pros, cons, "
-        "attachment_id, author_id, created_at, updated_by, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "badge, questions, attachment_id, pdf_id, figure_id, author_id, created_at, updated_by, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (pid, concept_id, number, fields["title"], fields.get("kind", "digital"), fields.get("principle", ""),
-         fields.get("description", ""), fields.get("pros", ""), fields.get("cons", ""), attachment_id, user_id, now, user_id,
-         now)).lastrowid
+         fields.get("description", ""), fields.get("pros", ""), fields.get("cons", ""), fields.get("badge", ""),
+         fields.get("questions", ""), attachment_id, pdf_id, figure_id, user_id, now, user_id, now)).lastrowid
+
+
+def attachment(conn, pid, value, label="Fichier", images_only=False):
+    """An attachment of this Space and of Diamond (deposited with /sheets/upload), or None for an empty value."""
+    if value in (None, ""):
+        return None
+    try:
+        aid = int(value)
+    except (TypeError, ValueError):
+        raise ApiError(400, "{} : identifiant de fichier attendu.".format(label))
+    row = conn.execute("SELECT mime FROM attachments WHERE id = ? AND project_id = ? AND module = ?", (aid, pid, MODULE)).fetchone()
+    if row is None:
+        raise ApiError(400, "{} introuvable dans ce Space. Correctif : déposez de nouveau le fichier.".format(label))
+    if images_only and row["mime"] not in ("image/png", "image/jpeg"):
+        raise ApiError(400, "{} : une image PNG ou JPEG. Correctif : exportez le croquis en PNG.".format(label))
+    return aid
 
 
 def api_list(ctx):
@@ -94,16 +121,12 @@ def api_create(ctx):
     from .concept_freeze import guard  # 0.60.116 (D-O-129): no new concept under a frozen brick
     guard(ctx.conn, pid, concept["id"], "Ajouter une feuille de concept")
     fields = _fields(ctx.body)
-    attachment = ctx.body.get("attachment_id")
-    if attachment not in (None, ""):
-        attachment = int(attachment)
-        if not ctx.conn.execute("SELECT 1 FROM attachments WHERE id = ? AND project_id = ? AND module = ?",
-                                (attachment, pid, MODULE)).fetchone():
-            raise ApiError(400, "Scan introuvable dans ce Space. Correctif : déposez de nouveau le fichier.")
+    scan = attachment(ctx.conn, pid, ctx.body.get("attachment_id"), "Scan")
+    if scan and fields["kind"] != "ai":  # 0.60.125: a sheet drawn with an AI keeps its nature, with its picture
         fields["kind"] = "scan"
-    else:
-        attachment = None
-    sid = add(ctx.conn, ctx.user["id"], pid, concept["id"], fields, attachment)
+    sid = add(ctx.conn, ctx.user["id"], pid, concept["id"], fields, scan,
+              pdf_id=attachment(ctx.conn, pid, ctx.body.get("pdf_id"), "PDF"),
+              figure_id=attachment(ctx.conn, pid, ctx.body.get("figure_id"), "Croquis", images_only=True))
     audit.log_action(ctx.conn, ctx.user["id"], "diamond_sheet_create", "diamond_concept_sheet", sid,
                      {"concept": C.code(concept["number"]), "kind": fields["kind"]}, ctx.ip)
     return {"sheets": rows(ctx.conn, pid, concept["id"]), "created": sid}
@@ -115,6 +138,9 @@ def api_update(ctx):
     from .concept_freeze import guard
     guard(ctx.conn, pid, s["concept_id"], "Modifier une feuille de concept")
     fields = _fields(ctx.body, partial=True)
+    for name, label in (("attachment_id", "Scan"), ("pdf_id", "PDF"), ("figure_id", "Croquis")):  # 0.60.125 (D-O-138)
+        if name in ctx.body:
+            fields[name] = attachment(ctx.conn, pid, ctx.body.get(name), label, images_only=name == "figure_id")
     if fields:
         sets = ", ".join("{} = ?".format(k) for k in fields)
         ctx.conn.execute("UPDATE diamond_concept_sheets SET {}, updated_by = ?, updated_at = ? WHERE id = ?".format(sets),
@@ -152,7 +178,8 @@ def api_file(ctx):
     pid = validate.int_param(ctx.params, "pid")
     permissions.require_project_role(ctx.conn, ctx.user, pid, "reader")
     s = _sheet(ctx.conn, pid, validate.int_param(ctx.params, "sid"))
-    row = ctx.conn.execute("SELECT * FROM attachments WHERE id = ? AND project_id = ?", (s["attachment_id"], pid)).fetchone()
+    which = {"pdf": "pdf_id", "figure": "figure_id"}.get(str((ctx.query or {}).get("which") or ""), "attachment_id")  # 0.60.125
+    row = ctx.conn.execute("SELECT * FROM attachments WHERE id = ? AND project_id = ?", (s[which], pid)).fetchone()
     if row is None:
         raise ApiError(404, "Cette feuille n'a pas de scan.")
     if row["mime"] in uploads.IMAGE_TYPES:
