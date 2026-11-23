@@ -50,7 +50,8 @@
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",
-        "tests/test_diamond_concept_cards.py"
+        "tests/test_diamond_concept_cards.py",
+        "tests/test_open_v060.py"
       ]
     },
     {
@@ -97,7 +98,8 @@
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",
-        "tests/test_diamond_concept_cards.py"
+        "tests/test_diamond_concept_cards.py",
+        "tests/test_open_v060.py"
       ]
     },
     {
@@ -144,7 +146,8 @@
         "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
         "static/js/diamond/concepts.js",
-        "tests/test_diamond_concept_cards.py"
+        "tests/test_diamond_concept_cards.py",
+        "tests/test_open_v060.py"
       ]
     }
   ]
