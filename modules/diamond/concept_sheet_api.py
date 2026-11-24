@@ -4,6 +4,8 @@
     GET /sheets/<sid>/sheet.pdf   the same sheet, vector, A4 landscape (an export: stamped and registered, D-B-129)
 
 concept_sheet_render.py draws it; the drawing in the template is the sheet's figure (figure_id), else its text.
+0.60.129 (D-O-142): a sheet that has its own picture (attachment_id, a scan or a sketch imported onto it) is exported as that
+picture: sheet.pdf is the picture on A4 landscape (the PNG button of the page saves the picture itself).
 """
 import re
 
@@ -48,4 +50,10 @@ def api_svg(ctx):
 
 def api_pdf(ctx):
     s, meta = _sheet(ctx)
+    if s.get("attachment_id") and str(s.get("file_mime") or "") in ("image/png", "image/jpeg"):
+        pid = validate.int_param(ctx.params, "pid")
+        row = ctx.conn.execute("SELECT * FROM attachments WHERE id = ? AND project_id = ?", (s["attachment_id"], pid)).fetchone()
+        page = R.picture(uploads.read(ctx.data_dir, row), row["mime"]) if row is not None else None
+        if page:
+            return RawFile(R.pdf(page), _name(s, "pdf"), "application/pdf")
     return RawFile(R.pdf(R.layout(s, meta)), _name(s, "pdf"), "application/pdf")

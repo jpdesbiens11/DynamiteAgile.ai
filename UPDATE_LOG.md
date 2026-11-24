@@ -1,12 +1,20 @@
-# Journal de mise à jour — 0.60.128
+# Journal de mise à jour — 0.60.129
+
+- **Version :** 0.60.128 → 0.60.129 (2026-11-23)
+- **Changements :**
+  1. **Diamond : « Importer un lot (.zip) » pose un croquis sur une feuille de concept existante** (D-O-142).
+  2. **Diamond : une feuille avec son image l'exporte en PNG et en PDF** (D-O-142).
+- **Base de données :** aucune migration.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.128
 
 - **Version :** 0.60.127 → 0.60.128 (2026-11-23)
 - **Changements :**
   1. **Diamond : « Feuilles de concept » par branche puis par brique, repliables, avec « IA : cette branche »** (D-O-141).
   2. **Diamond : « Supprimer » une feuille de concept, à côté d'« Archiver »** (D-O-141).
 - **Base de données :** migration diamond 22 (additive : `sheet_floor` des briques).
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.127
 

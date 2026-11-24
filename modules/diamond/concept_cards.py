@@ -18,6 +18,10 @@ the brick only (CB-3_synthese.png) or without a code, too. The brick is the one 
 A sheet keeps its number when it is free in the brick (CB-3.2 stays CB-3.2). Nothing is overwritten: a sheet of the same title
 already in the brick is left as it is, so the same .zip can be imported twice. preview builds nothing; apply stores the files
 (core/uploads.py, the same file is stored once) and creates the sheets.
+0.60.129 (D-O-142): a picture or a PDF without a card whose name STARTS with the code of a sheet of the Space (CB-1.1_croquis.png,
+CB-6.2-v2.jpg, CB-1.1.png) goes on that sheet instead of making a new one (concept_cards_attach.py); its nature stays as it is.
+The preview has one line per sheet or file, each ticked (apply ?skip=<JSON list of keys> leaves out the unticked ones), and apply
+writes a backup of the Space first. A reponse.json in the .zip is left aside with a warning (« Importer la réponse de l'IA »).
 """
 import io
 import re
@@ -26,6 +30,7 @@ import zipfile
 from core import audit, uploads, validate
 from core.errors import ApiError
 
+from . import concept_cards_attach as AT
 from . import concept_sheets as S
 from . import concepts as C
 from . import functions as F
@@ -89,12 +94,15 @@ def read_zip(data):
         raise ApiError(413, "{} fichiers dans le .zip : {} au maximum.".format(len(infos), MAX_ENTRIES))
     if sum(i.file_size for i in infos) > MAX_TOTAL_MB * 1048576:
         raise ApiError(413, "Le .zip décompressé dépasse {} Mo. Correctif : importez les briques une à une.".format(MAX_TOTAL_MB))
-    cards, files = [], {}
+    cards, files, warnings = [], {}, []
     for info in infos:
         name = info.filename.replace("\\", "/").rsplit("/", 1)[-1]
         if not name or name.startswith(".") or info.filename.startswith("__MACOSX"):
             continue
         ext = "." + name.rsplit(".", 1)[-1].lower() if "." in name else ""
+        if ext == ".json":  # 0.60.129 (D-O-142): the AI's answer travels another way
+            warnings.append("« {} » ignoré : une réponse de l'IA s'importe par « Importer la réponse de l'IA ».".format(name))
+            continue
         if ext not in KINDS and ext not in (".md", ".txt"):
             continue
         if info.file_size > MAX_FILE_MB * 1048576:
@@ -104,7 +112,7 @@ def read_zip(data):
             cards += parse_cards(body.decode("utf-8", "replace"))
         else:
             files[name] = (body, KINDS[ext])
-    return {"cards": cards, "files": files}
+    return {"cards": cards, "files": files, "warnings": warnings}
 
 
 def _norm(text):
@@ -151,11 +159,19 @@ def plan(conn, pid, pack, target=None, extras=False):
         names = by_code.get(card["code"] or "", [])
         used.update(names)
         entry(card, names, "ai")
+    for e in entries:
+        e["key"] = "card:" + (e["code"] or e["title"])
+    attached, warnings = AT.plan(conn, pid, pack["files"], used)  # 0.60.129 (D-O-142): onto the sheet of the code
+    for code in list(by_code):
+        by_code[code] = [n for n in by_code[code] if n not in used]
+        if not by_code[code]:
+            del by_code[code]
     for code, names in by_code.items():
         if not set(names) & used:
             used.update(names)
             m = SHEET_CODE.search(code)
             entry({"code": code, "brick": int(m.group(1)), "number": int(m.group(2)), "title": _title_of(names[0])}, names, "scan")
+            entries[-1]["warning"] = warnings.get(code)
     left = sorted(n for n in pack["files"] if n not in used)
     if extras:  # the picture and the PDF of the same name make one sheet (CB-3_synthese.png and .pdf)
         groups = {}
@@ -165,7 +181,13 @@ def plan(conn, pid, pack, target=None, extras=False):
             m = BRICK_CODE.search(names[0])
             entry({"code": None, "brick": int(m.group(1)) if m else None, "number": None, "title": _title_of(names[0])}, names, "scan")
         left = []
-    return entries, left
+    for e in entries:
+        e.setdefault("key", "file:" + e["files"][0] if e["files"] else "card:" + str(e["code"] or e["title"]))
+        if e["status"] == "new":
+            bad = AT.unreadable(e["files"], pack["files"])
+            if bad:
+                e.update(status="refused", reason=bad)
+    return attached + entries, left
 
 
 def _store(ctx, pid, name, data, mime):
@@ -175,7 +197,7 @@ def _store(ctx, pid, name, data, mime):
     return row["id"]
 
 
-@uploads.binary_body
+@uploads.large_body("max_evidence_mb")  # 0.60.129 (D-O-142): a batch of 40 sketches is bigger than « max_upload_mb »
 def api_import(ctx):
     pid = F.access(ctx, "editor")
     data = getattr(getattr(ctx, "upload", None), "data", b"") or b""
@@ -191,14 +213,22 @@ def api_import(ctx):
     if not pack["cards"] and not pack["files"]:
         raise ApiError(400, "Le .zip ne contient ni carte (.md) ni image ni PDF.")
     entries, left = plan(ctx.conn, pid, pack, target, str(q.get("extras") or "") in ("1", "true"))
-    counts = {k: sum(1 for e in entries if e["status"] == k) for k in ("new", "exists", "refused")}
-    view = [{k: e.get(k) for k in ("code", "title", "files", "status", "reason", "brick", "kind")} for e in entries]
+    counts = {k: sum(1 for e in entries if e["status"] == k) for k in ("new", "attach", "exists", "refused")}
+    view = [{k: e.get(k) for k in ("key", "code", "title", "files", "status", "reason", "brick", "kind", "action", "replaces",
+                                   "warning")} for e in entries]
+    warnings = pack["warnings"] + [e["warning"] for e in entries if e.get("warning")]
     if q.get("mode") != "apply":
-        return {"entries": view, "left": left, "counts": counts, "cards": len(pack["cards"]), "files": len(pack["files"])}
-    if not counts["new"]:
-        raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, ou refusées (voir l'aperçu).")
+        return {"entries": view, "left": left, "counts": counts, "cards": len(pack["cards"]), "files": len(pack["files"]),
+                "warnings": warnings}
+    skip = AT.skip_keys(q.get("skip"))
+    todo = [e for e in entries if e["status"] in ("new", "attach") and e["key"] not in skip]
+    if not todo:
+        raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).")
+    from .import_merge import backup
+    saved = backup(ctx, pid)  # 0.60.129 (D-O-142): as for the other imports, a backup of the Space first
+    attached = AT.apply(ctx, pid, [e for e in todo if e["status"] == "attach"], pack["files"], _store)
     created = []
-    for e in entries:
+    for e in todo:
         if e["status"] != "new":
             continue
         card = e["card"]
@@ -211,5 +241,6 @@ def api_import(ctx):
         sid = S.add(ctx.conn, ctx.user["id"], pid, e["concept_id"], fields, main_id, number=card.get("number"), pdf_id=pdf_id)
         created.append(sid)
     audit.log_action(ctx.conn, ctx.user["id"], "diamond_sheets_import", "project", pid,
-                     dict(counts, sheets=created, files=len(pack["files"])), ctx.ip)
-    return {"entries": view, "left": left, "counts": counts, "created": len(created), "imported": True}
+                     dict(counts, sheets=created, attached=attached, skipped=len(skip), files=len(pack["files"]), backup=saved), ctx.ip)
+    return {"entries": view, "left": left, "counts": counts, "created": len(created), "attached": len(attached),
+            "backup": saved, "warnings": warnings, "imported": True}

@@ -1,6 +1,4 @@
 {
-"En vrac": "Loose",
-"En vrac : tout ce que la scène fait penser, sans filtrer.": "Brain dump: everything the scene makes you think of, unfiltered.",
 "En vérification": "Under verification",
 "En-tête Content-Length invalide.": "Invalid Content-Length header.",
 "En-tête oui / non": "Header on / off",
@@ -308,6 +306,7 @@
 "Fichier de traduction (.json)": "Translation file (.json)",
 "Fichier du client": "Customer file",
 "Fichier illisible : un réglage .json est attendu.": "Unreadable file: a .json setting is expected.",
+"Fichier ou feuille": "File or sheet",
 "Fichier reçu introuvable (expiré, appliqué ou abandonné). Correctif : importez-le de nouveau.": "Received file not found (expired, applied or abandoned). Fix: import it again.",
 "Fichier sur le réseau": "File on the network",
 "Fichier vide. Correctif : choisissez le .csv ou collez le texte rendu par l'assistant IA.": "Empty file. Fix: choose the .csv or paste the text returned by the AI assistant.",
@@ -696,6 +695,7 @@
 "Import introuvable ou déjà appliqué. Correctif : importez le classeur de nouveau.": "Import not found or already applied. Fix: import the workbook again.",
 "Import réservé aux éditeurs du projet.": "Import reserved for project editors.",
 "Importer": "Import",
+"Importer ": "Import ",
 "Importer (.xlsx)…": "Import (.xlsx)…",
 "Importer (CSV)": "Import (CSV)",
 "Importer d'une IA": "Import from an AI",
@@ -893,6 +893,8 @@
 "L'erreur la plus fréquente est de faire les ": "The most common mistake is to do the ",
 "L'erreur la plus fréquente est de faire les étapes à l'envers : automatiser, accélérer et optimiser une pièce ou un procédé qu'il aurait fallu supprimer.": "The most frequent mistake is doing the steps backwards: automating, speeding up and optimizing a part or process that should have been eliminated.",
 "L'essai du minerai : mesurer la teneur": "The ore test: measuring the grade",
+"L'image de la feuille": "The sheet's picture",
+"L'image de la feuille, A4 paysage": "The sheet's picture, A4 landscape",
 "L'import CSV refuse des lignes": "The CSV import rejects lines",
 "L'intégration verticale quand un fournisseur est lent, cher ou unique.": "Vertical integration when a supplier is slow, expensive or sole.",
 "L'onglet Diamond : arbre fonctionnel, puis structure fonctionnelle, risques et DFMEA (0.60.11, D-O-023).": "The Diamond tab: function tree, then functional structure, risks and DFMEA (0.60.11, D-O-023).",
@@ -1415,6 +1417,5 @@
 "Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
 "Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority.",
 "Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
-"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them.",
-"Les échelles de 1 à 10": "The 1-to-10 scales"
+"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them."
 }

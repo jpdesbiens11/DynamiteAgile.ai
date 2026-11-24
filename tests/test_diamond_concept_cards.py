@@ -4,11 +4,15 @@ on its template as SVG and PDF (badge, + / − / ?, title block; the figure plac
 the tree for the AI, the rights. On the Rover of DEMO."""
 import base64
 import io
+import json
+import struct
 import sys
 import tempfile
 import threading
 import unittest
+import urllib.parse
 import zipfile
+import zlib
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -106,7 +110,7 @@ class ConceptCardsTest(unittest.TestCase):
         data = make_zip(n)
         url = self.base + "/sheets/import?mode=preview"
         prev = self.admin.upload(url, data, "application/zip", "lot.zip")
-        self.assertEqual(prev["counts"], {"new": 3, "exists": 0, "refused": 0})
+        self.assertEqual(prev["counts"], {"new": 3, "attach": 0, "exists": 0, "refused": 0})
         self.assertEqual(sorted(prev["left"]), sorted(["CB-{}_synthese.png".format(n), "CB-{}_synthese.pdf".format(n),
                                                         "CB-{0}.7-{0}.8_brainwriting.pdf".format(n)]))
         arm = next(e for e in prev["entries"] if e["code"] == "CB-{}.7".format(n))
@@ -180,6 +184,112 @@ class ConceptCardsTest(unittest.TestCase):
         self.assertNotIn(last["id"], [s["id"] for s in left])
         again = self.admin.post(url, {"title": "Après"})
         self.assertEqual(next(s for s in again["sheets"] if s["id"] == again["created"])["number"], last["number"] + 1)
+
+
+    # 0.60.129 (D-O-142): a file named by the code of an existing sheet goes on that sheet
+    def _brick_with_ai_sheet(self, name):
+        data = self.admin.post(self.base + "/concepts", {"name": name, "kind": "to_define"})
+        brick = next(c for c in data["concepts"] if c["id"] == data["created"])
+        made = self.admin.post(self.base + "/concepts/{}/sheets".format(brick["id"]), {"title": "Croquis à poser", "kind": "ai"})
+        return brick, next(s for s in made["sheets"] if s["id"] == made["created"])
+
+    def _sheets(self, brick):
+        return self.admin.get(self.base + "/concepts/{}".format(brick["id"]))["sheets"]
+
+    def test_07_image_on_an_existing_ai_sheet(self):
+        brick, sheet = self._brick_with_ai_sheet("Pied de la lampe")
+        code = sheet["code"]
+        first = png(4, 3, (200, 30, 30))
+        data = zipped({"images/{}_croquis_ia.png".format(code): first, "reponse.json": b'{"sheets": []}'})
+        prev = self.admin.upload(self.base + "/sheets/import?mode=preview", data, "application/zip", "lot.zip")
+        self.assertEqual(prev["counts"], {"new": 0, "attach": 1, "exists": 0, "refused": 0})
+        line = prev["entries"][0]
+        self.assertEqual((line["code"], line["action"], line["replaces"], line["kind"]), (code, "image", False, "ai"))
+        self.assertTrue(any("reponse.json" in w for w in prev["warnings"]))  # left aside, said
+        done = self.admin.upload(self.base + "/sheets/import?mode=apply", data, "application/zip", "lot.zip")
+        self.assertEqual((done["created"], done["attached"]), (0, 1))
+        self.assertTrue(done["backup"])  # a backup of the Space first
+        after = self._sheets(brick)
+        self.assertEqual(len(after), 1)  # no sheet created
+        self.assertEqual((after[0]["id"], after[0]["kind"], after[0]["file_mime"]), (sheet["id"], "ai", "image/png"))
+        status, headers, body = self.reader.raw_get(self.base + "/sheets/{}/file".format(sheet["id"]))
+        self.assertEqual(body, first)  # read back as it was
+        status, headers, pdf = self.reader.raw_get(self.base + "/sheets/{}/sheet.pdf".format(sheet["id"]))
+        self.assertIn(b"/Im1", pdf)  # the export is the picture
+        self.assertNotIn(b"Helvetica-Oblique) Tj", pdf)
+        again = self.admin.upload(self.base + "/sheets/import?mode=preview", data, "application/zip", "lot.zip")
+        self.assertEqual(again["counts"]["exists"], 1)  # the same picture twice: nothing to do
+
+    def test_08_replace_keeps_the_old_one(self):
+        brick, sheet = self._brick_with_ai_sheet("Tête de la lampe")
+        code = sheet["code"]
+        self.admin.upload(self.base + "/sheets/import?mode=apply", zipped({code + "_v1.png": png(2, 2, (10, 10, 10))}),
+                          "application/zip", "a.zip")
+        old = self._sheets(brick)[0]["attachment_id"]
+        data = zipped({code + "-v2.png": png(3, 2, (10, 200, 10)), code + ".pdf": PDF})
+        prev = self.admin.upload(self.base + "/sheets/import?mode=preview", data, "application/zip", "b.zip")
+        lines = {e["files"][0]: e for e in prev["entries"]}
+        self.assertTrue(lines[code + "-v2.png"]["replaces"])
+        self.assertEqual(lines[code + ".pdf"]["action"], "pdf")
+        skip = "&skip=" + urllib.parse.quote(json.dumps([lines[code + ".pdf"]["key"]]))  # the PDF line unticked
+        done = self.admin.upload(self.base + "/sheets/import?mode=apply" + skip, data, "application/zip", "b.zip")
+        self.assertEqual(done["attached"], 1)
+        now = self._sheets(brick)[0]
+        self.assertNotEqual(now["attachment_id"], old)
+        self.assertFalse(now["pdf_id"])  # unticked: not applied
+        with db.connect() as conn:  # the previous picture stays in the attachments of the Space
+            self.assertIsNotNone(conn.execute("SELECT 1 FROM attachments WHERE id = ?", (old,)).fetchone())
+
+    def test_09_no_code_unknown_or_archived_code_make_a_scan_sheet(self):
+        brick, sheet = self._brick_with_ai_sheet("Interrupteur")
+        n, code = brick["number"], sheet["code"]
+        self.admin.post(self.base + "/sheets/{}/archive".format(sheet["id"]), {})
+        data = zipped({code + "_ancien.png": png(2, 2, (1, 2, 3)), "CB-{}.30_socle.png".format(n): png(2, 2, (4, 5, 6)),
+                       "croquis_libre.png": png(2, 2, (7, 8, 9))})
+        url = self.base + "/sheets/import?extras=1&cid={}&mode=".format(brick["id"])
+        prev = self.admin.upload(url + "preview", data, "application/zip", "c.zip")
+        self.assertEqual(prev["counts"], {"new": 3, "attach": 0, "exists": 0, "refused": 0})
+        self.assertTrue(any("archivée" in w for w in prev["warnings"]))
+        self.assertTrue(any("CB-{}.30".format(n) in w and "aucune feuille" in w for w in prev["warnings"]))
+        self.admin.upload(url + "apply", data, "application/zip", "c.zip")
+        made = self._sheets(brick)
+        self.assertEqual(len(made), 3)
+        self.assertEqual({s["kind"] for s in made}, {"scan"})
+
+    def test_10_a_false_png_is_refused(self):
+        brick, sheet = self._brick_with_ai_sheet("Câble")
+        data = zipped({sheet["code"] + "_croquis.png": b"MZ\x90\x00 not a picture"})
+        prev = self.admin.upload(self.base + "/sheets/import?mode=preview", data, "application/zip", "d.zip")
+        self.assertEqual(prev["counts"]["refused"], 1)
+        self.assertIn("premiers octets", prev["entries"][0]["reason"])
+        self.fails(409, self.admin.upload, self.base + "/sheets/import?mode=apply", data, "application/zip", "d.zip")
+        self.assertFalse(self._sheets(brick)[0]["attachment_id"])
+        self.fails(403, self.reader.upload, self.base + "/sheets/import?mode=apply", data, "application/zip", "d.zip")
+
+    def test_11_lead_code(self):
+        from modules.diamond.concept_cards_attach import lead_code
+        self.assertEqual(lead_code("CB-1.1_croquis_ia.png"), "CB-1.1")
+        self.assertEqual(lead_code("CB-6.2-croquis.jpg"), "CB-6.2")
+        self.assertEqual(lead_code("cb-10.5.png"), "CB-10.5")
+        self.assertIsNone(lead_code("CB-1.10a.png"))
+        self.assertIsNone(lead_code("x_CB-1.1.png"))
+        self.assertIsNone(lead_code("CB-3.1-3.6_brainwriting.pdf"))  # a range: the brick's
+
+
+def png(w, h, rgb):
+    raw = b"".join(b"\x00" + bytes(rgb) * w for _ in range(h))
+    def chunk(tag, body):
+        return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body) & 0xFFFFFFFF)
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
+def zipped(files):
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        for name, body in files.items():
+            z.writestr(name, body)
+    return buf.getvalue()
 
 
 if __name__ == "__main__":

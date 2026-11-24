@@ -173,6 +173,9 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.129** (2026-11-23) : Diamond — « Importer un lot (.zip) » pose une image ou un PDF nommé par le code d'une feuille
+  existante (CB-1.1_croquis_ia.png) sur cette feuille, sans en créer (`modules/diamond/concept_cards_attach.py`) ; aperçu à lignes
+  cochables, sauvegarde du Space avant ; une feuille avec son image l'exporte en PNG / PDF (`concept_sheet_render.picture`) (D-O-142).
 - **0.60.128** (2026-11-23) : Diamond — « Feuilles de concept » par branche puis par brique, repliables, « IA : cette branche »
   (`static/js/diamond/concept_sheet_fold.js`) ; « Supprimer » une feuille (`concept_sheets.api_delete`, migration diamond 22
   `sheet_floor`) (D-O-141).
