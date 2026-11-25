@@ -100,6 +100,8 @@ CONCEPTS = Section(
             Field("reference", note="la pièce du commerce, la techno ou le produit précédent d'une brique existing, 300 caractères au plus"),
             Field("pivot_note", note="ce qui a changé depuis le concept initial, et pourquoi, 1000 caractères au plus"),
             member("owner", "owner_name", "owner_id", "concepts", "qui porte la brique : le nom affiché d'un membre du Space, ou vide"),
+            Field("branch_lead", note="la personne ou le groupe qui porte la branche de l'arbre (a les compétences, veut les gagner ou sait "
+                  "comment y arriver), 200 caractères au plus, ou vide"),
             Field("functions", src="function_ids", api="function_ids", kind="refs", ref="functions",
                   note="les fonctions (F…) que la brique réalise ; une fonction appartient à une seule brique"),
             Field("selected_sheet", ro=True, out=lambda rt, rec: (rec.get("selected_sheet") or {}).get("code", ""),

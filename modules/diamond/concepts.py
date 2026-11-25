@@ -12,6 +12,8 @@ selected sheet is then shown next to the initial concept, and pivot_note says wh
 A brick is « existing » (an off-the-shelf concept the team can refer to: a catalogue part, a known technology, a
 previous product) or « to define » (to be invented: concept sheets, digital or scanned paper, then Pugh matrices that
 judge groups of bricks against the needs, the functions and the requirements -- concept_sheets.py, concept_pugh.py).
+owner_id is the member who carries the brick; branch_lead (0.60.130) says in free words which person or group takes the branch:
+they have the competencies, want to gain them, or know how to get there with their colleagues.
 An AI assistant may propose the bricks when the Space is generated (core/starter_diamond.py, source « ai ») and the team
 edits them. Every write is journalled.
 """
@@ -25,7 +27,7 @@ KINDS = {"existing": "Concept existant", "to_define": "À définir"}
 STATUS = {"proposed": "Proposed", "exploring": "Exploring", "evaluating": "Evaluating", "selected": "Selected",
           "dropped": "Dropped"}
 SOURCES = {"team": "Équipe", "ai": "Brouillon IA"}
-LIMITS = {"name": 120, "initial_name": 80, "pivot_note": 1000, "description": 2000, "reference": 300}
+LIMITS = {"name": 120, "initial_name": 80, "pivot_note": 1000, "description": 2000, "reference": 300, "branch_lead": 200}
 MAX_CONCEPTS = 120
 
 
@@ -125,9 +127,9 @@ def add(conn, user_id, pid, fields, fids=(), source="team"):
     now = db.utc_now()
     cid = conn.execute(
         "INSERT INTO diamond_concepts (project_id, number, name, initial_name, description, kind, reference, status, source, position, "
-        "owner_id, created_by, created_at, updated_by, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "owner_id, branch_lead, created_by, created_at, updated_by, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (pid, number, fields["name"], fields.get("initial_name", ""), fields.get("description", ""), fields.get("kind", "to_define"), fields.get("reference", ""),
-         fields.get("status", "proposed"), source, number, fields.get("owner_id"), user_id, now, user_id, now)).lastrowid
+         fields.get("status", "proposed"), source, number, fields.get("owner_id"), fields.get("branch_lead", ""), user_id, now, user_id, now)).lastrowid
     link(conn, pid, cid, fids)
     return cid
 
@@ -138,7 +140,8 @@ def _fields(body, partial=False, conn=None, pid=None):
         out["owner_id"] = ACT.owner(conn, pid, body.get("owner_id"))
     if not partial or "name" in body:
         out["name"] = _clean(body, "name", "Nom de la brique", required=True)
-    for name, label in (("initial_name", "Concept initial"), ("pivot_note", "Pivot"), ("description", "Description"), ("reference", "Référence")):
+    for name, label in (("initial_name", "Concept initial"), ("pivot_note", "Pivot"), ("description", "Description"), ("reference", "Référence"),
+                        ("branch_lead", "Responsable de la branche")):  # branch_lead: 0.60.130 (D-O-144)
         if not partial or name in body:
             out[name] = _clean(body, name, label)
     if not partial or "kind" in body:

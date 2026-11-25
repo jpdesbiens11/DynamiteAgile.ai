@@ -14,7 +14,8 @@
     const compOn = D.partOn("competencies");  // 0.60.116: « Compétences et équipe » may be turned off (⚙ Admin → Modules et fonctions)
     const [data, concepts, comp] = await Promise.all([api.get(D.base(ctx) + "/functions"), api.get(D.base(ctx) + "/concepts"),
       compOn ? api.get(D.base(ctx) + "/competencies") : null]);
-    const state = { data, concepts, comp, selected: null, selectedConcept: null, list: false };
+    const state = { data, concepts, comp, selected: null, selectedConcept: null, list: false,
+      filter: comp ? D.competencyFilter(ctx, comp) : null };  // 0.60.130 (D-O-143): which competencies the grid shows, a view only
     const holder = el("div", { class: "dm-page" });
     page.append(holder);
     const lines = async () => { if (compOn) state.comp = await api.get(D.base(ctx) + "/competencies"); };  // 0.60.116: the lines follow the bricks
@@ -33,7 +34,6 @@
     state.rate = (fid, code, rating) => gridCall(() => api.put(D.base(ctx) + "/competencies/rating", { function_id: fid, code, rating }));
     state.addCol = (code) => gridCall(() => api.post(D.base(ctx) + "/competencies/columns", { code }));
     state.removeCol = (code) => gridCall(() => api.post(D.base(ctx) + "/competencies/columns/" + code + "/remove", {}));
-    state.profile = (key) => gridCall(() => api.post(D.base(ctx) + "/competencies/profile", { profile: key }));  // 0.60.119 (D-O-132)
     const run = async (path, body, method) => {
       try {
         state.data = await api[method || "post"](D.base(ctx) + path, body || {});
@@ -55,8 +55,10 @@
     if (!items.some((f) => f.id === state.selected)) state.selected = null;
     const bricks = state.concepts.concepts;
     if (!bricks.some((c) => c.id === state.selectedConcept)) state.selectedConcept = null;
+    const picker = state.comp && !state.list && items.some((f) => f.is_primary) ? D.competencyFilterPicker(ctx, state.comp,
+      (key) => { state.filter = key; D.later(() => draw(holder, ctx, state, run)); }) : null;
     holder.append(A.pageHead(ctx, [el("span", null, "Diamond"), el("span", null, "Arbre fonctionnel")],
-      items.length ? [D.exportMenu(ctx, "tree"), el("button", { type: "button", class: "btn btn-small", "aria-pressed": state.list ? "true" : "false",
+      items.length ? [picker, D.exportMenu(ctx, "tree"), el("button", { type: "button", class: "btn btn-small", "aria-pressed": state.list ? "true" : "false",
         onclick: () => { state.list = !state.list; D.later(() => draw(holder, ctx, state, run)); } }, state.list ? "Vue arbre" : "Vue liste")] : null));
     holder.append(el("div", { class: "page-head dm-intro" }, el("h1", { "data-new": "0.60.11-ftree" }, "Arbre fonctionnel"),
       el("p", { class: "muted" }, "Les fonctions du produit, de la fonction primaire (à gauche) à ses « comment » (à droite). De haut "
@@ -76,7 +78,7 @@
     };
     const hasPrimary = items.some((f) => f.is_primary);
     const tree = hasPrimary ? D.drawTree({ items, selected: state.selected, editable, onSelect: select, onDrop, onKey,
-      concepts: bricks, selectedConcept: state.selectedConcept, onConcept, comp: state.comp,
+      concepts: bricks, selectedConcept: state.selectedConcept, onConcept, comp: state.comp, filter: state.filter,
       onRate: state.rate, onAddCol: state.addCol, onRemoveCol: state.removeCol })
       : el("div", { class: "empty" }, el("p", null, "Aucune fonction primaire. Choisissez-en une parmi les fonctions hors arbre "
         + "(« En faire la fonction primaire »), ou créez-la."), editable ? el("button", { type: "button", class: "btn btn-primary",
@@ -86,8 +88,7 @@
     holder.append(el("div", { class: "dm-work dm-tree-work" + (chosen || brick ? " dm-with-panel" : "") }, tree,
       brick ? D.conceptPanel(state, brick, state.crun, editable, ctx) : chosen ? D.panel(state, chosen, run, editable) : null));
     if (hasPrimary && state.comp) {
-      holder.append(D.competencyLegend(ctx, state.comp, D.competencyColumns(state.comp),
-        A.canEdit(ctx) ? D.profilePicker(state.comp, state.profile) : null));
+      holder.append(D.competencyLegend(ctx, state.comp, D.competencyFiltered(state.comp, state.filter), state.filter));
     }
     holder.append(outside(state, holder, ctx, run, editable, select));
   }
@@ -113,7 +114,9 @@
           + "la recherche s'arrête (« Défiger » avec une raison pour la reprendre)."),
         withGrid ? el("li", null, "À droite, chaque ligne fonction → brique note les compétences nécessaires de 1 (presque pas) à 5 (au cœur "
           + "du développement) : un clic sur une case, ou les touches 1 à 5. « + » ajoute une compétence ; « ↔ IA » remplit la "
-          + "grille d'un coup. Gardez les 4 ou 5 compétences utiles : cliquez une icône du haut pour la retirer. La somme est dans « Compétences et équipe ».") : null));
+          + "grille d'un coup. Gardez les 4 ou 5 compétences utiles : cliquez une icône du haut pour la retirer. La somme est dans « Compétences et équipe ».") : null,
+        withGrid ? el("li", { "data-new": "0.60.130-filter-help" }, "La liste « Compétences » (en haut à droite) n'est qu'un filtre d'affichage : les colonnes du Space, toutes, "
+          + "ou celles d'un groupe. Les notes cachées restent.") : null));
   }
 
   function advice(checks) {

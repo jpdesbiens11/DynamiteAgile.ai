@@ -52,8 +52,10 @@
     const list = el("ul", { class: "dm-brick-fns" }, linked.map((f) => el("li", null, el("span", { class: "dm-code" }, "F" + f.number), " " + f.text,
       editable ? el("button", { type: "button", class: "icon-btn", "aria-label": "Retirer F" + f.number + " de " + c.code,
         onclick: () => crun("/concepts/link", { function_id: f.id, concept_id: null }) }, "×") : null)));
+    const lead = leadInput(c);
     if (!editable || c.frozen) {
-      box.append(...[c.owner_name ? el("p", { class: "muted" }, "Responsable : " + c.owner_name) : null,
+      box.append(...[c.branch_lead && !editable ? el("p", { class: "dm-reading" }, el("strong", null, "Responsable de la branche : "), c.branch_lead) : null,
+        editable ? leadForm(c, lead, crun) : null, c.owner_name ? el("p", { class: "muted" }, "Responsable : " + c.owner_name) : null,
         c.initial_name ? el("p", { class: "dm-concept-initial" }, "« " + c.initial_name + " »") : null,
         el("p", null, el("strong", null, c.name)), c.pivot_note ? el("p", null, el("strong", null, "Pivot : "), c.pivot_note) : null, c.reference ? el("p", { class: "muted" }, c.reference) : null,
         c.description ? el("p", null, c.description) : null, el("h3", null, "Fonctions"), list].filter(Boolean));  // no « null » (D-O-129)
@@ -71,9 +73,10 @@
         ev.preventDefault();
         crun("/concepts/" + c.id, { name: name.value, initial_name: initial.value, pivot_note: pivot.value, kind: kind.value,
           owner_id: owner.value ? Number(owner.value) : null, status: status.value, reference: reference.value,
-          description: description.value }, "patch");
+          branch_lead: lead.value, description: description.value }, "patch");
       } }, field("Concept initial : un nom qui parle", initial, "L'idée qui rallie l'équipe ; elle pourra pivoter après la divergence et la convergence."),
       field("Brique technologique (ce qu'elle est)", name), field("Responsable de la brique", owner, "La personne qui la porte, de ses feuilles de concept au prototype."),
+      leadField(lead),
       el("div", { class: "dm-row" }, field("Nature", kind), field("Status", status)),
       field("Référence", reference), field("Description", description),
       c.selected_sheet || c.pivot_note ? field("Pivot", pivot) : null,
@@ -93,13 +96,29 @@
     return box;
   }
 
+  /* 0.60.130 (D-O-144): the person or the group that carries the branch, in free words; it shows in the corner of the box */
+  function leadInput(c) {
+    return el("textarea", { rows: 2, maxlength: 200, "data-new": "0.60.130-branch-lead",
+      placeholder: "ex. Équipe thermique, avec Léa : déjà fait sur le prototype" }, c.branch_lead || "");
+  }
+
+  function leadField(lead) {
+    return field("Responsable de la branche (personne ou groupe)", lead, "Qui porte cette branche de l'arbre : a les compétences, veut "
+      + "les gagner, ou sait comment y arriver avec ses collègues. S'affiche dans le coin de la boîte au passage de la souris.");
+  }
+
+  function leadForm(c, lead, crun) {  // a frozen brick: its lead may still change
+    return el("form", { class: "ag-form dm-form", onsubmit: (ev) => { ev.preventDefault(); crun("/concepts/" + c.id, { branch_lead: lead.value }, "patch"); } },
+      leadField(lead), el("div", { class: "form-actions" }, el("button", { type: "submit", class: "btn btn-primary btn-small" }, "Enregistrer")));
+  }
+
   /* 0.60.116 (D-O-129): the concept retained of a frozen brick */
   function frozenNote(c) {
     return el("div", { class: "dm-frozen-note" }, el("p", null, el("span", { class: "badge badge-ok" }, "Figée"),
       " " + (c.frozen_by_name ? "par " + c.frozen_by_name : "") + (c.frozen_at ? " le " + c.frozen_at.slice(0, 10) : "")),
     el("p", { class: "dm-reading" }, el("strong", null, "Concept retenu : "), c.frozen_text),
     el("p", { class: "muted dm-hint" }, "La brique ne change plus : pas de nouvelle feuille de concept ni de matrice de Pugh. Seuls "
-      + "son responsable et ses fonctions peuvent encore changer."));
+      + "ses responsables et ses fonctions peuvent encore changer."));
   }
 
   function freeze(c, crun) {

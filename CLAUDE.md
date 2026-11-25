@@ -173,6 +173,10 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.130** (2026-11-25) : Diamond — la liste des groupes de compétences n'est qu'un filtre d'affichage (« colonnes du Space »,
+  « toutes / All », un groupe ; `static/js/diamond/competency_profiles.js`, par navigateur), la route `POST …/competencies/profile` qui
+  effaçait des notes est retirée (D-O-143) ; « Responsable de la branche » d'une brique (`branch_lead`, texte libre, migration
+  diamond 23), dans le coin de sa boîte au survol (`tree_concepts.js`) (D-O-144).
 - **0.60.129** (2026-11-23) : Diamond — « Importer un lot (.zip) » pose une image ou un PDF nommé par le code d'une feuille
   existante (CB-1.1_croquis_ia.png) sur cette feuille, sans en créer (`modules/diamond/concept_cards_attach.py`) ; aperçu à lignes
   cochables, sauvegarde du Space avant ; une feuille avec son image l'exporte en PNG / PDF (`concept_sheet_render.picture`) (D-O-142).

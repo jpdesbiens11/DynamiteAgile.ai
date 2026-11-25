@@ -118,6 +118,7 @@ def lines(conn, pid):
     return out
 
 
+# the last one: a profile applied before 0.60.130 replaced the columns (the filter of today writes nothing)
 COLUMN_ACTIONS = ("diamond_competency_column_add", "diamond_competency_column_remove", "diamond_competency_profile")
 
 
@@ -179,7 +180,7 @@ def payload(conn, pid, user=None):
         c["bdc"] = links.get(c["code"])
     from .competency_profiles import profiles
     cols = columns(conn, pid, rows)
-    return {"catalog": cat, "lines": rows, "columns": cols, "profiles": profiles(conn, cols), "summary": rows_summary, "total_points": total,
+    return {"catalog": cat, "lines": rows, "columns": cols, "profiles": profiles(conn), "summary": rows_summary, "total_points": total,
             "people_total": round(sum(s["people"] for s in rows_summary), 1),
             "can_manage": bool(user) and can_manage(conn, user), "icons": list(DC.ICONS), "detail_labels": DC.DETAIL_LABELS,
             "bdc_hub": links.get("_hub")}

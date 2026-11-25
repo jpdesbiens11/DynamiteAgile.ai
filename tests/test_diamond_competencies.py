@@ -281,31 +281,45 @@ class CompetenciesTest(unittest.TestCase):
             self.admin.patch("/api/diamond/competencies/CFD", {"starter": False})
         self.assertNotIn("CFD", [c["code"] for c in self.data()["catalog"] if c["starter"]])
 
-    def test_12_profiles_of_the_grid(self):
-        """0.60.119 (D-O-132): a profile replaces the columns of the grid at once; the ratings of the columns that leave go."""
+    def test_12_groups_are_a_view(self):
+        """0.60.130 (D-O-143): a group of competencies is a filter of the display: the server only lists the groups, the route that
+        replaced the columns and erased ratings is gone; a rating given in any view is kept."""
         from modules.diamond import competency_profiles as CPR
-        made = self.admin.post("/api/admin/projects", {"key": "PRF", "name": "Profils", "description": "Essai"})["project"]
-        base = "/api/diamond/p/{}".format(made["id"])
-        data = self.admin.get(base + "/competencies")
+        data = self.data()
         self.assertEqual([p["key"] for p in data["profiles"]], [p[0] for p in CPR.PROFILES])
-        self.assertTrue(next(p for p in data["profiles"] if p["key"] == "mechatronics")["current"])  # the starter set
         for codes in (p[3] for p in CPR.PROFILES):
             self.assertTrue(set(codes) <= {d[0] for d in DC.DEFAULTS})
-        data = self.data()
         line = data["lines"][0]
         self.editor.put(self.base + "/competencies/rating", {"function_id": line["function_id"], "code": "MECH", "rating": 3})
-        self.editor.put(self.base + "/competencies/rating", {"function_id": line["function_id"], "code": "SAFE", "rating": 4})
-        lost = sum(1 for ln in self.data()["lines"] for c in ln["ratings"] if c not in ("CELL", "PWR", "THERM", "SAFE", "TEST"))
-        data = self.editor.post(self.base + "/competencies/profile", {"profile": "energy"})
-        self.assertEqual(data["columns"], ["CELL", "PWR", "THERM", "SAFE", "TEST"])
-        self.assertTrue(next(p for p in data["profiles"] if p["key"] == "energy")["current"])
-        rated = next(ln for ln in data["lines"] if ln["function_id"] == line["function_id"])["ratings"]
-        self.assertEqual(rated.get("SAFE"), 4)
-        self.assertNotIn("MECH", rated)
-        with db.connect() as conn:
-            row = conn.execute("SELECT details FROM audit_log WHERE action = ? ORDER BY id DESC", (CPR.ACTION,)).fetchone()
-        self.assertIn('"ratings": {}'.format(lost), row["details"])
-        self.assertIn("inconnu", self.fails(400, self.editor.post, self.base + "/competencies/profile", {"profile": "nope"}))
+        data = self.editor.put(self.base + "/competencies/rating", {"function_id": line["function_id"], "code": "SAFE", "rating": 4})
+        self.assertIn("SAFE", data["columns"])  # rated from a group: it joins the columns of the Space
+        self.fails(404, self.editor.post, self.base + "/competencies/profile", {"profile": "energy"})
+        after = next(ln for ln in self.data()["lines"] if ln["function_id"] == line["function_id"])["ratings"]
+        self.assertEqual((after["MECH"], after["SAFE"]), (3, 4))
+        js = (BASE_DIR / "static/js/diamond/competency_profiles.js").read_text(encoding="utf-8")
+        self.assertFalse("api." in js, "the filter writes nothing on the server")
+
+    def test_13_branch_lead(self):
+        """0.60.130 (D-O-144): the person or the group that carries the branch, also on a frozen brick; « ↔ IA », Excel."""
+        import io
+        import zipfile
+        brick = self.editor.post(self.base + "/concepts", {"name": "Brique à porter", "branch_lead": "  Équipe  thermique, avec Léa "})
+        cid = brick["created"]
+        get = lambda data: next(c for c in data["concepts"] if c["id"] == cid)  # noqa: E731
+        self.assertEqual(get(brick)["branch_lead"], "Équipe thermique, avec Léa")
+        data = self.editor.patch(self.base + "/concepts/{}".format(cid), {"name": "Brique portée"})
+        self.assertEqual(get(data)["branch_lead"], "Équipe thermique, avec Léa")  # left out: unchanged
+        self.assertIn("200", self.fails(400, self.editor.patch, self.base + "/concepts/{}".format(cid), {"branch_lead": "x" * 201}))
+        self.editor.post(self.base + "/concepts/{}/freeze".format(cid), {"text": "Concept retenu"})
+        data = self.editor.patch(self.base + "/concepts/{}".format(cid), {"branch_lead": "Hugo : veut apprendre"})
+        self.assertEqual(get(data)["branch_lead"], "Hugo : veut apprendre")
+        _s, _h, body = self.admin.raw_get(self.base + "/export.xlsx")
+        with zipfile.ZipFile(io.BytesIO(body)) as z:
+            text = " ".join(z.read(n).decode("utf-8") for n in z.namelist() if n.endswith(".xml"))
+        self.assertIn("Responsable de la branche", text)
+        self.assertIn("Hugo : veut apprendre", text)
+        data = self.editor.patch(self.base + "/concepts/{}".format(cid), {"branch_lead": ""})
+        self.assertEqual(get(data)["branch_lead"], "")
 
     def test_08_turned_off_like_the_pfmea(self):
         self.admin.put("/api/admin/features", {"features": {"diamond_competencies": False}})

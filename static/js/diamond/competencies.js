@@ -20,11 +20,6 @@
       catch (err) { toast(err.message, "error"); }
       state.redraw();
     };
-    state.profile = async (key) => {  // 0.60.119 (D-O-132): a profile of columns
-      try { state.comp = await api.post(D.base(ctx) + "/competencies/profile", { profile: key }); toast("Profil appliqué.", "success"); }
-      catch (err) { toast(err.message, "error"); }
-      state.redraw();
-    };
     state.reload = async () => { state.comp = await api.get(D.base(ctx) + "/competencies"); state.redraw(); };
     draw(holder, ctx, state);
   }
@@ -34,8 +29,7 @@
     const comp = state.comp;
     const editable = A.canEdit(ctx);
     holder.append(A.pageHead(ctx, [el("span", null, "Diamond"), el("span", null, "Compétences et équipe")],
-      [editable ? D.profilePicker(comp, state.profile) : null,
-        el("a", { class: "btn btn-small", href: A.href(ctx, "ftree") }, "Noter dans l'arbre"),
+      [el("a", { class: "btn btn-small", href: A.href(ctx, "ftree") }, "Noter dans l'arbre"),
         el("a", { class: "btn btn-small", href: D.base(ctx) + "/competencies/summary.xlsx", download: "", "data-new": "0.60.116-competencies-xlsx" }, "Excel"),
         el("a", { class: "btn btn-small", href: D.base(ctx) + "/competencies/summary.docx", download: "", "data-new": "0.60.116-competencies-docx" }, "Word")]));
     holder.append(el("div", { class: "page-head dm-intro" }, el("h1", { "data-new": "0.60.116-competencies" }, "Compétences et équipe"),
@@ -47,7 +41,7 @@
         "Aucune ligne à noter : dans l'arbre fonctionnel, donnez une brique technologique (CB-n) aux fonctions tertiaires. Chaque ligne "
         + "qui aboutit à une brique reçoit sa grille de compétences.", [["Ouvrir l'arbre fonctionnel", () => { location.hash = A.href(ctx, "ftree"); }, true]]));
     } else {
-      holder.append(cards(comp), summary(comp, state, editable), detail(ctx, comp));
+      holder.append(cards(comp), summary(comp, state, editable), detail(ctx, state));
     }
     holder.append(D.competencyCatalog(ctx, comp, state.reload));
   }
@@ -100,9 +94,10 @@
       comp.summary.length ? table : el("p", { class: "muted" }, "Aucune compétence notée : notez-les dans l'arbre, ou avec « ↔ IA »."));
   }
 
-  function detail(ctx, comp) {
-    const cols = D.competencyColumns(comp);
-    if (!cols.length) return null;
+  function detail(ctx, state) {
+    const comp = state.comp;
+    if (!comp.catalog.length) return null;
+    const cols = D.competencyFiltered(comp, D.competencyFilter(ctx, comp));  // 0.60.130 (D-O-143): a view, the summary counts everything
     const head = ["Fonction", "Brique"].concat(cols.map((c) => el("span", { "data-tip": c.name }, D.compIcon(c.icon), el("span", { class: "dm-sr" }, c.name))));
     const rows = comp.lines.map((ln) => el("tr", null,
       el("td", null, el("span", { class: "dm-code" }, ln.code), " " + ln.text),
@@ -112,7 +107,8 @@
     const table = DA.table(head, rows);
     table.classList.add("dm-cp-detail");
     return el("section", { class: "dm-cb-section" }, el("h2", null, "Notes par ligne"),
-      el("p", { class: "muted" }, "Les mêmes notes que la grille de l'arbre. Pour les modifier : « Noter dans l'arbre »."), table);
+      el("p", { class: "muted" }, "Les mêmes notes que la grille de l'arbre. Pour les modifier : « Noter dans l'arbre »."),
+      D.competencyFilterPicker(ctx, comp, state.redraw), table);
   }
 
   A.views.competencies = view;

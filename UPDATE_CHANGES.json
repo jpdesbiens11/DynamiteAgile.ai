@@ -2,8 +2,8 @@
   "changes": [
     {
       "id": "C1",
-      "title": "Diamond : « Importer un lot (.zip) » pose un croquis sur une feuille de concept existante",
-      "why": "Une image ou un PDF dont le nom commence par le code d'une feuille active (CB-1.1_croquis_ia.png) va sur cette feuille au lieu d'en créer une : même contrôle qu'un scan déposé (vrai format, taille), nature gardée, ancienne image gardée dans les pièces jointes. Aperçu à une ligne cochable par fichier, avertissements (code archivé ou inconnu → nouvelle feuille Scan, reponse.json ignoré), sauvegarde du Space avant d'appliquer.",
+      "title": "Diamond : le filtre des compétences n'est plus qu'un filtre d'affichage, avec « Toutes / All »",
+      "why": "Changer de groupe remplaçait les colonnes du Space et effaçait des notes. Maintenant la liste ne change que ce qui est affiché : les colonnes du Space, toutes les compétences d'une seule vue, ou celles d'un groupe ; les notes cachées restent.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
@@ -11,9 +11,10 @@
         "core/__init__.py",
         "docs/DECISIONS.md",
         "docs/ETAT_PROJET.md",
-        "docs/releases/0.60.129.json",
-        "modules/diamond/concept_cards.py",
-        "modules/diamond/concept_cards_attach.py",
+        "docs/releases/0.60.130.json",
+        "modules/diamond/__init__.py",
+        "modules/diamond/competencies.py",
+        "modules/diamond/competency_profiles.py",
         "site/en/guide.html",
         "site/en/home.html",
         "site/en/index.html",
@@ -33,32 +34,43 @@
         "static/i18n/en_4.json",
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
-        "static/js/diamond/concept_sheet_tools.js",
-        "tests/test_diamond_concept_cards.py",
+        "static/js/diamond/competencies.js",
+        "static/js/diamond/competency_grid.js",
+        "static/js/diamond/competency_profiles.js",
+        "static/js/diamond/tree.js",
+        "tests/test_diamond_competencies.py",
         "tests/test_open_v060.py"
       ]
     },
     {
       "id": "C2",
-      "title": "Diamond : une feuille avec son image l'exporte en PNG et en PDF",
-      "why": "La carte et la page de la brique montrent l'image de la feuille à la place de la vignette au gabarit ; « PNG » enregistre cette image, « PDF » la met sur une page A4 paysage. Sans image, rien ne change.",
+      "title": "Diamond : « Responsable de la branche » d'une brique, visible dans le coin de sa boîte",
+      "why": "Un champ de plus dans le panneau du concept dit quelle personne ou quel groupe porte la branche (a les compétences, veut les gagner, ou sait comment y arriver) ; le texte s'affiche dans le coin supérieur droit de la boîte au passage de la souris.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
         "UPDATE_LOG.md",
         "core/__init__.py",
         "docs/DECISIONS.md",
-        "docs/releases/0.60.129.json",
-        "modules/diamond/concept_sheet_api.py",
-        "modules/diamond/concept_sheet_render.py",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.130.json",
+        "modules/diamond/concept_freeze.py",
+        "modules/diamond/concepts.py",
+        "modules/diamond/export_bricks.py",
+        "modules/diamond/migrations_b.py",
+        "modules/diamond/rt_sections_b.py",
+        "static/css/diamond_concepts.css",
         "static/i18n/en_1.json",
         "static/i18n/en_2.json",
         "static/i18n/en_3.json",
         "static/i18n/en_4.json",
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
-        "static/js/diamond/concept_sheet_tools.js",
-        "tests/test_diamond_concept_cards.py"
+        "static/js/diamond/concept_page.js",
+        "static/js/diamond/concept_panel.js",
+        "static/js/diamond/tree_concepts.js",
+        "tests/test_diamond_competencies.py",
+        "tests/test_open_v060.py"
       ]
     }
   ]

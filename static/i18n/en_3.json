@@ -343,6 +343,7 @@
 "Fillets, pas de sharp corner ni de notch dans une zone chargée (stress concentration)": "Blend radii, no sharp corner or notch in a loaded area (stress concentration)",
 "Filtering au power input (ferrite, X / Y capacitors) et sur chaque cable qui sort de l'enclosure": "Filtering at the power input (ferrite, X / Y capacitors) and on every cable leaving the enclosure",
 "Filtrage à l'entrée d'alimentation (ferrite, condensateurs X / Y) et sur chaque câble qui sort du boîtier": "Filtering at the power input (ferrite, X / Y capacitors) and on every cable leaving the enclosure",
+"Filtre d'affichage : aucune colonne ni note n'est changée": "Display filter: no column and no rating is changed",
 "Filtre médian et plausibilité entre capteurs": "Median filter and plausibility between sensors",
 "Filtre médian et plausibilité entre sensors": "Median filter and plausibility between sensors",
 "Filtre « Mes éléments » actif : vos requirements et tout le contenu générique ": "“My items” filter active: your requirements and all generic content ",
@@ -936,6 +937,7 @@
 "La bonne propriété au bon endroit": "The right property in the right place",
 "La boucle Build-Measure-Learn, le MVP et la décision de pivoter ou de persévérer, par l'auteur.": "The Build-Measure-Learn loop, the MVP and the decision to pivot or persevere, by the author.",
 "La boîte à outils et le poinçon des lots": "The toolbox and the lot hallmark",
+"La brique ne change plus : pas de nouvelle feuille de concept ni de matrice de Pugh. Seuls ses responsables et ses fonctions peuvent encore changer.": "The brick no longer changes: no new concept sheet and no new Pugh matrix. Only its leads and its functions may still change.",
 "La brique ne change plus : pas de nouvelle feuille de concept ni de matrice de Pugh. Seuls son responsable et ses fonctions peuvent encore changer.": "The brick no longer changes: no new concept sheet nor Pugh matrix. Only its owner and its functions may still change.",
 "La capacité des disques a progressé plus vite que les besoins des ordinateurs auxquels ils étaient destinés : c'est ce qui a ouvert la porte aux petits formats.": "Disk capacity grew faster than the needs of the computers it was made for: that is what opened the door to the smaller formats.",
 "La carte P × I (maintenant et résiduelle) est dans le fichier draw.io ; le registre complet, dans le classeur Excel.": "The P × I map (now and residual) is in the draw.io file; the complete register is in the Excel workbook.",
@@ -979,6 +981,7 @@
 "La ligne du PFMEA qui protège la caractéristique (à venir)": "The PFMEA row that protects the characteristic (coming)",
 "La ligne du plan de contrôle (à venir)": "The control plan row (coming)",
 "La liste priorisée de tout ce qu'il reste à faire, du plus important au moins important.": "The prioritized list of everything left to do, from most important to least important.",
+"La liste « Compétences » (en haut à droite) n'est qu'un filtre d'affichage : les colonnes du Space, toutes, ou celles d'un groupe. Les notes cachées restent.": "The « Competencies » list (top right) is only a display filter: the Space's columns, all of them, or those of a group. Hidden ratings stay.",
 "La matrice de Pugh (référence, + / 0 / −) puis la matrice pondérée, avec un exemple.": "The Pugh matrix (reference, + / 0 / −) then the weighted matrix, with an example.",
 "La matrice de traçabilité complète : chaque requirement « Verified » ou justifié.": "The complete traceability matrix: each requirement “Verified” or justified.",
 "La matrice pièces × fonctions : une pièce qui ne sert aucune fonction est à retirer.": "The parts × functions matrix: a part that serves no function should be removed.",
@@ -1416,6 +1419,5 @@
 "Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results.",
 "Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
 "Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority.",
-"Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
-"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them."
+"Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim."
 }

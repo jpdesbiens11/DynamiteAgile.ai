@@ -11,6 +11,12 @@
   /* 0.60.106 (D-O-118): the person who carries the brick, as initials on the box */
   const initials = (name) => name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 
+  /* 0.60.130 (D-O-144): who carries the branch -- a small mark in the corner, the whole text there on hover or keyboard focus */
+  const leadMark = (c) => (c.branch_lead ? el("span", { class: "dm-concept-leadmark" + (c.owner_name ? " dm-concept-leadmark-low" : ""), "aria-hidden": "true" },
+    DA.diamond.compIcon ? DA.diamond.compIcon("person") : "●") : null);
+  const leadTag = (p) => (p.c.branch_lead ? el("span", { class: "dm-concept-lead" + (p.y < 70 ? " dm-concept-lead-down" : "") },  // no room above
+    el("span", { class: "dm-sr" }, "Responsable de la branche : "), p.c.branch_lead) : null);
+
   function conceptColumn(box, opts) {
     const D = DA.diamond, T = D.TREE, svg = D.svg;
     const levels = Math.max(box.levels, 3);
@@ -42,6 +48,7 @@
         "data-tip": (p.c.initial_name ? "Concept initial « " + p.c.initial_name + " » — " : "") + p.c.name
           + (p.c.reference ? " — " + p.c.reference : "") + (p.c.selected_sheet ? " — retenu : " + p.c.selected_sheet.title : ""), "aria-pressed": p.c.id === opts.selectedConcept ? "true" : "false",
         onclick: () => opts.onConcept(p.c.id) },
+      leadMark(p.c), leadTag(p),
       p.c.owner_name ? el("span", { class: "dm-concept-owner", "data-tip": "Responsable : " + p.c.owner_name }, initials(p.c.owner_name)) : null,
       el("span", { class: "dm-code" }, p.c.code, el("span", { class: "dm-concept-kind" },
         (p.c.kind === "existing" ? "Existant" : "À définir") + shared + (p.c.source === "ai" ? " · IA" : ""))),
@@ -65,6 +72,7 @@
       type: "button", class: "dm-node dm-concept dm-concept-frozen" + (c.id === opts.selectedConcept ? " dm-selected" : ""),
       "data-tip": "Figée — concept retenu : " + c.frozen_text, "aria-pressed": c.id === opts.selectedConcept ? "true" : "false",
       "data-new": "0.60.116-brick-frozen", onclick: () => opts.onConcept(c.id) },
+    leadMark(c), leadTag(p),
     c.owner_name ? el("span", { class: "dm-concept-owner", "data-tip": "Responsable : " + c.owner_name }, initials(c.owner_name)) : null,
     el("span", { class: "dm-code" }, c.code, el("span", { class: "dm-concept-kind" }, "Figée")),
     el("strong", { class: "dm-concept-initial" }, c.name),

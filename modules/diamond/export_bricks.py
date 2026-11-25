@@ -50,18 +50,18 @@ def landed(c):
 def bricks_sheet(book, kit, data):
     from .export_xlsx import _frame, _table
     s = book.sheet("Briques technologiques")
-    widths = [8, 26, 34, 16, 12, 18, 30, 20, 9, 40, 24]
+    widths = [8, 26, 34, 16, 12, 18, 30, 30, 20, 9, 40, 24]
     _frame(s, data, "Briques technologiques — Concept initial / Brique", widths, kit, "E0602F")
     lab = data["concept_labels"]
     code = {f["id"]: "F{}".format(f["number"]) for f in data["tree"]}
     comp = competencies_of(data)
     rows = [[c["code"], c.get("initial_name") or "", c["name"], lab["kinds"].get(c["kind"], c["kind"]),
-             lab["status"].get(c["status"], c["status"]), c.get("owner_name") or "", c.get("reference") or "",
+             lab["status"].get(c["status"], c["status"]), c.get("owner_name") or "", c.get("branch_lead") or "", c.get("reference") or "",
              ", ".join(code[i] for i in c["function_ids"] if i in code), c.get("sheets") or 0, landed(c),
              " · ".join("{} {}".format(k, v) for k, v in sorted(comp.get(c["id"], {}).items()))] for c in data["concepts"]]
-    _table(s, kit, ["Code", "Concept initial", "Brique technologique", "Nature", "Status", "Responsable", "Référence", "Fonctions",
+    _table(s, kit, ["Code", "Concept initial", "Brique technologique", "Nature", "Status", "Responsable", "Responsable de la branche", "Référence", "Fonctions",
                     "Feuilles", "Concept retenu", "Compétences (note max.)"],
-           rows or [["—"] + [""] * 10], widths, (lambda v: [kit.wrap] * 11) if rows else None)
+           rows or [["—"] + [""] * 11], widths, (lambda v: [kit.wrap] * 12) if rows else None)
 
 
 # ---------------------------------------------------------------- draw.io / PowerPoint

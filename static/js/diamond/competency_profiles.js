@@ -1,36 +1,52 @@
-/* Diamond · profiles of the competency grid (0.60.119, D-O-132): « Profil de grille ▾ » under the tree and at the top of
-   « Compétences et équipe ». A profile replaces the columns of the grid of the Space in one go (mechatronics, electronics and
-   power, embedded software…); before it does, the page says how many ratings of the columns that leave are erased. */
+/* Diamond · the filter of the competencies (0.60.130, D-O-143; it was the « Profil de grille » of 0.60.119, which replaced the columns
+   and erased ratings). A view only: « Colonnes du Space » (the ones the team chose), « Toutes / All » (the whole catalogue at
+   once), or the group of one kind of product (mechatronics, electronics and power, embedded software…). Nothing is written: the
+   choice stays in this browser, per Space, and is shared by the tree and « Compétences et équipe ». */
 (function () {
   "use strict";
 
   const { el } = DA;
   const D = DA.diamond;
+  const SPACE = "space", ALL = "all";
+  const memory = {};  // when the browser keeps nothing (private window)
+  const storeKey = (ctx) => "dm-comp-filter-" + ctx.pid;
 
-  /* comp: the payload of /competencies; onPick(key): applies the profile (after the confirmation) */
-  function profilePicker(comp, onPick) {
-    const names = Object.fromEntries(comp.catalog.map((c) => [c.code, c.name]));
-    const current = (comp.profiles || []).find((p) => p.current);
-    const pick = el("select", { class: "dm-cg-profile", "aria-label": "Profil de grille", "data-new": "0.60.119-competency-profile",
-      "data-tip": "Remplacer les colonnes de la grille par celles d'un profil" },
-    el("option", { value: "" }, current ? "Profil : " + current.name : "Profil de grille…"),
-    (comp.profiles || []).filter((p) => p.codes.length).map((p) => el("option", { value: p.key, disabled: p.current ? "disabled" : null },
-      p.name + " — " + p.codes.join(", "))));
+  /* the choice of this viewer; an unknown one (a group that left) is the columns of the Space */
+  function filter(ctx, comp) {
+    let key = memory[ctx.pid];
+    try { key = key || localStorage.getItem(storeKey(ctx)); } catch (err) { /* private window */ }
+    return key && (key === ALL || groups(comp).some((p) => p.key === key)) ? key : SPACE;
+  }
+
+  const groups = (comp) => (comp.profiles || []).filter((p) => p.codes.length);
+
+  /* the columns a filter shows, as competencies of the catalogue */
+  function filtered(comp, key) {
+    if (key === ALL) {  // the catalogue in its order, plus a deactivated one the Space still uses
+      const used = new Set(comp.columns);
+      return comp.catalog.filter((c) => c.active || used.has(c.code));
+    }
+    const group = groups(comp).find((p) => p.key === key);
+    if (!group) return D.competencyColumns(comp);
+    const byCode = new Map(comp.catalog.map((c) => [c.code, c]));
+    return group.codes.map((code) => byCode.get(code)).filter(Boolean);
+  }
+
+  /* the select; onChange redraws the page */
+  function filterPicker(ctx, comp, onChange) {
+    const key = filter(ctx, comp);
+    const option = (value, label) => el("option", { value, selected: value === key ? "selected" : null }, label);
+    const pick = el("select", { class: "dm-cg-profile", "aria-label": "Compétences affichées", "data-new": "0.60.130-competency-filter",
+      "data-tip": "Filtre d'affichage : aucune colonne ni note n'est changée" },
+    option(SPACE, "Compétences : colonnes du Space"), option(ALL, "Compétences : toutes / All"),
+    groups(comp).map((p) => option(p.key, p.name + " — " + p.codes.join(", "))));
     pick.addEventListener("change", () => {
-      const p = comp.profiles.find((x) => x.key === pick.value);
-      if (!p) return;
-      const keep = new Set(p.codes);
-      const lost = comp.lines.reduce((n, ln) => n + Object.keys(ln.ratings).filter((c) => !keep.has(c)).length, 0);
-      const leaving = [...new Set(comp.lines.flatMap((ln) => Object.keys(ln.ratings)).concat(comp.columns))].filter((c) => !keep.has(c));
-      const text = "Appliquer le profil « " + p.name + " » ? La grille aura " + p.codes.length + " colonnes : "
-        + p.codes.map((c) => names[c] || c).join(", ") + "."
-        + (lost ? "\n\n" + lost + " note" + (lost > 1 ? "s" : "") + " des colonnes qui partent (" + leaving.join(", ") + ") "
-          + (lost > 1 ? "sont effacées" : "est effacée") + " ; les personnes prévues restent dans la synthèse." : "");
-      if (!window.confirm(text)) { pick.value = ""; return; }
-      onPick(p.key);
+      memory[ctx.pid] = pick.value;
+      try { localStorage.setItem(storeKey(ctx), pick.value); } catch (err) { /* private window: this visit only */ }
+      onChange(pick.value);
     });
     return pick;
   }
 
-  D.profilePicker = profilePicker;
+  Object.assign(D, { competencyFilter: filter, competencyFiltered: filtered, competencyFilterPicker: filterPicker });
 })();

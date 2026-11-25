@@ -13,7 +13,7 @@ from . import concepts as C
 from . import functions as F
 
 LIMITS = {"text": 1000, "reason": 300}
-OPEN_FIELDS = {"owner_id", "function_ids"}  # what a frozen brick still accepts
+OPEN_FIELDS = {"owner_id", "branch_lead", "function_ids"}  # what a frozen brick still accepts
 
 
 def frozen_error(c, what):
@@ -29,7 +29,7 @@ def guard(conn, pid, cid, what):
 
 
 def guard_fields(c, fields):
-    """api_update of a frozen brick: only its owner and its functions may change."""
+    """api_update of a frozen brick: only its owner, the lead of its branch and its functions may change."""
     if c.get("frozen") and set(fields) - OPEN_FIELDS:
         raise frozen_error(c, "Modifier " + ", ".join(sorted(set(fields) - OPEN_FIELDS)))
 

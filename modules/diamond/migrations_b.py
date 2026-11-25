@@ -441,4 +441,8 @@ MIGRATIONS = [
         -- 0.60.128 (D-O-141): a concept sheet may be deleted; its number is not given again by the automatic numbering
         ALTER TABLE diamond_concepts ADD COLUMN sheet_floor INTEGER NOT NULL DEFAULT 0;
     """),
+    (23, """
+        -- 0.60.130 (D-O-144): the person or the group that carries the branch of the tree ending with this brick (free text)
+        ALTER TABLE diamond_concepts ADD COLUMN branch_lead TEXT NOT NULL DEFAULT '';
+    """),
 ]

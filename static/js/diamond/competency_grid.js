@@ -2,7 +2,8 @@
    column, beyond a dashed line: one column per competency used in the Space (its icon on top, the legend under the tree), one
    row of dashed cells per function line that ends with a brick, at the height of the function. A cell holds the rating 1 to 5
    (5: at the heart of the development); a click opens the choice, the keys 1 to 5 set it, 0 or Delete clears it. The row of
-   the line stays with its function through a light dashed guide at its height. No text in the SVG. */
+   the line stays with its function through a light dashed guide at its height. No text in the SVG. 0.60.130 (D-O-143): the filter
+   (competency_profiles.js) says which columns show; columns are added and removed in the view « Colonnes du Space » only. */
 (function () {
   "use strict";
 
@@ -35,13 +36,14 @@
     return (comp.columns || []).map((code) => byCode.get(code)).filter(Boolean);
   }
 
-  /* opts: {comp, editable, onRate(fid, code, n), onAddCol(code), onRemoveCol(code)}; column: what conceptColumn returned */
+  /* opts: {comp, filter, editable, onRate(fid, code, n), onAddCol(code), onRemoveCol(code)}; column: what conceptColumn returned */
   function competencyGrid(box, column, opts) {
     const D = DA.diamond, T = D.TREE;
-    const cols = columns(opts.comp);
+    const cols = D.competencyFiltered(opts.comp, opts.filter);
+    const choose = opts.editable && opts.filter === "space";
     const sep = column.width + GAP / 2 - T.PAD;
     const x0 = column.width + GAP - T.PAD;
-    const width = x0 + cols.length * CW + (opts.editable ? ADD : 0) + T.PAD;
+    const width = x0 + cols.length * CW + (choose ? ADD : 0) + T.PAD;
     const g = D.svg("svg", { class: "dm-lines dm-cg-lines", width, height: column.height, "aria-hidden": "true" });
     g.append(D.svg("line", { x1: sep, y1: 0, x2: sep, y2: column.height, class: "dm-concept-sep" }));
     const bricks = new Map(column.placed.map((p) => [p.c.id, p]));
@@ -62,8 +64,8 @@
     });
     const head = el("div", { class: "dm-cg-head" });
     head.style.left = x0 + "px";
-    cols.forEach((c) => head.append(headButton(c, opts)));
-    if (opts.editable) head.append(addButton(opts, cols));
+    cols.forEach((c) => head.append(headButton(c, opts, choose)));
+    if (choose) head.append(addButton(opts, cols));
     return { svg: g, nodes, head, width, cols };
   }
 
@@ -99,12 +101,12 @@
   }
 
   /* the title of a column: its icon and its code, always readable; a click offers to take it out of the grid */
-  function headButton(c, opts) {
+  function headButton(c, opts, choose) {
     const rated = opts.comp.lines.filter((ln) => ln.ratings[c.code]).length;
     const node = el("button", { type: "button", class: "dm-cg-icon", "data-tip": c.name + " (" + c.code + ")"
-      + (opts.editable ? " — cliquez pour la retirer de la grille" : ""), "aria-label": c.name, disabled: opts.editable ? null : "disabled" },
+      + (choose ? " — cliquez pour la retirer de la grille" : ""), "aria-label": c.name, disabled: choose ? null : "disabled" },
     compIcon(c.icon), el("span", { class: "dm-cg-code" }, c.code));
-    if (!opts.editable) return node;
+    if (!choose) return node;
     node.addEventListener("click", () => {
       document.querySelectorAll(".dm-cg-menu").forEach((m) => m.remove());
       const close = () => { menu.remove(); document.removeEventListener("keydown", esc); node.focus(); };
@@ -137,14 +139,15 @@
   }
 
   /* under the tree: what each icon means, the scale, and the way to the summary */
-  function competencyLegend(ctx, comp, cols, picker) {
+  function competencyLegend(ctx, comp, cols, filter) {
     const items = cols.map((c) => el("span", { class: "dm-cg-key" }, compIcon(c.icon),
       c.bdc ? el("a", { href: c.bdc, "data-tip": "Profil, formation, outils et livrables (BDC)" }, c.name) : el("span", null, c.name)));
     return el("div", { class: "dm-cg-legend", "aria-label": "Légende des compétences", "data-new": "0.60.116-competency-legend" },
       el("strong", null, "Compétences"), items.length ? items : el("span", { class: "muted" }, comp.lines.length
         ? "Aucune compétence notée : ajoutez une colonne avec « + » à droite de l'arbre, ou faites remplir la grille par l'IA (« ↔ IA »)."
         : "Donnez une brique technologique aux fonctions tertiaires : chaque ligne qui aboutit à une brique reçoit sa grille."),
-      el("span", { class: "muted dm-cg-scale" }, "1 presque pas · 3 régulièrement · 5 au cœur du développement"), picker || null,
+      el("span", { class: "muted dm-cg-scale" }, "1 presque pas · 3 régulièrement · 5 au cœur du développement"),
+      filter !== "space" ? el("span", { class: "muted" }, "Vue filtrée : les colonnes du Space et les notes ne changent pas.") : null,
       el("a", { class: "btn btn-small", href: DA.agile.href(ctx, "competencies") }, "Compétences et équipe →"));
   }
 
