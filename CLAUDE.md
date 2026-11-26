@@ -173,6 +173,8 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.130** (2026-11-26) : Diamond — le « Profil » des compétences devient un **filtre d'affichage** (`static/js/diamond/competency_profiles.js`,
+  `D.competencyFilter`) : « Grille du Space », « Tous », un métier / groupe technique ; aucune note effacée, gardé par Space dans le navigateur (D-O-143).
 - **0.60.129** (2026-11-23) : Diamond — « Importer un lot (.zip) » pose une image ou un PDF nommé par le code d'une feuille
   existante (CB-1.1_croquis_ia.png) sur cette feuille, sans en créer (`modules/diamond/concept_cards_attach.py`) ; aperçu à lignes
   cochables, sauvegarde du Space avant ; une feuille avec son image l'exporte en PNG / PDF (`concept_sheet_render.picture`) (D-O-142).
@@ -361,7 +363,7 @@
 - Feuille de route, questions ouvertes et relais : `docs/ETAT_PROJET.md` ; décisions : `docs/DECISIONS.md` ;
   règles techniques : `docs/FONDATIONS.md` (prime sur ce fichier) ; décisions antérieures D-A / D-B citées dans le
   code : `docs/DECISIONS_ANTERIEURES.md`.
-- Tests : `python3 -m unittest discover -s tests -t .` puis `node tests/js/ai_markdown.js` et
+- Tests : `python3 -m unittest discover -s tests -t .` puis `node tests/js/ai_markdown.js`, `node tests/js/competency_filter.js` et
   `node tests/js/editor_roundtrip.js`, `node tests/js/admin_mail_links.js`, `node tests/js/password_toggle.js`. Démarrage : `python3 app_dynamite_agile.py --dev-admin` (admin / admin).
 
 ## Comment travailler ici

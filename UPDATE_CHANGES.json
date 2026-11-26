@@ -2,8 +2,8 @@
   "changes": [
     {
       "id": "C1",
-      "title": "Diamond : « Importer un lot (.zip) » pose un croquis sur une feuille de concept existante",
-      "why": "Une image ou un PDF dont le nom commence par le code d'une feuille active (CB-1.1_croquis_ia.png) va sur cette feuille au lieu d'en créer une : même contrôle qu'un scan déposé (vrai format, taille), nature gardée, ancienne image gardée dans les pièces jointes. Aperçu à une ligne cochable par fichier, avertissements (code archivé ou inconnu → nouvelle feuille Scan, reponse.json ignoré), sauvegarde du Space avant d'appliquer.",
+      "title": "Diamond : le « Profil » des compétences devient un filtre (« Grille du Space », « Tous », un métier ou groupe technique)",
+      "why": "Le sélecteur sous l'arbre fonctionnel et en haut de « Compétences et équipe » remplaçait les colonnes de la grille et effaçait les notes des colonnes qui partaient. Il ne fait plus qu'afficher : « Grille du Space » (les colonnes choisies, avec « + » et « Retirer de la grille »), « Tous » (toutes les compétences actives du catalogue et toute compétence notée), ou un métier / groupe technique (Mécatronique, Logiciel embarqué…). Aucune note effacée, rien n'est envoyé au serveur ; le choix est gardé par Space dans ce navigateur ; un lecteur peut aussi filtrer.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
@@ -11,9 +11,7 @@
         "core/__init__.py",
         "docs/DECISIONS.md",
         "docs/ETAT_PROJET.md",
-        "docs/releases/0.60.129.json",
-        "modules/diamond/concept_cards.py",
-        "modules/diamond/concept_cards_attach.py",
+        "docs/releases/0.60.130.json",
         "site/en/guide.html",
         "site/en/home.html",
         "site/en/index.html",
@@ -27,38 +25,19 @@
         "site/modules.html",
         "site/versions.html",
         "static/apps/vitrine/index.html",
+        "static/css/diamond_competencies.css",
         "static/i18n/en_1.json",
         "static/i18n/en_2.json",
         "static/i18n/en_3.json",
         "static/i18n/en_4.json",
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
-        "static/js/diamond/concept_sheet_tools.js",
-        "tests/test_diamond_concept_cards.py",
+        "static/js/diamond/competencies.js",
+        "static/js/diamond/competency_grid.js",
+        "static/js/diamond/competency_profiles.js",
+        "static/js/diamond/tree.js",
+        "tests/js/competency_filter.js",
         "tests/test_open_v060.py"
-      ]
-    },
-    {
-      "id": "C2",
-      "title": "Diamond : une feuille avec son image l'exporte en PNG et en PDF",
-      "why": "La carte et la page de la brique montrent l'image de la feuille à la place de la vignette au gabarit ; « PNG » enregistre cette image, « PDF » la met sur une page A4 paysage. Sans image, rien ne change.",
-      "files": [
-        "CLAUDE.md",
-        "UPDATE_CHANGES.json",
-        "UPDATE_LOG.md",
-        "core/__init__.py",
-        "docs/DECISIONS.md",
-        "docs/releases/0.60.129.json",
-        "modules/diamond/concept_sheet_api.py",
-        "modules/diamond/concept_sheet_render.py",
-        "static/i18n/en_1.json",
-        "static/i18n/en_2.json",
-        "static/i18n/en_3.json",
-        "static/i18n/en_4.json",
-        "static/i18n/en_5.json",
-        "static/i18n/en_6.json",
-        "static/js/diamond/concept_sheet_tools.js",
-        "tests/test_diamond_concept_cards.py"
       ]
     }
   ]

@@ -33,7 +33,8 @@
     state.rate = (fid, code, rating) => gridCall(() => api.put(D.base(ctx) + "/competencies/rating", { function_id: fid, code, rating }));
     state.addCol = (code) => gridCall(() => api.post(D.base(ctx) + "/competencies/columns", { code }));
     state.removeCol = (code) => gridCall(() => api.post(D.base(ctx) + "/competencies/columns/" + code + "/remove", {}));
-    state.profile = (key) => gridCall(() => api.post(D.base(ctx) + "/competencies/profile", { profile: key }));  // 0.60.119 (D-O-132)
+    state.compFilter = D.competencyFilter(ctx);  // 0.60.130 (D-O-143): a filter of the columns, kept in this browser
+    state.filter = (value) => { state.compFilter = value; D.later(() => draw(holder, ctx, state, run)); };
     const run = async (path, body, method) => {
       try {
         state.data = await api[method || "post"](D.base(ctx) + path, body || {});
@@ -76,7 +77,7 @@
     };
     const hasPrimary = items.some((f) => f.is_primary);
     const tree = hasPrimary ? D.drawTree({ items, selected: state.selected, editable, onSelect: select, onDrop, onKey,
-      concepts: bricks, selectedConcept: state.selectedConcept, onConcept, comp: state.comp,
+      concepts: bricks, selectedConcept: state.selectedConcept, onConcept, comp: state.comp, compFilter: state.compFilter,
       onRate: state.rate, onAddCol: state.addCol, onRemoveCol: state.removeCol })
       : el("div", { class: "empty" }, el("p", null, "Aucune fonction primaire. Choisissez-en une parmi les fonctions hors arbre "
         + "(« En faire la fonction primaire »), ou créez-la."), editable ? el("button", { type: "button", class: "btn btn-primary",
@@ -86,8 +87,8 @@
     holder.append(el("div", { class: "dm-work dm-tree-work" + (chosen || brick ? " dm-with-panel" : "") }, tree,
       brick ? D.conceptPanel(state, brick, state.crun, editable, ctx) : chosen ? D.panel(state, chosen, run, editable) : null));
     if (hasPrimary && state.comp) {
-      holder.append(D.competencyLegend(ctx, state.comp, D.competencyColumns(state.comp),
-        A.canEdit(ctx) ? D.profilePicker(state.comp, state.profile) : null));
+      holder.append(D.competencyLegend(ctx, state.comp, D.competencyColumns(state.comp, state.compFilter),
+        D.profilePicker(ctx, state.comp, state.filter)));
     }
     holder.append(outside(state, holder, ctx, run, editable, select));
   }

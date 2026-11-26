@@ -30,18 +30,22 @@
   }
 
   /* the columns: the competencies this Space chose for its grid, in their order (0.60.117, D-O-130: server side, « columns ») */
-  function columns(comp) {
+  function columns(comp, filter) {
     const byCode = new Map(comp.catalog.map((c) => [c.code, c]));
-    return (comp.columns || []).map((code) => byCode.get(code)).filter(Boolean);
+    const shown = filter && DA.diamond.competencyFilterCodes ? DA.diamond.competencyFilterCodes(comp, filter) : null;  // 0.60.130 (D-O-143)
+    return (shown || comp.columns || []).map((code) => byCode.get(code)).filter(Boolean);
   }
 
-  /* opts: {comp, editable, onRate(fid, code, n), onAddCol(code), onRemoveCol(code)}; column: what conceptColumn returned */
+  /* opts: {comp, compFilter, editable, onRate(fid, code, n), onAddCol(code), onRemoveCol(code)}; column: what conceptColumn returned.
+     0.60.130 (D-O-143): a filter other than the grid of the Space only shows its columns -- the cells still rate, but « + » and
+     « Retirer de la grille » belong to the grid of the Space. */
   function competencyGrid(box, column, opts) {
     const D = DA.diamond, T = D.TREE;
-    const cols = columns(opts.comp);
+    const cols = columns(opts.comp, opts.compFilter);
+    const manage = opts.editable && !opts.compFilter;
     const sep = column.width + GAP / 2 - T.PAD;
     const x0 = column.width + GAP - T.PAD;
-    const width = x0 + cols.length * CW + (opts.editable ? ADD : 0) + T.PAD;
+    const width = x0 + cols.length * CW + (manage ? ADD : 0) + T.PAD;
     const g = D.svg("svg", { class: "dm-lines dm-cg-lines", width, height: column.height, "aria-hidden": "true" });
     g.append(D.svg("line", { x1: sep, y1: 0, x2: sep, y2: column.height, class: "dm-concept-sep" }));
     const bricks = new Map(column.placed.map((p) => [p.c.id, p]));
@@ -62,8 +66,8 @@
     });
     const head = el("div", { class: "dm-cg-head" });
     head.style.left = x0 + "px";
-    cols.forEach((c) => head.append(headButton(c, opts)));
-    if (opts.editable) head.append(addButton(opts, cols));
+    cols.forEach((c) => head.append(headButton(c, opts, manage)));
+    if (manage) head.append(addButton(opts, cols));
     return { svg: g, nodes, head, width, cols };
   }
 
@@ -99,12 +103,12 @@
   }
 
   /* the title of a column: its icon and its code, always readable; a click offers to take it out of the grid */
-  function headButton(c, opts) {
+  function headButton(c, opts, manage) {
     const rated = opts.comp.lines.filter((ln) => ln.ratings[c.code]).length;
     const node = el("button", { type: "button", class: "dm-cg-icon", "data-tip": c.name + " (" + c.code + ")"
-      + (opts.editable ? " — cliquez pour la retirer de la grille" : ""), "aria-label": c.name, disabled: opts.editable ? null : "disabled" },
+      + (manage ? " — cliquez pour la retirer de la grille" : ""), "aria-label": c.name, disabled: manage ? null : "disabled" },
     compIcon(c.icon), el("span", { class: "dm-cg-code" }, c.code));
-    if (!opts.editable) return node;
+    if (!manage) return node;
     node.addEventListener("click", () => {
       document.querySelectorAll(".dm-cg-menu").forEach((m) => m.remove());
       const close = () => { menu.remove(); document.removeEventListener("keydown", esc); node.focus(); };
