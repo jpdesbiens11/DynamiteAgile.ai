@@ -1,12 +1,19 @@
-# Journal de mise à jour — 0.60.129
+# Journal de mise à jour — 0.60.130
+
+- **Version :** 0.60.129 → 0.60.130 (2026-11-26)
+- **Changements :**
+  1. **Diamond : le « Profil » des compétences devient un filtre — « Grille du Space », « Tous », un métier ou groupe technique ; aucune note effacée** (D-O-143).
+- **Base de données :** aucune migration.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.129
 
 - **Version :** 0.60.128 → 0.60.129 (2026-11-23)
 - **Changements :**
   1. **Diamond : « Importer un lot (.zip) » pose un croquis sur une feuille de concept existante** (D-O-142).
   2. **Diamond : une feuille avec son image l'exporte en PNG et en PDF** (D-O-142).
 - **Base de données :** aucune migration.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.128
 

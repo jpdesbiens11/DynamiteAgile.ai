@@ -1,0 +1,50 @@
+{
+  "version": "0.60.130",
+  "date": "2026-11-26",
+  "summary": {
+    "fr": "Diamond : le « Profil » des compétences devient un filtre d'affichage — « Grille du Space », « Tous » ou un métier / groupe technique ; aucune note effacée.",
+    "en": "Diamond: the competency « Profil » becomes a display filter — the Space grid, « Tous » (All) or one trade / technical group; no rating erased."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : le « Profil » des compétences devient un filtre (« Grille du Space », « Tous », un métier ou groupe technique)",
+      "why": "Le sélecteur sous l'arbre fonctionnel et en haut de « Compétences et équipe » remplaçait les colonnes de la grille et effaçait les notes des colonnes qui partaient. Il ne fait plus qu'afficher : « Grille du Space » (les colonnes choisies, avec « + » et « Retirer de la grille »), « Tous » (toutes les compétences actives du catalogue et toute compétence notée), ou un métier / groupe technique (Mécatronique, Logiciel embarqué…). Aucune note effacée, rien n'est envoyé au serveur ; le choix est gardé par Space dans ce navigateur ; un lecteur peut aussi filtrer.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.130.json",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/css/diamond_competencies.css",
+        "static/i18n/en_1.json",
+        "static/i18n/en_2.json",
+        "static/i18n/en_3.json",
+        "static/i18n/en_4.json",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/diamond/competencies.js",
+        "static/js/diamond/competency_grid.js",
+        "static/js/diamond/competency_profiles.js",
+        "static/js/diamond/tree.js",
+        "tests/js/competency_filter.js",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}

@@ -20,11 +20,7 @@
       catch (err) { toast(err.message, "error"); }
       state.redraw();
     };
-    state.profile = async (key) => {  // 0.60.119 (D-O-132): a profile of columns
-      try { state.comp = await api.post(D.base(ctx) + "/competencies/profile", { profile: key }); toast("Profil appliqué.", "success"); }
-      catch (err) { toast(err.message, "error"); }
-      state.redraw();
-    };
+    state.filter = () => state.redraw();  // 0.60.130 (D-O-143): a filter of the competencies, kept in this browser
     state.reload = async () => { state.comp = await api.get(D.base(ctx) + "/competencies"); state.redraw(); };
     draw(holder, ctx, state);
   }
@@ -34,7 +30,7 @@
     const comp = state.comp;
     const editable = A.canEdit(ctx);
     holder.append(A.pageHead(ctx, [el("span", null, "Diamond"), el("span", null, "Compétences et équipe")],
-      [editable ? D.profilePicker(comp, state.profile) : null,
+      [D.profilePicker(ctx, comp, state.filter),
         el("a", { class: "btn btn-small", href: A.href(ctx, "ftree") }, "Noter dans l'arbre"),
         el("a", { class: "btn btn-small", href: D.base(ctx) + "/competencies/summary.xlsx", download: "", "data-new": "0.60.116-competencies-xlsx" }, "Excel"),
         el("a", { class: "btn btn-small", href: D.base(ctx) + "/competencies/summary.docx", download: "", "data-new": "0.60.116-competencies-docx" }, "Word")]));
@@ -47,7 +43,7 @@
         "Aucune ligne à noter : dans l'arbre fonctionnel, donnez une brique technologique (CB-n) aux fonctions tertiaires. Chaque ligne "
         + "qui aboutit à une brique reçoit sa grille de compétences.", [["Ouvrir l'arbre fonctionnel", () => { location.hash = A.href(ctx, "ftree"); }, true]]));
     } else {
-      holder.append(cards(comp), summary(comp, state, editable), detail(ctx, comp));
+      holder.append(cards(comp), summary(comp, state, editable, ctx), detail(ctx, comp));
     }
     holder.append(D.competencyCatalog(ctx, comp, state.reload));
   }
@@ -62,12 +58,14 @@
 
   const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("fr-CA");
 
-  function summary(comp, state, editable) {
+  function summary(comp, state, editable, ctx) {
     const total = comp.people_total || 0;
+    const only = D.competencyFilterCodes(comp, D.competencyFilter(ctx));  // 0.60.130 (D-O-143): rows of the filter; totals stay whole
+    const shown = only ? comp.summary.filter((s) => only.includes(s.code)) : comp.summary;
     if (state.team === null) state.team = total;
     const team = el("input", { type: "number", min: 0, max: 999, step: 0.5, value: state.team, class: "dm-cp-num", "aria-label": "Taille d'équipe visée" });
     team.addEventListener("change", () => { state.team = Math.max(0, Number(team.value) || 0); state.redraw(); });
-    const rows = comp.summary.map((s) => {
+    const rows = shown.map((s) => {
       const people = el("input", { type: "number", min: 0, max: 999, step: 0.5, value: s.people, class: "dm-cp-num",
         "aria-label": "Personnes à embaucher ou réunir — " + s.name, disabled: editable ? null : "disabled" });
       const note = el("input", { type: "text", maxlength: 300, value: s.note, placeholder: "Embauche, interne, stage, sous-traitance…",
@@ -101,7 +99,7 @@
   }
 
   function detail(ctx, comp) {
-    const cols = D.competencyColumns(comp);
+    const cols = D.competencyColumns(comp, D.competencyFilter(ctx));
     if (!cols.length) return null;
     const head = ["Fonction", "Brique"].concat(cols.map((c) => el("span", { "data-tip": c.name }, D.compIcon(c.icon), el("span", { class: "dm-sr" }, c.name))));
     const rows = comp.lines.map((ln) => el("tr", null,

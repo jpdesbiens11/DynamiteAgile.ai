@@ -1,5 +1,4 @@
 {
-"En vérification": "Under verification",
 "En-tête Content-Length invalide.": "Invalid Content-Length header.",
 "En-tête oui / non": "Header on / off",
 "En-têtes « ID » et « Task » introuvables dans les 10 premières lignes. Correctif : partez d'un export (bouton « Exporter Excel ») et gardez la première ligne.": "“ID” and “Task” headers not found in the first 10 rows. Fix: start from an export (“Export Excel” button) and keep the first row.",
@@ -343,6 +342,7 @@
 "Fillets, pas de sharp corner ni de notch dans une zone chargée (stress concentration)": "Blend radii, no sharp corner or notch in a loaded area (stress concentration)",
 "Filtering au power input (ferrite, X / Y capacitors) et sur chaque cable qui sort de l'enclosure": "Filtering at the power input (ferrite, X / Y capacitors) and on every cable leaving the enclosure",
 "Filtrage à l'entrée d'alimentation (ferrite, condensateurs X / Y) et sur chaque câble qui sort du boîtier": "Filtering at the power input (ferrite, X / Y capacitors) and on every cable leaving the enclosure",
+"Filtre :": "Filter:",
 "Filtre médian et plausibilité entre capteurs": "Median filter and plausibility between sensors",
 "Filtre médian et plausibilité entre sensors": "Median filter and plausibility between sensors",
 "Filtre « Mes éléments » actif : vos requirements et tout le contenu générique ": "“My items” filter active: your requirements and all generic content ",
@@ -352,6 +352,7 @@
 "Filtrer les ": "Filter the ",
 "Filtrer les comptes": "Filter accounts",
 "Filtrer les comptes…": "Filter accounts…",
+"Filtrer les compétences": "Filter the competencies",
 "Filtrer par AP": "Filter by AP",
 "Filtrer par texte": "Filter by text",
 "Filtrer par type": "Filter by type",
@@ -529,6 +530,7 @@
 "Gravité": "Severity",
 "Grille de compétences du stage": "Internship competency grid",
 "Grille de stage incomplète : ": "Internship grid incomplete: ",
+"Grille du Space": "Space grid",
 "Gris": "Gray",
 "Ground plane continu, current loops courtes, layout rules (placement et routing) écrites": "Continuous ground plane, short current loops, written placement and routing rules",
 "Groupe": "Group",
@@ -1416,6 +1418,5 @@
 "Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results.",
 "Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
 "Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority.",
-"Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
-"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them."
+"Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim."
 }

@@ -97,3 +97,4 @@ p.dm-frozen-note { display: block; }
 .dm-cg-profile { max-width: 22rem; padding: .2rem .4rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm);
   background: var(--surface); color: var(--ink); font: inherit; font-size: .84rem; }
 .dm-cg-profile:hover, .dm-cg-profile:focus-visible { border-color: var(--acc, var(--agile)); }
+.dm-cg-filter { display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap; } /* 0.60.130 (D-O-143) */
