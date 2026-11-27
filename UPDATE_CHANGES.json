@@ -2,8 +2,8 @@
   "changes": [
     {
       "id": "C1",
-      "title": "Diamond : « ↔ IA : feuilles de concept », un seul aller-retour avec l'IA (une branche ou toutes, prompt, contexte .zip, retour .zip importé d'un coup)",
-      "why": "La page « Feuilles de concept » offrait trois outils qui se recoupaient (« Importer un lot (.zip) » avec aperçu à cocher, « IA : une branche », « IA : cette branche ») : trop complexe et flou. Il n'en reste qu'un, « ↔ IA : feuilles de concept » : une branche ou toutes ; le prompt en entier dans un encadré et « Copier le prompt » ; « Télécharger le contexte (.zip) » (contexte.json, croquis et PDF des feuilles déjà dessinées, PROMPT.md) quand il y a des feuilles. Le prompt donne le prochain code libre de chaque brique, demande un seul .zip en retour (reponse.json + images/<code>_….png), des pivots pour une branche de concepts existants, laisse de côté les briques figées. Le .zip de l'IA (ou son reponse.json seul) s'importe d'un coup : sauvegarde du Space, feuilles créées sur le gabarit, codes existants mis à jour, rapport par feuille. Pour 4 ou 5 tours de raffinement et de créativité.",
+      "title": "Diamond : « ▶ Revue » des feuilles de concept — une à la fois au clavier, d'une branche à l'autre ; garder, écarter, supprimer (avec Annuler)",
+      "why": "Après un tour de créativité avec l'IA (45 feuilles), revoir demandait d'ouvrir chaque branche et chaque brique. « ▶ Revue » (en haut de la page et sur chaque branche) montre une feuille à la fois en plein écran, dans l'ordre de l'arbre, d'une branche à l'autre : ← / →, G garder, E écarter (réversible), Suppr supprimer (Annuler pendant 5 s), M modifier, Échap. La revue est partagée par l'équipe (vue par qui, migration diamond 23 additive). Une feuille retenue par une matrice de Pugh n'est ni écartée ni supprimée ; une brique figée est en lecture seule.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
@@ -12,10 +12,11 @@
         "core/modules.py",
         "docs/DECISIONS.md",
         "docs/ETAT_PROJET.md",
-        "docs/releases/0.60.132.json",
+        "docs/releases/0.60.133.json",
         "modules/diamond/__init__.py",
-        "modules/diamond/concept_cards.py",
-        "modules/diamond/concept_round.py",
+        "modules/diamond/concept_review.py",
+        "modules/diamond/concept_sheets.py",
+        "modules/diamond/migrations_b.py",
         "site/en/guide.html",
         "site/en/home.html",
         "site/en/index.html",
@@ -29,18 +30,26 @@
         "site/modules.html",
         "site/versions.html",
         "static/apps/vitrine/index.html",
+        "static/css/diamond_concepts.css",
         "static/i18n/en_1.json",
         "static/i18n/en_2.json",
         "static/i18n/en_3.json",
         "static/i18n/en_4.json",
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
-        "static/js/diamond/concept_round.js",
+        "static/js/diamond/concept_review.js",
         "static/js/diamond/concept_sheet_fold.js",
-        "static/js/diamond/concept_sheet_tools.js",
         "static/js/diamond/concept_sheets.js",
-        "tests/test_diamond_concept_round.py",
+        "tests/test_diamond_concept_review.py",
         "tests/test_open_v060.py"
+      ]
+    },
+    {
+      "id": "C2",
+      "title": "Diamond : un seul bouton IA sur « Feuilles de concept »",
+      "why": "« ↔ IA : feuilles de concept » et le « ↔ IA » général de Diamond se répétaient sur la même page : seul le premier reste sur « Feuilles de concept » ; le « ↔ IA » général reste sur les autres pages de Diamond.",
+      "files": [
+        "static/js/diamond/rt.js"
       ]
     }
   ]

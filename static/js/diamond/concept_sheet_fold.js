@@ -71,11 +71,15 @@
         el("div", { class: "dm-sheets" }, sheets.map((s) => card(s))), save));
       holder.append(fold(bid, isOpen(bid),
         [el("strong", null, g.branch ? "F" + g.branch.number + " " + g.branch.text : "Briques sans fonction de l'arbre"),
-          el("span", { class: "muted" }, " · " + g.bricks.length + " brique(s) · " + count + " feuille(s)")],
+          el("span", { class: "muted" }, " · " + g.bricks.length + " brique(s) · " + count + " feuille(s)"),
+          g.branch ? el("button", { type: "button", class: "btn btn-small dm-fold-review", "data-new": "0.60.133-review-branch",
+            "data-tip": "Revoir les feuilles de cette branche, une à la fois",
+            onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); D.openReview(ctx, reload, { scope: "f" + g.branch.id }); } }, "▶ Revue") : null],
         el("div", { class: "dm-fold-body" }, bricks), save));
     });
     return holder;
   }
 
   D.sheetsByBranch = view;
+  D.sheetBranches = branches;  // 0.60.133 (D-O-146): the order of the tree, for « Revue »
 })();

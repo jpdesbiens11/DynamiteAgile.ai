@@ -25,8 +25,10 @@ def code(concept_number, number):
 
 def rows(conn, pid, concept_id=None):
     sql = ("SELECT s.*, c.number AS concept_number, c.name AS concept_name, u.display_name AS author_name, "
-           "a.mime AS file_mime, a.original_name AS file_name FROM diamond_concept_sheets s "
+           "a.mime AS file_mime, a.original_name AS file_name, r.display_name AS reviewer_name FROM diamond_concept_sheets s "
            "JOIN diamond_concepts c ON c.id = s.concept_id LEFT JOIN users u ON u.id = s.author_id "
+           "LEFT JOIN users r ON r.id = s.reviewed_by "  # 0.60.133 (D-O-146): who saw the sheet in « Revue »
+
            "LEFT JOIN attachments a ON a.id = s.attachment_id WHERE s.project_id = ? AND s.archived = 0 AND c.archived = 0")
     args = [pid]
     if concept_id is not None:

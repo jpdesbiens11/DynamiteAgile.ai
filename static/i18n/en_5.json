@@ -1,6 +1,4 @@
 {
-"Questions fréquentes": "FAQ",
-"Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
 "Questions fréquentes sur ": "Frequently asked questions about ",
 "Questions ouvertes (?)": "Open questions (?)",
 "Qui a fait Dynamite | Agile, et comment": "Who made Dynamite | Agile, and how",
@@ -338,8 +336,10 @@
 "Revision cible": "Target Revision",
 "Revision cible : ": "Target Revision: ",
 "Revoir": "Review",
+"Revoir les feuilles de cette branche, une à la fois": "Review the sheets of this branch, one at a time",
 "Revoir les passe-câbles après le premier essai": "Review the cable glands after the first test",
 "Revoir les requirements de Goldmine avec leurs auteurs avant la PDR.": "Review the Goldmine requirements with their authors before the PDR.",
+"Revoir une feuille de concept": "Review a concept sheet",
 "Revoir…": "Review…",
 "Revu : tout est à jour": "Reviewed: everything is up to date",
 "Revue": "Review",
@@ -353,6 +353,7 @@
 "Revue de l'arbre : chaque fonction tertiaire est-elle nécessaire ? Archivez, le numéro reste.": "Tree review: is each tertiary function necessary? Archive it, the number stays.",
 "Revue de mi-année": "Mid-year review",
 "Revue de sécurité à la CDR": "Safety review at the CDR",
+"Revue des feuilles de concept": "Review of the concept sheets",
 "Revue du PDP.": "PDP review.",
 "Revue du certificat": "Certificate review",
 "Revue du certificat du fabricant": "Review of the manufacturer's certificate",
@@ -627,6 +628,7 @@
 "Saisir la semaine": "Enter the week",
 "Saisir ses heures": "Log your hours",
 "Sans AP": "No AP",
+"Sans branche": "No branch",
 "Sans capture.": "No screenshot.",
 "Sans certificat client valide de votre autorité, la connexion est refusée avant même la page de connexion.": "Without a valid client certificate from your authority, the connection is refused even before the login page.",
 "Sans chiffrement, le mot de passe du compte SMTP passerait en clair : choisissez STARTTLS ou SSL.": "Without encryption, the SMTP account password would travel in clear text: choose STARTTLS or SSL.",
@@ -1252,6 +1254,7 @@
 "Tout déplier": "Unfold all",
 "Tout est marqué vu pour ": "Everything is marked seen for ",
 "Tout est rangé": "Everything is filed",
+"Tout est revu dans cette portée.": "Everything is reviewed in this scope.",
 "Tout est traduit.": "Everything is translated.",
 "Tout exporter (": "Export all (",
 "Tout fermer": "Close all",
@@ -1423,5 +1426,6 @@
 "Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST.",
 "Un exemple concret…": "A concrete example…",
 "Un extrait des heures des Budget Lines cochées ci-dessus, au gabarit Word de l'outil (le même que Goldmine et Testing) : destinataire et périmètre, sommaire par Budget Line, heures par employé, détail des justifications, attestation, Definitions et Acronyms. Le destinataire personnalise la page de titre et le texte.": "An extract of the hours of the Budget Lines ticked above, in the tool's Word template (the same as Goldmine and Testing): recipient and scope, summary by Budget Line, hours per employee, detail of the justifications, attestation, Definitions and Acronyms. The recipient personalises the title page and the text.",
-"Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)"
+"Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)",
+"Un fichier .md léger : confidentialité, comptes et droits, Timesheet, préférences des comptes ": "A light .md file: privacy, accounts and rights, Timesheet, account preferences "
 }
