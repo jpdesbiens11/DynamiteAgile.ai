@@ -1,4 +1,6 @@
 {
+"Un label porte déjà ce nom.": "A label already has this name.",
+"Un logiciel de comptabilité très simple a conquis les petites entreprises, qui trouvaient les logiciels existants trop complets et trop compliqués : il a dépassé les leaders sur ce marché.": "Very simple accounting software won small businesses, which found existing packages too complete and too complicated: it overtook the leaders in that market.",
 "Un marché qui n'existe pas ne s'analyse pas": "A market that does not exist cannot be analyzed",
 "Un membre de l'équipe, en rotation": "A team member, in rotation",
 "Un morceau de travail réalisable dans un Sprint ; Story = valeur pour l'utilisateur, Task = travail technique.": "A piece of work achievable within a Sprint; Story = value for the user, Task = technical work.",
@@ -1359,6 +1361,7 @@
 "← Sommaire": "← Summary",
 "← Toutes les caractéristiques": "← All characteristics",
 "← → · G garder · E écarter · Suppr supprimer · M modifier · Ctrl+Z annuler · Échap": "← → · G keep · E drop · Del delete · M edit · Ctrl+Z undo · Esc",
+"← → · G garder · E écarter · Suppr supprimer · M modifier · R raffiner avec l'IA · Ctrl+Z annuler · Échap": "← → · G keep · E drop · Del delete · M edit · R refine with AI · Ctrl+Z undo · Esc",
 "← → · G garder · E écarter · Suppr supprimer · M modifier · Échap": "← → · G keep · E drop · Del delete · M edit · Esc",
 "↑ Plus tôt": "↑ Earlier",
 "↑ ↓ pour choisir · Entrée pour ouvrir · Échap pour fermer": "↑ ↓ to choose · Enter to open · Esc to close",

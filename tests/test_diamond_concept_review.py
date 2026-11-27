@@ -95,6 +95,20 @@ class ConceptReviewTest(unittest.TestCase):
         finally:
             self.admin.post(self.base + "/concepts/{}/unfreeze".format(self.brick["id"]), {"reason": "fin"})
 
+    def test_03_compact_card_details_on_double_click(self):
+        """0.60.136 (D-O-149): the card shows code and badges, title, the sheet as a thumbnail, principle and every button; the
+        description, + / − / ? and author are one double-click (or Entrée, or « Détails ») away: « ▶ Revue » on this sheet, its brick."""
+        js = (BASE_DIR / "static/js/diamond/concept_sheets.js").read_text("utf-8")
+        card = js[js.index("  function card("):js.index("  function sheetSection(")]
+        for text in ('"0.60.136-sheet-compact"', '"dblclick"', 'ev.key === "Enter"', '{ scope: "c" + s.concept_id, id: s.id, filter: "all" }',
+                     "{ thumb: true }", '"Détails"', '"Modifier"', "Raffiner avec l'IA", '"Archiver"', '"Supprimer"', "s.principle"):
+            self.assertIn(text, card)
+        for hidden in ("s.description", "s.pros", "s.cons", "s.questions", "author_name"):
+            self.assertNotIn(hidden, card)
+        review = (BASE_DIR / "static/js/diamond/concept_review.js").read_text("utf-8")
+        self.assertIn("(start && start.filter)", review)
+        self.assertIn("R raffiner avec l'IA", review)
+
 
 if __name__ == "__main__":
     unittest.main()

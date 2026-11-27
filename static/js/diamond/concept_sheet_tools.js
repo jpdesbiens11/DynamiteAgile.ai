@@ -31,13 +31,14 @@
     } catch (err) { toast(err.message, "error"); }
   }
 
-  /* The picture of a sheet in its card: the deposited picture, else the sheet drawn on the template; and its files */
-  function visual(ctx, s) {
+  /* The picture of a sheet in its card: the deposited picture, else the sheet drawn on the template; and its files.
+     opts.thumb (0.60.136, D-O-149): a thumbnail, not a link -- a double-click on the card shows the sheet in detail. */
+  function visual(ctx, s, opts) {
     const picture = s.attachment_id && String(s.file_mime || "").startsWith("image/");
-    const src = picture ? fileUrl(ctx, s) : sheetUrl(ctx, s, "svg");
-    const thumb = s.attachment_id && !picture ? null
-      : el("a", { href: src, target: "_blank", rel: "noopener", class: "dm-sheet-visual" },
-        el("img", { class: "dm-sheet-scan", src, alt: "Feuille " + s.code, loading: "lazy" }));
+    const src = picture ? fileUrl(ctx, s) : sheetUrl(ctx, s, "svg") + "?v=" + encodeURIComponent(s.updated_at || "");
+    const img = el("img", { class: "dm-sheet-scan", src, alt: "Feuille " + s.code, loading: "lazy" });
+    const thumb = s.attachment_id && !picture ? null : opts && opts.thumb ? el("div", { class: "dm-sheet-visual dm-sheet-thumb" }, img)
+      : el("a", { href: src, target: "_blank", rel: "noopener", class: "dm-sheet-visual" }, img);
     const links = el("div", { class: "dm-actions dm-sheet-files", "data-new": "0.60.125-sheet-files" },
       s.attachment_id && !picture ? el("a", { class: "btn btn-small", href: fileUrl(ctx, s), target: "_blank", rel: "noopener" }, "Ouvrir le scan (PDF)") : null,
       s.pdf_id ? el("a", { class: "btn btn-small", href: fileUrl(ctx, s, "pdf"), target: "_blank", rel: "noopener" }, picture ? "PDF joint" : "PDF") : null,

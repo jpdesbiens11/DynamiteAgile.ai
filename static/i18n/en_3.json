@@ -1,4 +1,5 @@
 {
+"En entreprise aujourd'hui": "In a company today",
 "En faire la fonction primaire": "Make it the primary function",
 "En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
 "En retard": "Overdue",
@@ -980,6 +981,7 @@
 "La fenêtre affiche l'adresse à donner au collègue (ex. https://192.168.1.23:8443) et le fichier": "The window shows the address to give to the colleague (e.g. https://192.168.1.23:8443) and the file",
 "La feuille au gabarit, A4 paysage": "The sheet on the template, A4 landscape",
 "La feuille au gabarit, en image": "The sheet on the template, as a picture",
+"La feuille en détail : description, + / − / ?, auteur (double-clic sur la carte)": "The sheet in detail: description, + / − / ?, author (double-click the card)",
 "La feuille « Synthèse » compte les questions par status pendant que vous travaillez.": "The “Summary” sheet counts the questions by status as you work.",
 "La fonction primaire et les fonctions de service vues par le client ; les premiers risques projet.": "The primary function and the service functions as seen by the customer; the first project risks.",
 "La fonction primaire n'a aucune fonction secondaire : demandez-vous « comment ? » elle est réalisée.": "The primary function has no secondary function: ask yourself “how?” it is achieved.",
@@ -1432,7 +1434,5 @@
 "Les substances interdites dans l'électronique, une exigence de fait pour l'export.": "The substances banned in electronics, a de facto requirement for export.",
 "Les tables des codes de temps n'existent pas encore. Correctif : redémarrez l'outil, puis relancez « Commencer ».": "The time code tables do not exist yet. Fix: restart the tool, then run “Start” again.",
 "Les termes techniques (en anglais) et leur équivalent français ; le vocabulaire de l'analyse fonctionnelle.": "The technical terms (in English) and their French equivalent; the vocabulary of functional analysis.",
-"Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results.",
-"Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
-"Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority."
+"Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results."
 }
