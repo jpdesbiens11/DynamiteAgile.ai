@@ -31,7 +31,8 @@
     const mine = all.filter((s) => s.pages.includes(view));
     const boxes = all.map((s) => {
       const box = el("input", { type: "checkbox", value: s.key, checked: mine.length ? mine.includes(s) : true });
-      return [s, box, el("label", { class: "dm-rt-sec" }, box, el("span", null, s.label), el("span", { class: "muted" }, " · " + s.count))];
+      return [s, box, el("label", { class: "dm-rt-sec", title: s.writes || null }, box, el("span", null, s.label), el("span", { class: "muted" }, " · " + s.count),
+        s.read_only ? el("span", { class: "muted", "data-new": "0.60.135-rt-read-only" }, " · lecture seule") : null)];  // 0.60.135 (D-O-148)
     });
     const setAll = (on) => boxes.forEach(([, b]) => { b.checked = on; });
     const page = () => boxes.forEach(([s, b]) => { b.checked = mine.includes(s); });
@@ -94,9 +95,10 @@
     if (box) boxes.push([e, box]);
     return el("tr", { class: "dm-ai-" + e.kind }, el("td", null, box), el("td", { class: "dm-code nowrap" }, e.code || "—"),
       el("td", null, el("span", { class: "dm-ai-kind" }, e.kind_label)), el("td", null, e.label),
-      el("td", null, e.reason ? el("span", { class: e.kind === "refused" ? "dm-ch-miss" : "muted" }, e.reason)
-        : el("ul", { class: "dm-ai-changes" }, e.changes.map(([f, a, b]) => el("li", null, el("strong", null, f), " : ",
-          a ? el("del", null, a) : null, a ? " → " : null, b || "—")))));
+      el("td", null, e.note ? el("div", { class: "dm-ai-note", "data-new": "0.60.135-rt-dup" }, "⚠ " + e.note) : null,
+        e.reason ? el("span", { class: e.kind === "refused" ? "dm-ch-miss" : "muted" }, e.reason)
+          : el("ul", { class: "dm-ai-changes" }, e.changes.map(([f, a, b]) => el("li", null, el("strong", null, f), " : ",
+            a ? el("del", null, a) : null, a ? " → " : null, b || "—")))));
   }
 
   function preview(res, boxes) {
@@ -105,7 +107,7 @@
     res.entries.forEach((e) => { (bySection[e.section] = bySection[e.section] || []).push(e); });
     const blocks = Object.keys(bySection).map((key) => {
       const list = bySection[key];
-      const moving = list.filter((e) => e.kind !== "same");
+      const moving = list.filter((e) => e.kind !== "same" || e.note);  // 0.60.135: a code found again is shown
       const n = (k) => list.filter((e) => e.kind === k).length;
       const head = el("summary", null, el("strong", null, res.labels[key] || key), " — ",
         [n("new") + " nouveau(x)", n("update") + " modifié(s)", n("remove") + " retiré(s)", n("refused") + " refusé(s)", n("same") + " identique(s)"].join(" · "));
@@ -153,7 +155,8 @@
       if (out && !window.confirm(n + " changement(s) dont " + out + " retrait(s) seront appliqués. Une sauvegarde du Space est prise avant. Continuer ?")) return;
       apply.disabled = true;
       try {
-        const confirm = boxes.filter(([e, b]) => b.checked && e.kind === "remove" && !e.default).map(([e]) => e.id);  // ticked by hand
+        // ticked by hand: a removal of a truncated section, a probable duplicate (0.60.135, D-O-148)
+        const confirm = boxes.filter(([e, b]) => b.checked && !e.default).map(([e]) => e.id);
         const res = await api.post(D.base(ctx) + "/rt/import", { file: text.value, mode: "apply", skip: skip(), confirm });
         const a = res.applied;
         toast(a.new + " ajout(s), " + a.update + " modification(s), " + a.remove + " retrait(s). Sauvegarde : " + res.backup, "success");
@@ -192,6 +195,7 @@
   /** The button of every Diamond page head (SHELL.headTools). */
   D.rtButton = function (ctx) {
     if (ctx.view === "csheets") return null;  // 0.60.133 (D-O-146): « ↔ IA : feuilles de concept » is the one AI button of that page
+    if (ctx.view === "concepts" && ctx.arg) return null;  // 0.60.135 (D-O-148): and of the page of a brick
     return el("button", { type: "button", class: "btn btn-small dm-rt-btn", "data-new": "0.60.111-rt", title: "Aller-retour avec un assistant IA : "
       + "exporter cette page ou tout Diamond, importer la réponse, tout reste synchronisé", onclick: () => open(ctx) }, "↔ IA");
   };

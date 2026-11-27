@@ -168,11 +168,11 @@ class ConceptCardsTest(unittest.TestCase):
         fns = self.admin.get(self.base + "/concepts")["functions"]
         busy = {fid for c in self.admin.get(self.base + "/concepts")["concepts"] for fid in c["function_ids"]}
         second = next(f for f in fns if f["level"] == 2 and any(g["parent_id"] == f["id"] and g["id"] in busy for g in fns))
-        res = self.admin.get(self.base + "/concepts/branch-prompt?fid={}".format(second["id"]))
+        res = self.admin.get(self.base + "/concepts/round?scope=f{}".format(second["id"]))  # 0.60.135: the round of the branch
         self.assertIn("F{}".format(second["number"]), res["prompt"])
         self.assertIn('"badge"', res["prompt"])
         self.assertGreater(res["bricks"], 0)
-        self.fails(400, self.admin.get, self.base + "/concepts/branch-prompt?fid=0")
+        self.fails(400, self.admin.get, self.base + "/concepts/round?scope=f0")
 
     def test_06_delete_a_sheet(self):
         """0.60.128 (D-O-141): delete for good; refused for a sheet in a Pugh matrix; its number is not given again."""

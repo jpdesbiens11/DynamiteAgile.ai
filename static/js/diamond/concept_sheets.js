@@ -5,7 +5,8 @@
    on that template (PNG, PDF: concept_sheet_tools.js); « Feuilles de concept » creates sheets itself -- by hand for a chosen brick,
    by batch from a .zip of cards with their pictures and PDF, or with an AI, one branch of the tree at a time.
    0.60.132 (D-O-145): the AI tools of the page are one button, « ↔ IA : feuilles de concept » (concept_round.js): the prompt and
-   the context .zip out, the .zip of the AI back in at once; « Importer un lot (.zip) » and « IA : une branche » are gone. */
+   the context .zip out, the .zip of the AI back in at once; « Importer un lot (.zip) » and « IA : une branche » are gone.
+   0.60.135 (D-O-148): « Raffiner avec l'IA » on each card: the same round on that one sheet. */
 (function () {
   "use strict";
 
@@ -27,6 +28,7 @@
       el("p", { class: "muted dm-sheet-by" }, (s.author_name || "") + " · " + DA.formatDate(s.updated_at || s.created_at)),
       editable ? el("div", { class: "dm-actions" },
         el("button", { type: "button", class: "btn btn-small", onclick: () => openSheet(ctx, s.concept_id, s, done) }, "Modifier"),
+        D.roundButton(ctx, "s" + s.id, done, "Raffiner avec l'IA"),  // 0.60.135 (D-O-148): one sheet, text and sketch, its code kept
         el("button", { type: "button", class: "btn btn-small btn-danger", onclick: async () => {
           if (!window.confirm("Archiver la feuille " + s.code + " « " + s.title + " » ?")) return;
           try { await api.post(D.base(ctx) + "/sheets/" + s.id + "/archive", {}); done(); } catch (err) { toast(err.message, "error"); }

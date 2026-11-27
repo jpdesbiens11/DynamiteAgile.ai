@@ -140,7 +140,10 @@ class StoryPictosAiTest(unittest.TestCase):
         self.assertLess(story_js.index('"Export .docx"'), story_js.index('class: "page-head dm-intro"'))
         self.assertNotIn("dm-story-headline", story_js)
         self.assertNotIn("conceptAiButtons", (js / "concepts.js").read_text("utf-8"))
-        self.assertIn("sheetAiButtons", (js / "concept_page.js").read_text("utf-8"))  # one brick's sheets: kept
+        # 0.60.135 (D-O-148): one brick's sheets go through « ↔ IA : feuilles de concept » on that brick (a .zip, text and sketch)
+        self.assertNotIn("sheetAiButtons", (js / "concept_page.js").read_text("utf-8"))
+        self.assertIn('D.roundButton(ctx, "c" + c.id', (js / "concept_page.js").read_text("utf-8"))
+        self.assertFalse((js / "concept_ai.js").exists())
         self.assertIn("prompt: false", (js / "dfmea.js").read_text("utf-8"))
         self.assertIn("prompt: false", (js / "cplans.js").read_text("utf-8"))
         self.assertIn('modes: ["generate"]', (js / "pfmea.js").read_text("utf-8"))

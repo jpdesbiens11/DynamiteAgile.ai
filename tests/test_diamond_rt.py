@@ -116,6 +116,31 @@ class RoundTripTest(unittest.TestCase):
         log = self.admin.get("/api/admin/audit?action=diamond_rt_import")
         self.assertTrue(any(r.get("action") == "diamond_rt_import" for r in (log.get("entries") or log.get("rows") or [])))
 
+    def test_03b_codes_lost_by_the_ai_are_found_again(self):
+        """0.60.135 (D-O-148): the AI gives the functions back without their codes (one as « +F9 », pointed to by a part): no
+        removal, no creation -- each takes its code back, and the part points to the function it named."""
+        doc = self.export("functions,parts")
+        leaf = next(f for f in doc["functions"] if f["level"] == 3)
+        lost = [f for f in doc["functions"] if f["code"] != leaf["code"]][:3]
+        for f in lost:
+            f.pop("code")
+        leaf_code = leaf.pop("code")
+        leaf["code"], leaf["notes"] = "+F9", "Rendue avec un code temporaire"
+        doc["parts"].append({"name": "Capteur témoin", "kind": "bought", "functions": ["+F9"]})
+        res = self.preview(doc)
+        moving = [e for e in res["entries"] if e["kind"] not in ("same",)]
+        self.assertEqual(res["counts"]["remove"], 0, moving)
+        self.assertEqual(res["counts"]["new"], 1, moving)  # the part only
+        found = [e for e in res["entries"] if e["section"] == "functions" and e["note"].startswith("Code retrouvé")]
+        self.assertEqual(len(found), 4, found)
+        self.assertIn("« +F9 »", next(e for e in found if e["code"] == leaf_code)["note"])
+        done = self.admin.post(self.base + "/import", {"file": answer(doc), "mode": "apply"})
+        self.assertEqual(done["applied"], {"new": 1, "update": 1, "remove": 0})
+        after = self.export("functions,parts")
+        self.assertEqual(len(after["functions"]), len(doc["functions"]))
+        part = next(p for p in after["parts"] if p["name"] == "Capteur témoin")
+        self.assertEqual(part["functions"], [leaf_code])
+
     def test_04_truncated_answer_unticks_its_removals_and_skip_is_honoured(self):
         doc = self.export("flows")
         doc["flows"] = doc["flows"][:3]
@@ -165,7 +190,7 @@ class RoundTripTest(unittest.TestCase):
         self.assertIn("CONTEXTE", self.admin.get(self.base + "/prompt?sections=parts")["prompt"])  # parts point to functions
 
     def test_08_answer_reading(self):
-        from modules.diamond.rt import read_doc
+        from modules.diamond.rt_api import read_doc
         from core.errors import ApiError
         self.assertEqual(read_doc('blabla ```json\n{"functions": []}\n``` fin'), {"functions": []})
         self.assertEqual(read_doc('{"diamond": {"story": []}}'), {"story": []})

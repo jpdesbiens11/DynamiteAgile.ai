@@ -64,13 +64,16 @@ def build(rt, keys, mode, goal="", board=None):
     ]
     for key in keys:
         sec = rt.sections[key]
-        parts.append("« {} » ({} élément(s)). {}\n  Champs :\n{}".format(key, len(doc[key]), sec.guide, _fields(sec)))
+        parts.append("« {} » ({} élément(s)){}. {}\n  Champs :\n{}".format(
+            key, len(doc[key]), " [LECTURE SEULE ici : ne rendez pas cette section. {}]".format(sec.writes) if sec.writes else "",
+            sec.guide, _fields(sec)))
     parts += [
         "RÈGLES DU DOCUMENT RENDU",
         "1. Un seul bloc ```json contenant un objet {\"section\": [éléments]}, avec chaque section que vous rendez COMPLÈTE : "
         "un élément existant absent d'une section rendue est retiré du Space. Ne rendez pas une section que vous ne voulez pas toucher.",
         "2. Gardez le « code » de chaque élément existant, tel quel. Un nouvel élément n'a pas de code, ou un code temporaire qui "
-        "commence par « + » (\"+F1\", \"+CB1\") si d'autres éléments doivent le pointer.",
+        "commence par « + » (\"+F1\", \"+CB1\") si d'autres éléments doivent le pointer. Ne recréez jamais un élément existant "
+        "sans son code : la plateforme le reconnaît (même texte, même nom…) et lui rend son code ; un doublon arrive décoché.",
         "3. Les liens s'écrivent avec les codes (\"parent\": \"F2\", \"functions\": [\"F3\", \"+F1\"]). Un lien vers un code qui "
         "n'existe ni dans le Space ni dans votre réponse est refusé.",
         "4. Un champ omis garde sa valeur ; une valeur vide l'efface. Les champs [lecture seule] sont ignorés.",

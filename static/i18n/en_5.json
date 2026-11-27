@@ -1,10 +1,4 @@
 {
-"Questions ouvertes (?)": "Open questions (?)",
-"Qui a fait Dynamite | Agile, et comment": "Who made Dynamite | Agile, and how",
-"Qui contacter ?": "Who to contact?",
-"Qui dans l'équipe": "Who in the team",
-"Qui et combien de temps": "Who and for how long",
-"Qui fait quoi, maintenant ?": "Who does what, now?",
 "Qui mesure quoi, comment, et que faire si ça sort. Un plan pour les pièces à la réception et un par configuration de ligne ; il passe de Prototype à Pré-lancement puis à Production sans être recopié.": "Who measures what, how, and what to do if it goes out. One plan for the parts at reception and one per line configuration; it moves from Prototype to Pre-launch then to Production without being copied.",
 "Qui porte quoi": "Who carries what",
 "Qui voit Procédés, PFMEA et Plans de contrôle dans ce Space : l'Admin du Space et les administrateurs toujours, plus les membres cochés.": "Who sees Process, PFMEA and Control plans in this Space: the Space Admin and the administrators always, plus the members ticked.",
@@ -28,6 +22,9 @@
 "Racontez l'utilisation du produit, scène par scène : qui, où, avec quoi, ce qui se passe et ce ": "Tell how the product is used, scene by scene: who, where, with what, what happens and what ",
 "Racontez l'utilisation du produit, scène par scène : qui, où, avec quoi, ce qui se passe et ce qu'on ressent. On diverge en équipe, sans bonne ni mauvaise réponse, avant l'arbre fonctionnel. Un assistant IA s'en servira ensuite pour proposer l'arbre et le reste de Diamond.": "Tell the story of using the product, scene by scene: who, where, with what, what happens and how it feels. Diverge as a team, with no right or wrong answer, before the functional tree. An AI assistant will then use it to propose the tree and the rest of Diamond.",
 "Radio module pre-certified ISED / FCC avec l'antenna et le placement de son integration guide": "ISED / FCC pre-certified radio module with the antenna and the placement from its integration sheet",
+"Raffiner ": "Refine ",
+"Raffiner avec l'IA": "Refine with AI",
+"Raffiner cette feuille avec l'IA : son texte et son croquis, son code gardé": "Refine this sheet with AI: its text and its sketch, its code kept",
 "Rafraîchissement de la telemetry": "Telemetry refresh",
 "Rafraîchissement de la télémétrie": "Telemetry refresh",
 "Raison": "Reason",
@@ -1429,5 +1426,13 @@
 "Un extrait des heures des Budget Lines cochées ci-dessus, au gabarit Word de l'outil (le même que Goldmine et Testing) : destinataire et périmètre, sommaire par Budget Line, heures par employé, détail des justifications, attestation, Definitions et Acronyms. Le destinataire personnalise la page de titre et le texte.": "An extract of the hours of the Budget Lines ticked above, in the tool's Word template (the same as Goldmine and Testing): recipient and scope, summary by Budget Line, hours per employee, detail of the justifications, attestation, Definitions and Acronyms. The recipient personalises the title page and the text.",
 "Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)",
 "Un fichier .md léger : confidentialité, comptes et droits, Timesheet, préférences des comptes ": "A light .md file: privacy, accounts and rights, Timesheet, account preferences ",
-"Un fichier arrive dans vos Téléchargements, par exemple « Dynamite_Agile_v0.41.0_code_pour_Claude.zip ». Il ne contient aucune donnée des employés : seulement le programme, la lettre de départ (UPDATE_PROMPT.md) et la description de la base.": "A file arrives in your Downloads, for example “Dynamite_Agile_v0.41.0_code_pour_Claude.zip”. It contains no employee data: only the program, the starting letter (UPDATE_PROMPT.md) and the description of the database."
+"Un fichier arrive dans vos Téléchargements, par exemple « Dynamite_Agile_v0.41.0_code_pour_Claude.zip ». Il ne contient aucune donnée des employés : seulement le programme, la lettre de départ (UPDATE_PROMPT.md) et la description de la base.": "A file arrives in your Downloads, for example “Dynamite_Agile_v0.41.0_code_pour_Claude.zip”. It contains no employee data: only the program, the starting letter (UPDATE_PROMPT.md) and the description of the database.",
+"Un flux qui va d'une entrée directement à une sortie ne traverse aucune fonction. Correctif : faites-le passer par la fonction qui le traite.": "A flow that goes from an input straight to an output passes through no function. Fix: route it through the function that processes it.",
+"Un flux relie deux éléments différents. Correctif : choisissez une autre cible.": "A flow connects two different elements. Fix: choose another target.",
+"Un fournisseur doit répondre ? Ticket à votre nom intitulé « Waiting For — réponse Supplier X », échéance = relance.": "A supplier must reply? A ticket in your name titled “Waiting For — Supplier X reply”, due date = follow-up.",
+"Un gabarit éprouvé : chaque exigence a sa raison, sa source et son critère d'acceptation.": "A proven template: each requirement has its rationale, its source and its acceptance criterion.",
+"Un gros sujet (ex. « Sous-système de chauffage »), découpé en Stories et Tasks.": "A big topic (e.g. “Heating subsystem”), split into Stories and Tasks.",
+"Un inconvénient par ligne": "One drawback per line",
+"Un label porte déjà ce nom.": "A label already has this name.",
+"Un logiciel de comptabilité très simple a conquis les petites entreprises, qui trouvaient les logiciels existants trop complets et trop compliqués : il a dépassé les leaders sur ce marché.": "Very simple accounting software won small businesses, which found existing packages too complete and too complicated: it overtook the leaders in that market."
 }

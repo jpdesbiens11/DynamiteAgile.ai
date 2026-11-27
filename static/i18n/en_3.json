@@ -1,4 +1,5 @@
 {
+"En faire la fonction primaire": "Make it the primary function",
 "En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
 "En retard": "Overdue",
 "En service : ": "In service: ",
@@ -270,6 +271,7 @@
 "Feuille": "Sheet",
 "Feuille ": "Sheet ",
 "Feuille approuvée.": "Sheet approved.",
+"Feuille de concept inconnue dans ce Space (archivée ou supprimée ?). Correctif : rechargez la page.": "Unknown concept sheet in this Space (archived or deleted?). Fix: reload the page.",
 "Feuille de concept introuvable dans ce Space. Correctif : rechargez la page.": "Concept sheet not found in this Space. Fix: reload the page.",
 "Feuille de temps": "Timesheet",
 "Feuille de temps de ": "Timesheet of ",
@@ -1219,6 +1221,7 @@
 "Le prompt de départ (à copier)": "The starter prompt (to copy)",
 "Le prompt des briques de cette branche": "The prompt of this branch's bricks",
 "Le prompt donne les pièces Diamond (fonctions, notes) et la nomenclature, avec une règle stricte : ne jamais inventer un PN, répondre « aucun » si rien ne convient, une raison par proposition. La réponse revient en aperçu : les propositions sûres sont cochées, les autres se choisissent à la main ; un PN absent de la nomenclature est refusé.": "The prompt gives the Diamond parts (functions, notes) and the bill of materials, with a strict rule: never invent a PN, answer “aucun” if nothing fits, one reason per proposal. The answer comes back as a preview: the sure proposals are ticked, the others are chosen by hand; a PN missing from the bill of materials is refused.",
+"Le prompt et le contexte pour votre assistant IA, puis le .zip qu'il rend (texte et croquis de chaque feuille)": "The prompt and the context for your AI assistant, then the .zip it returns (text and sketch of each sheet)",
 "Le prompt qui demande des feuilles de concept pour cette brique : ses fonctions, les besoins et requirements": "The prompt that asks for concept sheets for this building block: its functions, the needs and requirements",
 "Le prompt qui demande à un assistant IA l'arbre et le reste de Diamond, à partir des scènes": "The prompt that asks an AI assistant for the tree and the rest of Diamond, from the scenes",
 "Le prompt qui demande à un assistant IA les briques de chaque fonction, à partir de l'arbre": "The prompt that asks an AI assistant for the building block of each function, from the tree",
@@ -1362,6 +1365,7 @@
 "Les essais du Space : sujet, catégorie, norme et article, méthode (T, A, I, D), objectif.": "The Space's tests: subject, category, standard and clause, method (T, A, I, D), objective.",
 "Les excavatrices hydrauliques ont d'abord été vendues à des entrepreneurs résidentiels, hors du réseau des grands chantiers où régnaient les pelles à câbles.": "Hydraulic excavators were first sold to residential contractors, outside the network of large sites where cable shovels ruled.",
 "Les fabricants de grands disques se sont repliés vers les gros ordinateurs, plus rentables, plutôt que de suivre les petits formats.": "The makers of large disks retreated towards the bigger, more profitable computers instead of following the small formats.",
+"Les feuilles de concept (CB-n.m) : les solutions candidates d'une brique, avant la Pugh Matrix (selected : retenue par une Pugh Matrix décidée ; dropped : écartée). Lisez-les pour les briques, les matrices de Pugh et le reste de Diamond.": "The concept sheets (CB-n.m): the candidate solutions of a building block, before the Pugh Matrix (selected: retained by a decided Pugh Matrix; dropped: set aside). Read them for the building blocks, the Pugh matrices and the rest of Diamond.",
 "Les feuilles de temps de l'équipe du Rover": "The Rover team's timesheets",
 "Les fichiers joints (images, PDF) ne sont pas dans les points : ils restent sur le serveur. Ceux d'un Space supprimé sont dans sa sauvegarde « avant suppression » (volet Données → Sauvegardes des Spaces).": "Attached files (images, PDFs) are not in the points: they stay on the server. Those of a deleted Space are in its “before deletion” backup (Data pane → Space backups).",
 "Les flèches suivent les blocs qu'on déplace": "Arrows follow the blocks as you move them",
@@ -1429,5 +1433,6 @@
 "Les tables des codes de temps n'existent pas encore. Correctif : redémarrez l'outil, puis relancez « Commencer ».": "The time code tables do not exist yet. Fix: restart the tool, then run “Start” again.",
 "Les termes techniques (en anglais) et leur équivalent français ; le vocabulaire de l'analyse fonctionnelle.": "The technical terms (in English) and their French equivalent; the vocabulary of functional analysis.",
 "Les tests de Training sont corrigés par le serveur ; l'instructeur suit les résultats.": "Training tests are graded by the server; the instructor follows the results.",
-"Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less."
+"Les tickets d'étape (hors Admin) sont faits par le nouveau membre en 5 jours ou moins.": "The step tickets (outside Admin) are done by the new member in 5 days or less.",
+"Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority."
 }

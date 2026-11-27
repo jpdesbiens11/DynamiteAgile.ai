@@ -153,27 +153,15 @@ class ConceptsTest(unittest.TestCase):
         status, _h, body = self.admin.raw_get(self.base + "/pugh/{}/export.xlsx".format(nxt["matrix"]["id"]))
         self.assertEqual((status, body[:2]), (200, b"PK"))
 
-    def test_04_ai_prompts_and_import(self):
-        prompt = self.admin.get(self.base + "/concepts/prompt")["prompt"]
-        self.assertIn("F{}".format(self.tertiary[0]["number"]), prompt)
-        self.assertIn("nom qui parle", prompt)
-        f = self.tertiary[8]
-        self.admin.post(self.base + "/concepts/link", {"function_id": f["id"], "concept_id": None})  # 0.60.116: the Rover has its bricks
-        answer = "Voici :\n```json\n" + json.dumps({"concepts": [{"name": "Brique IA", "initial_name": "Œil de lynx", "kind": "to_define",
-                                                                  "functions": ["F{}".format(f["number"]), "F99999"]}],
-                                                    "sheets": [{"concept": "Brique IA", "title": "Option IA", "principle": "p"}]},
-                                                   ensure_ascii=False) + "\n```"
-        dry = self.admin.post(self.base + "/concepts/ai", {"file": answer, "dry": True})
-        self.assertEqual((dry["concepts"], dry["links"], dry["sheets"], dry["dropped"]), (1, 1, 1, 1))
-        self.assertNotIn("Brique IA", [c["name"] for c in self.admin.get(self.base + "/concepts")["concepts"]])
-        self.admin.post(self.base + "/concepts/ai", {"file": answer})
-        mine = next(c for c in self.admin.get(self.base + "/concepts")["concepts"] if c["name"] == "Brique IA")
-        self.assertEqual((mine["source"], mine["initial_name"], mine["function_ids"], mine["sheets"]), ("ai", "Œil de lynx", [f["id"]], 1))
-        sheet_prompt = self.admin.get(self.base + "/concepts/{}/prompt".format(mine["id"]))["prompt"]
-        self.assertIn("Œil de lynx", sheet_prompt)
-        self.assertIn("Option IA", sheet_prompt)
-        self.fails(409, self.admin.post, self.base + "/concepts/ai", {"file": json.dumps({"concepts": [{"name": "Brique IA"}]})})
-        self.assertIn("Correctif", self.fails(400, self.admin.post, self.base + "/concepts/ai", {"file": "pas du JSON"}))
+    def test_04_legacy_ai_routes_are_gone(self):
+        """0.60.135 (D-O-148): the JSON-only prompts and import of 0.60.105 (no sketch, a duplicate at each import) are gone: the
+        bricks travel by « ↔ IA » of Diamond, the sheets by « ↔ IA : feuilles de concept » (test_diamond_concept_round.py)."""
+        brick = self.admin.get(self.base + "/concepts")["concepts"][0]
+        for path in ("/concepts/prompt", "/concepts/{}/prompt".format(brick["id"]), "/concepts/branch-prompt?fid=1"):
+            self.fails(404, self.admin.get, self.base + path)
+        self.fails(404, self.admin.post, self.base + "/concepts/ai", {"file": "{}"})
+        prompt = self.admin.get(self.base + "/concepts/round?scope=c{}".format(brick["id"]))
+        self.assertIn(brick["code"], prompt["scope"])
 
     def test_05_reader_reads_only(self):
         self.reader.get(self.base + "/concepts")
