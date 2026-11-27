@@ -1,4 +1,16 @@
-# Journal de mise à jour — 0.60.134
+# Journal de mise à jour — 0.60.135
+
+- **Version :** 0.60.134 → 0.60.135 (2026-11-27)
+- **Changements :**
+  1. **Diamond : imports et exports IA sans doublon — « ↔ IA : feuilles de concept » sur toutes les branches, une branche, une brique ou une feuille à raffiner, texte et croquis** (D-O-148).
+- **Base de données :** aucune migration.
+- **Retirés :** `modules/diamond/concept_ai.py`, `static/js/diamond/concept_ai.js` et les routes `/concepts/prompt`, `/concepts/<id>/prompt`, `/concepts/branch-prompt`, `POST /concepts/ai`.
+- **Champs [new] :** `0.60.135-round-brick`, `0.60.135-round-sheet`, `0.60.135-round-refine`, `0.60.135-round-button`, `0.60.135-brick-review`, `0.60.135-review-refine`, `0.60.135-morpho-review`, `0.60.135-rt-dup`, `0.60.135-rt-read-only`.
+- **Tests :** `tests/test_diamond_concept_round.py`, `tests/test_diamond_sheets_json_import.py`, `tests/test_diamond_rt.py`, `tests/test_diamond_rt_b.py`, `tests/test_diamond_concepts.py`, suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.134
 
 - **Version :** 0.60.133 → 0.60.134 (2026-11-27)
 - **Changements :**
@@ -6,8 +18,6 @@
 - **Base de données :** aucune migration.
 - **Champs [new] :** `0.60.134-review-strip`, `0.60.134-review-back`.
 - **Tests :** `tests/test_diamond_concept_review.py`, suite complète.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.133
 

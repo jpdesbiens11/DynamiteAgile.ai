@@ -80,9 +80,14 @@ class SheetsJsonImportTest(unittest.TestCase):
     def test_02_new_codes_create_ai_sheets_on_the_template(self):
         brick = self._brick("Châssis du rover", sheets=5)  # CB-n.1 … CB-n.5 exist, like CB-6 of the report
         n = brick["number"]
-        data = answer(n, NEW, title="Schema")  # the same title five times: five sheets all the same (codes, not titles)
+        data = answer(n, NEW, title="Schema {}")  # five new codes, five titles: five sheets (the identity is the code)
         prev = self._import(data, "preview")
         self.assertEqual(prev["counts"], {"new": 5, "update": 0, "attach": 0, "exists": 0, "refused": 0}, prev)
+        # 0.60.135 (D-O-148): the same title (or principle) under new codes is a duplicate of the AI, refused with the code to keep
+        twice = self._import(answer(n, ["6", "7"], title="Schema"), "preview")
+        self.assertEqual([e["status"] for e in twice["entries"]], ["new", "refused"])
+        self.assertIn("doublon de CB-{}.6".format(n), twice["entries"][1]["reason"])
+        self.assertIn("gardez le code CB-{}.6".format(n), twice["entries"][1]["reason"])
         self.assertEqual([e["code"] for e in prev["entries"]], ["CB-{}.{}".format(n, m) for m in NEW])  # 9 before 10
         self.assertEqual({e["kind"] for e in prev["entries"]}, {"ai"})
         self.assertFalse(any("Scan" in w or "ignoré" in w for w in prev["warnings"]), prev["warnings"])
@@ -92,7 +97,10 @@ class SheetsJsonImportTest(unittest.TestCase):
         sheets = self._sheets(brick)
         self.assertEqual(len(sheets), 10)
         last = sheets["CB-{}.10".format(n)]
-        self.assertEqual((last["kind"], last["status"], last["title"]), ("ai", "open", "Schema"))
+        self.assertEqual((last["kind"], last["status"], last["title"]), ("ai", "open", "Schema CB-{}.10".format(n)))
+        again = self._import(answer(n, ["11"], extra={"title": "SCHÉMA cb-{}.10".format(n)}), "preview")  # case, accents aside
+        self.assertEqual(again["entries"][0]["status"], "refused")
+        self.assertIn("doublon de CB-{}.10".format(n), again["entries"][0]["reason"])
         self.assertEqual((last["principle"], last["cons"]), ("Principe CB-{}.10".format(n), "fragile"))
         self.assertEqual(last["pros"], "léger\nsans outil")
         self.assertTrue(last["figure_id"])

@@ -25,9 +25,12 @@ writes a backup of the Space first.
 0.60.131 (D-O-144): a reponse.json in the .zip ({"sheets": [...]}, the answer of « ↔ IA ») is read (concept_cards_json.py): a new
 code creates an « ai » sheet with all its text and its sketch drawn on the template, an existing code updates its sheet; one line per
 sheet of the answer in the preview and in the report of apply, never a silent skip or a Scan. Lines sorted CB-6.9 before CB-6.10.
+0.60.135 (D-O-148): no duplicate of an AI: a new code whose title or principle is the one of a sheet of its brick (even dropped), or
+of a sheet created earlier by the same answer, is refused with the code to keep (« gardez le code CB-1.2 pour la mettre à jour »).
 """
 import io
 import re
+import unicodedata
 import zipfile
 
 from core import audit, uploads, validate
@@ -124,6 +127,40 @@ def _norm(text):
     return re.sub(r"[^\w]+", " ", str(text or "").lower()).strip()
 
 
+def idea_key(text):
+    """0.60.135 (D-O-148): a title or a principle as the duplicate check reads it -- case, accents and punctuation aside."""
+    plain = unicodedata.normalize("NFKD", str(text or "")).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", " ", plain.lower()).strip()
+
+
+def _ideas(sheets):
+    """{brick id: {(field, key): (code, title, status)}}: the titles and the principles (20 letters and more) of the sheets."""
+    out = {}
+    for s in sheets:
+        _remember(out, s["concept_id"], s, s["code"])
+    return out
+
+
+def _remember(ideas, brick_id, card, code):
+    mine = ideas.setdefault(brick_id, {})
+    for name in ("title", "principle"):
+        key = idea_key(card.get(name))
+        if key and (name == "title" or len(key) >= 20):
+            mine.setdefault((name, key), (code, card.get("title") or "", card.get("status") or "open"))
+
+
+def duplicate(ideas, brick_id, card):
+    """The reason a new card of the AI repeats a sheet of its brick, or ""."""
+    mine = ideas.get(brick_id, {})
+    for name, what in (("title", "même titre"), ("principle", "même principe")):
+        hit = mine.get((name, idea_key(card.get(name))))
+        if hit and idea_key(card.get(name)):
+            code, title, status = hit
+            return ("doublon de {} « {} »{} ({}) : gardez le code {} pour la mettre à jour, ou proposez une autre idée".format(
+                code, title, " (écartée)" if status == "dropped" else "", what, code))
+    return ""
+
+
 def _title_of(name):
     stem = name.rsplit(".", 1)[0]
     stem = RANGE.sub("", stem)
@@ -136,9 +173,11 @@ def plan(conn, pid, pack, target=None, extras=False):
     """What the import would do: one entry per sheet, and the files left aside."""
     bricks = {c["number"]: c for c in C.rows(conn, pid)}
     have, active = {}, {}
-    for s in S.rows(conn, pid):
+    sheets = S.rows(conn, pid)
+    for s in sheets:
         have.setdefault(s["concept_id"], set()).add(_norm(s["title"]))
         active[s["code"]] = s
+    ideas = _ideas(sheets)  # 0.60.135 (D-O-148): what an AI may not propose twice
     archived = AT._sheets(conn, pid)[1]
     used, entries = set(), []
     by_code = {}
@@ -160,9 +199,12 @@ def plan(conn, pid, pack, target=None, extras=False):
             e.update(status="refused", reason="{} est figée".format(brick["code"]))
         elif by_title and _norm(card["title"]) in have.get(brick["id"], set()):
             e.update(status="exists", brick=brick["code"], reason="une feuille de ce titre existe déjà dans " + brick["code"])
+        elif card.get("source") == "json" and duplicate(ideas, brick["id"], card):
+            e.update(status="refused", brick=brick["code"], reason=duplicate(ideas, brick["id"], card))
         else:
             e.update(status="new", brick=brick["code"], concept_id=brick["id"])
             have.setdefault(brick["id"], set()).add(_norm(card["title"]))
+            _remember(ideas, brick["id"], card, card["code"] or card["title"])
         entries.append(e)
 
     seen = set()
@@ -177,6 +219,7 @@ def plan(conn, pid, pack, target=None, extras=False):
             seen.add(card["code"])
             if sheet is not None and not card.get("error"):
                 e = J.update_entry(conn, card, sheet, names, pack["files"])
+                _remember(ideas, sheet["concept_id"], card, card["code"])
                 if sheet["concept_id"] in {b["id"] for b in bricks.values() if b.get("frozen")}:
                     e.update(status="refused", reason="{} est figée".format(e["brick"]))
                 entries.append(e)
@@ -256,7 +299,7 @@ def run(ctx, pid, pack, target=None, extras=False, apply=False, skip=frozenset()
         if strict:
             raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).")
         for line in view:
-            line["outcome"] = "rien à faire : " + (line["reason"] or "")
+            line["outcome"] = (line["reason"] or "") if line["status"] == "refused" else "rien à faire : " + (line["reason"] or "")
         return {"entries": view, "left": left, "counts": counts, "created": 0, "updated": 0, "attached": 0, "backup": None,
                 "warnings": warnings, "imported": False}
     from .import_merge import backup
@@ -290,7 +333,8 @@ def run(ctx, pid, pack, target=None, extras=False, apply=False, skip=frozenset()
                      dict(counts, sheets=created, updated=updated, attached=attached, skipped=len(skip), files=len(pack["files"]),
                           backup=saved), ctx.ip)
     for line in view:  # 0.60.131 (D-O-144): the report, one line per sheet or file
-        line["outcome"] = outcome.get(line["key"]) or ("décochée" if line["key"] in skip else "rien à faire : " + (line["reason"] or ""))
+        line["outcome"] = outcome.get(line["key"]) or ("décochée" if line["key"] in skip else (line["reason"] or "") if line["status"]
+                                                        == "refused" else "rien à faire : " + (line["reason"] or ""))
     return {"entries": view, "left": left, "counts": counts, "created": len(created), "updated": len(updated),
             "attached": len(attached), "backup": saved, "warnings": warnings, "imported": True}
 

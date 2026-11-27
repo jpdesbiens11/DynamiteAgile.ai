@@ -2,7 +2,8 @@
    (branch, brick, number: CB-6.9 before CB-6.10); « Suivant » on the last sheet of a branch goes on to the next branch.
    Scope: every branch, one branch or one brick; filter: all, to review (Open and not seen), dropped.
    ← / → previous / next · G keep (seen; a dropped sheet is back in the running) · E drop (« Dropped », seen) · Suppr delete (gone at
-   once, « Annuler » for 5 s: the server is called only after) · M edit · Ctrl+Z undo the last keep, drop or delete · Échap close.
+   once, « Annuler » for 5 s: the server is called only after) · M edit · R refine with the AI (0.60.135, D-O-148: « ↔ IA : feuilles
+   de concept » on this one sheet) · Ctrl+Z undo the last keep, drop or delete · Échap close.
    0.60.134 (D-O-147): the list of a review is fixed when it starts (or when the scope or the filter changes): a sheet kept or dropped
    stays in it with its new status, so ← always goes back to it; a strip of every sheet of the list, by branch, coloured by status,
    jumps to any of them. Seen is shared by the team (concept_review.py); the place in the review is remembered in this browser for the
@@ -196,6 +197,18 @@
       });
     };
 
+    const refine = () => {  // 0.60.135 (D-O-148): R, this sheet with the AI -- its text and its sketch, its code kept
+      const { it } = current();
+      if (!it || it.concept.frozen) return;
+      D.openConceptRound(ctx, async () => {
+        const fresh = await api.get(D.base(ctx) + "/sheets");
+        const map = new Map(fresh.sheets.map((s) => [s.id, s]));
+        all.forEach((x) => { if (map.has(x.sheet.id)) Object.assign(x.sheet, map.get(x.sheet.id)); });
+        changed = true;
+        draw();
+      }, { scope: "s" + it.sheet.id });
+    };
+
     function onKey(ev) {
       if (document.querySelector(".modal-backdrop")) return;  // the edit window has the keyboard
       const t = ev.target;
@@ -204,7 +217,7 @@
       const k = ev.key.toLowerCase();
       if (k === "z" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); undo(); return; }
       const run = { arrowright: () => go(1), arrowleft: () => go(-1), home: () => go(-1e6), end: () => go(1e6),
-        g: () => review("keep"), e: () => review("drop"), delete: remove, m: edit }[k];
+        g: () => review("keep"), e: () => review("drop"), delete: remove, m: edit, r: refine }[k];
       if (run && !ev.ctrlKey && !ev.metaKey && !ev.altKey) { ev.preventDefault(); run(); }
     }
 
@@ -232,6 +245,7 @@
         el("button", { type: "button", class: "btn btn-danger", disabled: s.status === "selected" ? "" : null, onclick: remove },
           el("kbd", null, "Suppr"), " Supprimer"),
         el("button", { type: "button", class: "btn", onclick: edit }, el("kbd", null, "M"), " Modifier"),
+        el("button", { type: "button", class: "btn", "data-new": "0.60.135-review-refine", onclick: refine }, el("kbd", null, "R"), " Raffiner avec l'IA"),
         seen(s) || dropped ? el("button", { type: "button", class: "btn btn-small", onclick: () => review("reopen") }, "Rouvrir (à revoir)") : null);
     }
 

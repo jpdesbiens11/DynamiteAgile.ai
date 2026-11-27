@@ -117,54 +117,17 @@ CONCEPTS = Section(
 
 # ---------------------------------------------------------------- concept sheets
 
-SHEET_KEYS = ("title", "kind", "principle", "description", "pros", "cons")
-SCAN = "kind « scan » : réservé à une feuille papier déposée dans la page. Correctif : digital ou ai."
-
-
-def _sheet_create(rt, body):
-    cid, status = body.pop("concept_id", None), body.pop("status", None)
-    if not cid:
-        raise ApiError(400, "Feuille de concept sans brique. Correctif : « concept » : le code CB-n de sa brique.")
-    if body.get("kind") == "scan" and not body.get("attachment_id"):
-        raise ApiError(400, SCAN)
-    sid = rt.call("POST", "/concepts/{}/sheets".format(cid), body)["created"]
-    if status and status != "open":
-        rt.call("PATCH", "/sheets/{}".format(sid), {"status": status})
-    return sid
-
-
-def _sheet_update(rt, sid, body):
-    """A sheet does not change brick in place (its code CB-n.m names it): it is redrawn under the new brick, the old one archived."""
-    rec = _record(rt, "sheets", sid)
-    if "concept_id" in body and body["concept_id"] != rec["concept_id"]:
-        full = dict({k: rec[k] for k in SHEET_KEYS}, status=rec["status"])
-        full.update(body)
-        if rec.get("attachment_id"):
-            full["attachment_id"] = rec["attachment_id"]
-        _sheet_create(rt, full)
-        rt.call("POST", "/sheets/{}/archive".format(sid), {})
-        return
-    body.pop("concept_id", None)
-    if body.get("kind") == "scan" and not rec.get("attachment_id"):
-        raise ApiError(400, SCAN)
-    if body:
-        rt.call("PATCH", "/sheets/{}".format(sid), body)
-
-
 SHEETS = Section(
     "sheets", "Feuilles de concept", ["csheets", "concepts"], order=45, table="diamond_concept_sheets",
     items=lambda rt: rt.call("GET", "/sheets")["sheets"], code=lambda r: r["code"],
-    fields=[Field("concept", src="concept_id", kind="ref", ref="concepts", note="la brique (CB-n) dont la feuille est une solution (obligatoire)"),
-            Field("title", note="160 caractères au plus (obligatoire)"),
-            Field("kind", kind="enum", values=list(CS.KINDS), note="digital : écrite dans la plateforme ; ai : rédigée avec l'IA ; scan : "
-                  "feuille papier déposée dans la page (jamais pour une nouvelle feuille)"),
-            Field("status", kind="enum", values=list(CS.STATUS), note="selected : retenue (d'ordinaire par une Pugh Matrix décidée)"),
-            Field("principle", note="le principe en une phrase, 600 caractères au plus"), Field("description", note="4000 caractères au plus"),
-            Field("pros", note="1500 caractères au plus"), Field("cons", note="1500 caractères au plus")],
-    create=_sheet_create, update=_sheet_update, remove="/sheets/{id}/archive", removes="archive",
-    guide="Les feuilles de concept (CB-n.m) : les solutions candidates d'une brique to_define, avant la Pugh Matrix. Changer la "
-          "brique d'une feuille la recrée sous l'autre brique (nouveau code) et archive l'ancienne. Le scan d'une feuille papier se "
-          "dépose dans la page, pas ici. Un retrait archive la feuille.")
+    fields=[Field("concept", src="concept_id", kind="ref", ref="concepts", note="la brique (CB-n) dont la feuille est une solution"),
+            Field("title"), Field("kind", kind="enum", values=list(CS.KINDS)), Field("status", kind="enum", values=list(CS.STATUS)),
+            Field("principle"), Field("description"), Field("pros"), Field("cons"), Field("questions"), Field("badge")],
+    writes="Une feuille de concept est une idée complète, son texte ET son croquis : elle se crée et se raffine par « ↔ IA : "
+           "feuilles de concept » (un .zip : reponse.json et images/<code>_….png), où une branche, une brique ou une feuille se "
+           "travaille sans doublon.",
+    guide="Les feuilles de concept (CB-n.m) : les solutions candidates d'une brique, avant la Pugh Matrix (selected : retenue par "
+          "une Pugh Matrix décidée ; dropped : écartée). Lisez-les pour les briques, les matrices de Pugh et le reste de Diamond.")
 
 
 # ---------------------------------------------------------------- Pugh matrices

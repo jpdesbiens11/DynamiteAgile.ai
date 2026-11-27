@@ -115,28 +115,52 @@ class RoundTripBTest(unittest.TestCase):
         self.assertEqual((made["kind"], made["status"], made["functions"]), ("existing", "exploring", [f3]))
         self.remove("concepts", made["code"])
 
-    def test_02_sheets(self):
+    def test_02_sheets_read_only(self):
+        """0.60.135 (D-O-148): the sheets are read by the AI here, never written: an idea is its text AND its sketch, and travels
+        by « ↔ IA : feuilles de concept » (a .zip)."""
         b = self.brick("Bloc feuilles", [self.fns[4]["id"]])
-        other = self.brick("Bloc autre", [self.fns[5]["id"]])
         for t in ("Plaque", "Ailettes"):
-            self.admin.post(self.base + "/concepts/{}/sheets".format(b["id"]), {"title": t, "pros": "Compact"})
-        items = self.same_again("sheets")
-        self.assertIn((b["code"] + ".1", b["code"], "Plaque"), [(i["code"], i["concept"], i["title"]) for i in items])
-        got = self.one_update("sheets", b["code"] + ".1", "cons", "Pompe")
-        self.assertEqual(got["cons"], "Pompe")
-        made = self.add("sheets", {"concept": b["code"], "title": "Caloduc", "kind": "ai", "status": "dropped"})
-        self.assertEqual((made["code"], made["kind"], made["status"]), (b["code"] + ".3", "ai", "dropped"))
-        refused = self.send({"sheets": self.dump("sheets")["sheets"] + [{"title": "Sans brique"}]})
-        self.assertEqual(refused["counts"]["refused"], 1, refused["entries"])  # a new sheet needs its brick
-        scan = self.send({"sheets": self.dump("sheets")["sheets"] + [{"concept": b["code"], "title": "Papier", "kind": "scan"}]})
-        self.assertIn("scan", next(e for e in scan["entries"] if e["kind"] == "refused")["reason"])
-        items = self.dump("sheets")["sheets"]  # a sheet moved to another brick: redrawn there, the old one archived
-        next(i for i in items if i["code"] == b["code"] + ".2")["concept"] = other["code"]
-        self.assertEqual(self.send({"sheets": items}, "apply")["applied"]["update"], 1)
-        codes = {i["code"]: i for i in self.dump("sheets")["sheets"]}
-        self.assertNotIn(b["code"] + ".2", codes)
-        self.assertEqual((codes[other["code"] + ".1"]["title"], codes[other["code"] + ".1"]["pros"]), ("Ailettes", "Compact"))
-        self.remove("sheets", made["code"])
+            self.admin.post(self.base + "/concepts/{}/sheets".format(b["id"]), {"title": t, "pros": "Compact", "badge": "léger"})
+        items = self.dump("sheets")["sheets"]
+        mine = next(i for i in items if i["code"] == b["code"] + ".1")
+        self.assertEqual((mine["concept"], mine["title"], mine["badge"]), (b["code"], "Plaque", "léger"))
+        mine["cons"] = "Pompe"
+        out = self.send({"sheets": items + [{"concept": b["code"], "title": "Caloduc"}]})
+        self.assertEqual(out["entries"], [])
+        self.assertTrue(any("feuilles de concept" in w and "croquis" in w for w in out["warnings"]), out["warnings"])
+        prompt = self.admin.get(self.base + "/rt/prompt?sections=concepts,sheets")["prompt"]
+        self.assertIn("« sheets » ({} élément(s)) [LECTURE SEULE ici".format(len(items)), prompt)
+        self.assertEqual(len([i for i in self.dump("sheets")["sheets"] if i["concept"] == b["code"]]), 2)  # nothing written
+
+    def test_02b_no_duplicate_of_an_ai(self):
+        """0.60.135 (D-O-148): a brick given back without its code takes it back (an update, not a removal and a creation); a
+        repeat of a brick still in the answer, or of a new one earlier in it, starts unticked and is skipped unless confirmed."""
+        a = self.brick("Bloc doublon", [self.fns[8]["id"]])
+        items = self.dump("concepts")["concepts"]
+        lost = next(i for i in items if i["code"] == a["code"])
+        lost.pop("code")
+        lost["name"], lost["description"] = "BLOC DOUBLON.", "Rendu sans son code"  # case and punctuation aside
+        out = self.send({"concepts": items})
+        moving = [e for e in out["entries"] if e["kind"] != "same" and "figée" not in e.get("reason", "")]
+        self.assertEqual([(e["kind"], e["code"]) for e in moving], [("update", a["code"])], moving)
+        self.assertIn("Code retrouvé : " + a["code"], moving[0]["note"])
+        self.assertEqual(self.send({"concepts": items}, "apply")["applied"]["remove"], 0)
+        got = next(i for i in self.dump("concepts")["concepts"] if i["code"] == a["code"])
+        self.assertEqual(got["description"], "Rendu sans son code")
+        items = self.dump("concepts")["concepts"]
+        twin = {"name": "Bloc doublon", "kind": "existing"}
+        out = self.send({"concepts": items + [twin, {"name": "Bloc neuf"}, {"name": "bloc NEUF"}]})
+        new = {e["label"]: e for e in out["entries"] if e["kind"] == "new"}
+        self.assertFalse(new["Bloc doublon"]["default"])
+        self.assertIn("Doublon probable de " + a["code"], new["Bloc doublon"]["note"])
+        self.assertTrue(new["Bloc neuf"]["default"])
+        self.assertFalse(new["bloc NEUF"]["default"])
+        self.assertIn("n° {} de la réponse, « Bloc neuf »".format(len(items) + 2), new["bloc NEUF"]["note"])
+        before = len(items)
+        done = self.send({"concepts": items + [twin, {"name": "Bloc neuf"}, {"name": "bloc NEUF"}]}, "apply")
+        self.assertEqual(done["applied"]["new"], 1)  # the unticked repeats are not created
+        self.assertEqual(len(self.dump("concepts")["concepts"]), before + 1)
+        self.remove("concepts", next(i["code"] for i in self.dump("concepts")["concepts"] if i["name"] == "Bloc neuf"))
 
     def test_03_pugh(self):
         b1, b2 = self.brick("Bloc P1", [self.fns[6]["id"]]), self.brick("Bloc P2", [self.fns[7]["id"]])

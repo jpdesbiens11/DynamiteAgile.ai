@@ -39,7 +39,7 @@
         + "concept existant ; une brique à définir s'invente avec des feuilles de concept (numériques, avec l'IA ou scannées), puis se "
         + "juge avec d'autres dans une matrice de Pugh, sur les besoins, les fonctions et les requirements.")));
     if (!concepts.length) { holder.append(empty(ctx, state, editable, reload, functions.length > 0)); return; }
-    holder.append(counters(concepts), owners(concepts), board(ctx, state), morpho(ctx, state));
+    holder.append(counters(concepts), owners(concepts), board(ctx, state), morpho(ctx, state, reload));
   }
 
   function counters(concepts) {
@@ -104,11 +104,15 @@
   }
 
   /* morphological chart: a row per brick to define, its sheets side by side -- the combinations the Pugh matrices judge */
-  function morpho(ctx, state) {
+  function morpho(ctx, state, reload) {
     const rows = state.data.concepts.filter((c) => c.kind === "to_define" || c.sheets);
     if (!rows.length) return null;
     const max = Math.max(1, ...rows.map((c) => state.sheets.filter((s) => s.concept_id === c.id).length));
-    return el("section", { class: "dm-cb-morpho", "data-new": "0.60.105-morpho" }, el("h2", null, "Tableau morphologique"),
+    // 0.60.135 (D-O-148): the sheets of the chart with the AI (all the branches, or a branch, a brick, a sheet chosen in the window)
+    return el("section", { class: "dm-cb-morpho", "data-new": "0.60.105-morpho" }, el("div", { class: "dm-panel-head" },
+      el("h2", null, "Tableau morphologique"), el("div", { class: "dm-actions" }, D.roundButton(ctx, "all", reload),
+        state.sheets.length ? el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.135-morpho-review",
+          onclick: () => D.openReview(ctx, reload) }, "▶ Revue") : null)),
       el("p", { class: "muted" }, "Une ligne par brique, ses feuilles de concept côte à côte. Un concept global prend une feuille par ligne ; "
         + "la feuille retenue par une matrice de Pugh est marquée."),
       el("div", { class: "pg-wrap" }, el("table", { class: "data dm-morpho" },

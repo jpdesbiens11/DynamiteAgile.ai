@@ -17,7 +17,9 @@ The team works as on a blackboard with post-its -- the AI is the blackboard -- a
            Every write goes through the page's own route (its checks, its numbering, its journal): nothing is written here
            that the page itself would refuse.
 
-A section is declared in rt_sections_*.py (Section, Field); this file is the engine and the routes.
+A section is declared in rt_sections_*.py (Section, Field); this file is the engine, rt_api.py the routes (0.60.135).
+0.60.135 (D-O-148): no duplicate of an AI (rt_dup.py): an item given back without its code takes it back, a repeat starts unticked;
+a section may be read only here (Section.writes: the concept sheets, text and sketch, travel by « ↔ IA : feuilles de concept »).
 """
 import copy
 import json
@@ -25,11 +27,9 @@ import re
 import sqlite3
 from collections import Counter
 
-from core import audit, permissions, validate
 from core.errors import ApiError
-from core.files import RawFile
 
-from . import ai_io
+from . import ai_io, rt_dup
 
 KINDS = {"new": "Nouveau", "update": "Modifié", "same": "Identique", "remove": "Retiré", "refused": "Refusé"}
 TRUNCATED = 0.5  # an answer that keeps less than half of a section's items: its removals start unticked (a truncated answer)
@@ -54,12 +54,13 @@ class Section:
     /api/diamond/p/<pid> (« {id} » replaced) or a function(rt, ...); table: where a created item's id is found."""
 
     def __init__(self, key, label, pages, fields, items, code, table, create=None, update=None, remove=None, removes="supprime",
-                 prefix="", guide="", new_id=None, create_body=None, order=0, removable=None, listed=True):
+                 prefix="", guide="", new_id=None, create_body=None, order=0, removable=None, listed=True, writes=""):
         self.key, self.label, self.pages, self.fields, self.items, self.code = key, label, pages, fields, items, code
         self.table, self.create, self.update, self.remove, self.removes = table, create, update, remove, removes
         self.prefix, self.guide, self.new_id, self.create_body, self.order = prefix, guide, new_id, create_body, order
         self.removable = removable  # removable(rec) -> False: an item that leaving the answer does not remove (an unpriced part)
         self.listed = listed  # False: a read-only list given as context only (the catalogue of the competencies, 0.60.116)
+        self.writes = writes  # 0.60.135 (D-O-148): non-empty, the section is read only here, and this says where it is written
 
 
 def registry():
@@ -210,11 +211,16 @@ def plan(rt, doc):
         temps[key] = {str(it.get("code")).strip() for it in items if isinstance(it, dict) and str(it.get("code") or "").startswith("+")}
     for key in keys:
         sec, items = rt.sections[key], doc[key]
+        if sec.writes:  # 0.60.135 (D-O-148): read only here
+            warnings.append("{} : section laissée de côté, rien n'y est écrit par « ↔ IA ». {}".format(sec.label, sec.writes))
+            continue
         if not isinstance(items, list):
             warnings.append("{} : une liste d'objets est attendue ; section ignorée.".format(sec.label))
             continue
         current = {sec.code(r): r for r in rt.records(key)}
         seen = set()
+        by_key = {f.key: f for f in sec.fields}
+        guard = rt_dup.Guard(sec, current, items, lambda name, rec: _out_value(rt, by_key[name], rec))
         for n, item in enumerate(items, start=1):
             if not isinstance(item, dict):
                 continue
@@ -227,6 +233,12 @@ def plan(rt, doc):
             if code and code in seen:
                 entries.append(_entry(base, "refused", _label(sec, item), reason="Code présent deux fois dans la réponse."))
                 continue
+            back, twin, temp = None, "", None
+            if not code or code.startswith("+"):  # 0.60.135 (D-O-148): an item of the Space given back without its code
+                back, twin = guard.check(item, n)
+                if back:
+                    temp, code = code or None, back
+                    base["code"] = back
             if code:
                 seen.add(code)
             rec = current.get(code)
@@ -250,9 +262,10 @@ def plan(rt, doc):
             if reasons:
                 entries.append(_entry(base, "refused", label, reason=" ".join(reasons)))
             elif rec is None:
-                entries.append(_entry(base, "new", label, changes=changes, values=values))
+                entries.append(_entry(base, "new", label, changes=changes, values=values, default=not twin, note=twin))
             else:
-                entries.append(_entry(base, "update" if values else "same", label, changes=changes, values=values, item_id=rec["id"]))
+                entries.append(_entry(base, "update" if values else "same", label, changes=changes, values=values, item_id=rec["id"],
+                                      note=guard.note(back, temp) if back else "", temp=temp))
         gone = [c for c in current if c not in seen and (sec.removable is None or sec.removable(current[c]))]
         if gone and sec.remove:
             short = len(seen) < TRUNCATED * len(current)
@@ -275,10 +288,10 @@ def _show(v):
     return "" if v is None else str(v)
 
 
-def _entry(base, kind, label, changes=None, reason="", values=None, item_id=None, default=True):
-    out = dict(base, kind=kind, kind_label=KINDS[kind], label=label, changes=changes or [], reason=reason,
+def _entry(base, kind, label, changes=None, reason="", values=None, item_id=None, default=True, note="", temp=None):
+    out = dict(base, kind=kind, kind_label=KINDS[kind], label=label, changes=changes or [], reason=reason, note=note,
                default=default and kind in ("new", "update", "remove"))
-    out["_values"], out["_item"] = values or {}, item_id
+    out["_values"], out["_item"], out["_temp"] = values or {}, item_id, temp  # _temp: the « +… » code of an item found again
     return out
 
 
@@ -330,9 +343,14 @@ def apply(rt, entries, skip, dry=False):
     order = list(rt.sections)
     done = Counter()
     steps = []
+    found = {e["_temp"] for e in entries if e.get("_temp") and e.get("_item")}
+    for e in entries:  # 0.60.135 (D-O-148): a « +… » code given to an item found again names that item
+        if e.get("_temp") and e.get("_item"):
+            rt.codes(e["section"])[e["_temp"]] = e["_item"]
     for key in order:  # creations and updates, in the order of the links
         sec = rt.sections[key]
-        steps += [(sec, e) for e in _parents_first(sec, [e for e in todo if e["section"] == key and e["kind"] in ("new", "update")])]
+        steps += [(sec, e) for e in _parents_first(sec, [e for e in todo if e["section"] == key and e["kind"] in ("new", "update")],
+                                                   found)]
     for key in reversed(order):  # the removals last, what hangs on an item before the item
         steps += [(rt.sections[key], e) for e in todo if e["section"] == key and e["kind"] == "remove"]
     conn = rt.ctx.conn
@@ -387,12 +405,12 @@ def _named(sec, e, err):
                     "puis vérifiez de nouveau.".format(sec.label, e["code"] or "(nouveau)", _why(err)))
 
 
-def _parents_first(sec, entries):
+def _parents_first(sec, entries, found=()):
     """New items that point to other new items of the same section (a sub-function under a new function) come after them."""
     self_refs = [f.key for f in sec.fields if f.kind == "ref" and f.ref == sec.key]
     if not self_refs:
         return entries
-    pending, out, placed = list(entries), [], set()
+    pending, out, placed = list(entries), [], set(found)
     while pending:
         ready = [e for e in pending if all(not str(e["_values"].get(k) or "").startswith("+") or e["_values"][k] in placed for k in self_refs)]
         ready = ready or pending[:1]
@@ -401,99 +419,3 @@ def _parents_first(sec, entries):
             placed.add(e["code"])
             pending.remove(e)
     return out
-
-
-# ---------------------------------------------------------------- reading the answer
-
-def read_doc(text):
-    text = str(text or "").lstrip("﻿")
-    if not text.strip():
-        raise ApiError(400, "Réponse vide. Correctif : collez la réponse de l'assistant IA (son bloc JSON) ou choisissez le .json.")
-    if len(text) > ai_io.MAX_TEXT:
-        raise ApiError(413, "Texte trop long ({} caractères au plus).".format(ai_io.MAX_TEXT))
-    blocks = re.findall(r"```(?:json)?[ \t]*\n(.*?)```", text, re.S)
-    for body in reversed(blocks) if blocks else [text]:
-        start, end = body.find("{"), body.rfind("}")
-        if 0 <= start < end:
-            try:
-                data = json.loads(body[start:end + 1])
-            except ValueError:
-                continue
-            if isinstance(data, dict):
-                return data.get("diamond") if isinstance(data.get("diamond"), dict) else data
-    raise ApiError(400, "Aucun objet JSON lu. Correctif : la réponse doit contenir un bloc ```json { \"functions\": [...], ... } ```.")
-
-
-# ---------------------------------------------------------------- routes
-
-def _pid(ctx, minimum):
-    pid = validate.int_param(ctx.params, "pid")
-    permissions.require_project_role(ctx.conn, ctx.user, pid, minimum)
-    return pid
-
-
-def _keys(rt, raw):
-    keys = [k for k in str(raw or "").split(",") if k in rt.sections and rt.sections[k].listed]
-    return keys or [k for k, s in rt.sections.items() if s.listed]
-
-
-def api_sections(ctx):
-    pid = _pid(ctx, "reader")
-    rt = RoundTrip(ctx, pid)
-    return {"sections": [{"key": s.key, "label": s.label, "pages": s.pages, "count": len(rt.records(s.key))} for s in rt.sections.values()
-                         if s.listed]}
-
-
-def api_export(ctx):
-    pid = _pid(ctx, "reader")
-    rt = RoundTrip(ctx, pid)
-    keys = _keys(rt, ctx.query.get("sections"))
-    doc = dict(dump(rt, keys), _context=context(rt, keys))
-    key = ctx.conn.execute("SELECT key FROM projects WHERE id = ?", (pid,)).fetchone()[0]
-    return RawFile((json.dumps(doc, ensure_ascii=False, indent=1) + "\n").encode("utf-8"),
-                   "{}_diamond_{}.json".format(key, "-".join(keys) if len(keys) < 4 else "complet"), "application/json")
-
-
-def api_prompt(ctx):
-    from . import rt_prompt
-    pid = _pid(ctx, "reader")
-    rt = RoundTrip(ctx, pid)
-    keys = _keys(rt, ctx.query.get("sections"))
-    mode = ctx.query.get("mode") if ctx.query.get("mode") in rt_prompt.MODES else "review"
-    board = None
-    if str(ctx.query.get("ideation") or "").isdigit():  # 0.60.112 (D-O-125): the post-its of an Idéation session as source
-        from modules.toolbox import ideation_ai
-        board = ideation_ai.board(ctx.conn, pid, int(ctx.query["ideation"]))
-    return {"prompt": rt_prompt.build(rt, keys, mode, ctx.query.get("goal", ""), board), "sections": keys}
-
-
-def api_import(ctx):
-    pid = _pid(ctx, "editor")
-    rt = RoundTrip(ctx, pid)
-    doc = read_doc(ctx.body.get("file"))
-    entries, warnings = plan(rt, doc)
-    counts = Counter(e["kind"] for e in entries)
-    public = [{k: v for k, v in e.items() if not k.startswith("_")} for e in entries]
-    summary = {k: counts.get(k, 0) for k in KINDS}
-    labels = {k: rt.sections[k].label for k in {e["section"] for e in entries}}
-    if ctx.body.get("mode") != "apply":
-        apply(rt, entries, set(), dry=True)  # the rehearsal: what the pages' routes would refuse, refused now
-        counts = Counter(e["kind"] for e in entries)
-        summary = {k: counts.get(k, 0) for k in KINDS}
-        public = [{k: v for k, v in e.items() if not k.startswith("_")} for e in entries]
-        return {"mode": "preview", "entries": public, "counts": summary, "warnings": warnings, "labels": labels}
-    skip = {str(x) for x in ctx.body.get("skip") or []}
-    forced = {str(x) for x in ctx.body.get("confirm") or []}  # removals of a truncated section the person ticked herself
-    skip |= {e["id"] for e in entries if e["kind"] == "remove" and not e["default"] and e["id"] not in forced}
-    apply(rt, entries, skip, dry=True)  # the same rehearsal: what the routes refuse now (a line it hung on was unticked) stays out
-    if not [e for e in entries if e["kind"] in ("new", "update", "remove") and e["id"] not in skip]:
-        raise ApiError(400, "Rien à appliquer : toutes les lignes sont identiques, refusées ou décochées.")
-    from .import_merge import backup
-    saved = backup(ctx, pid)
-    with audit.source("ai"):  # 0.60.120 (D-O-133): « Changements » shows these lines as written by the AI
-        done = apply(RoundTrip(ctx, pid), entries, skip)  # a fresh view of the Space: the rehearsal's ids are gone
-        counts = Counter(e["kind"] for e in entries)
-        audit.log_action(ctx.conn, ctx.user["id"], "diamond_rt_import", "project", pid,
-                         dict(done, refused=counts.get("refused", 0), sections=sorted(labels), backup=saved), ctx.ip)
-    return {"mode": "apply", "applied": {k: done.get(k, 0) for k in ("new", "update", "remove")},
-            "refused": counts.get("refused", 0), "backup": saved}

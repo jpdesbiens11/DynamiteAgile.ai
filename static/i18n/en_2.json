@@ -1,4 +1,6 @@
 {
+"Bilan d'ensemble, points forts, axes de progrès…": "Overall review, strengths, areas for improvement…",
+"Bilan de puissance avec une marge d'au moins 20 % sur chaque rail d'alimentation": "Power budget with a margin of at least 20% on each supply rail",
 "Bilan du MVP 0 : persévérer ou pivoter": "MVP 0 review: persevere or pivot",
 "Bilan du MVP 1 : persévérer ou pivoter": "MVP 1 review: persevere or pivot",
 "Bilan du MVP 2": "MVP 2 review",
@@ -64,6 +66,7 @@
 "Brique de F": "Building block of F",
 "Brique figée": "Frozen brick",
 "Brique figée : lecture seule.": "Frozen brick: read only.",
+"Brique inconnue dans ce Space (archivée ?). Correctif : choisissez une brique dans la liste.": "Unknown building block in this Space (archived?). Fix: choose a building block in the list.",
 "Brique introuvable dans ce Space (archivée ?). Correctif : rechargez la page.": "Building block not found in this Space (archived?). Fix: reload the page.",
 "Brique technologique": "Technology brick",
 "Brique technologique (après le pointillé)": "Technology building block (after the dotted line)",
@@ -282,6 +285,7 @@
 "Certification et normes": "Certification and standards",
 "Certification plan ; compliance matrix ; rapports de conformité ; déclaration de conformité.": "Certification plan; compliance matrix; compliance reports; declaration of conformity.",
 "Certificats clients (mTLS)": "Client certificates (mTLS)",
+"Ces briques sont des **concepts existants**": "These building blocks are **existing concepts**",
 "Cet ID de task existe déjà dans le plan.": "This task ID already exists in the plan.",
 "Cet identifiant existe déjà.": "This username already exists.",
 "Cet utilisateur n'est pas membre du projet.": "This user is not a member of the project.",
@@ -433,6 +437,7 @@
 "Choisissez la brique de la feuille.": "Choose the sheet's brick.",
 "Choisissez la cible du flux, ou « Relier en cliquant la cible ».": "Choose the flow's target, or “Link by clicking the target”.",
 "Choisissez la photo ou le PDF de la feuille.": "Choose the photo or the PDF of the sheet.",
+"Choisissez la portée : toutes les branches, une branche, une brique, ou une feuille à raffiner. Copiez le prompt et collez-le dans votre assistant IA, avec le fichier de contexte s'il y a déjà des feuilles (leurs croquis et PDF). Une idée est complète avec son texte et son croquis : l'IA rend les deux dans un .zip.": "Choose the scope: all branches, one branch, one building block, or one sheet to refine. Copy the prompt and paste it into your AI assistant, with the context file if there are already sheets (their sketches and PDF). An idea is complete with its text and its sketch: the AI hands both back in a .zip.",
 "Choisissez le .zip.": "Choose the .zip.",
 "Choisissez le Test qui le vérifie dans la liste (par Subject) ; pour un Need particulier, prenez un « Custom Test » (TST-CUS-…) ou demandez à l'équipe de tests d'en créer un dans Testing.": "Choose the Test that verifies it from the list (by Subject); for a particular Need, take a “Custom Test” (TST-CUS-…) or ask the test team to create one in Testing.",
 "Choisissez le fichier .md.": "Choose the .md file.",
@@ -1335,6 +1340,7 @@
 "Déploiement de la fonction qualité (Quality Function Deployment, QFD)": "Quality Function Deployment (QFD)",
 "Déposer": "Upload",
 "Déposer des fichiers…": "Upload files…",
+"Déposez le .zip rendu par l'assistant (reponse.json et images/<code>_….png ; PDF facultatif), ou son reponse.json seul. L'import se fait d'un coup : une sauvegarde du Space d'abord, chaque code nouveau crée sa feuille dessinée sur le gabarit, chaque code existant met sa feuille à jour, un doublon (même titre ou même principe dans la brique) est refusé. Recommencez autant de tours que la séance le demande.": "Drop the .zip returned by the assistant (reponse.json and images/<code>_….png; PDF optional), or its reponse.json alone. The import is done in one go: a backup of the Space first, each new code creates its sheet drawn on the template, each existing code updates its sheet, a duplicate (same title or same principle in the building block) is refused. Go round as many times as the session needs.",
 "Déposez le .zip rendu par l'assistant (reponse.json et images/<code>_….png ; PDF facultatif), ou son reponse.json seul. L'import se fait d'un coup : une sauvegarde du Space d'abord, chaque code nouveau crée sa feuille dessinée sur le gabarit, chaque code existant met sa feuille à jour. Recommencez autant de tours que la séance le demande.": "Drop the .zip the assistant handed back (reponse.json and images/<code>_….png; PDF optional), or its reponse.json alone. The import runs in one go: a backup of the Space first, each new code creates its sheet drawn on the template, each existing code updates its sheet. Go round as many times as the session needs.",
 "Déposez tout ce que le fournisseur envoie, de tout type : rapport du plan rempli, rapports de laboratoire, données brutes, Excel, photos, vidéos, archives. ": "Upload everything the supplier sends, of any type: completed plan report, lab reports, raw data, Excel, photos, videos, archives. ",
 "Déposez-le ci-dessous avec « Vérifier un zip de mise à jour… » : une étape de revue par version, puis ": "Drop it below with “Check an update zip…”: one review step per version, then ",
@@ -1428,6 +1434,5 @@
 "En attente du départ": "Waiting to start",
 "En cours": "In progress",
 "En dernier. Musk a reconnu publiquement que la première ligne de la Model 3 avait été trop automatisée trop tôt, avant les étapes 1 à 4.": "Last. Musk publicly acknowledged that the Model 3's first line had been automated too much, too early, before steps 1 to 4.",
-"En entreprise aujourd'hui": "In a company today",
-"En faire la fonction primaire": "Make it the primary function"
+"En entreprise aujourd'hui": "In a company today"
 }

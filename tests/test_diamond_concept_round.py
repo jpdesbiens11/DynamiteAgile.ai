@@ -152,6 +152,83 @@ class ConceptRoundTest(unittest.TestCase):
         finally:
             self.admin.post(self.base + "/concepts/{}/unfreeze".format(target["id"]), {"reason": "fin de l'essai"})
 
+    def test_05_brick_and_sheet_scopes(self):
+        """0.60.135 (D-O-148): one brick, one sheet to refine -- its code kept, its sketch alone in the context, the other sheets
+        of its brick as text; a dropped sheet is marked; an unknown scope is refused."""
+        brick = next(c for c in self._bricks().values() if c["kind"] == "to_define" and not c["frozen"])
+        n = brick["number"]
+        code_a, code_b = "CB-{}.70".format(n), "CB-{}.71".format(n)
+        answer = {"sheets": [{"code": c, "concept": brick["code"], "title": "Variante " + c, "principle": "Principe propre à " + c,
+                              "image": "images/{}_x.png".format(c)} for c in (code_a, code_b)]}
+        self._import(zipped({"reponse.json": json.dumps(answer).encode(), "images/{}_x.png".format(code_a): png(3, 3, (9, 9, 9)),
+                             "images/{}_x.png".format(code_b): png(3, 3, (99, 9, 9))}))
+        sheets = self._sheets(brick["code"])
+        a, b = sheets[code_a], sheets[code_b]
+        self.admin.post(self.base + "/sheets/{}/review".format(b["id"]), {"action": "drop"})
+        r = self.admin.get(self.base + "/concepts/round?scope=c{}".format(brick["id"]))
+        self.assertEqual((r["key"], r["tag"], r["bricks"]), ("c{}".format(brick["id"]), brick["code"], 1))
+        self.assertIn("la brique " + brick["code"], r["scope"])
+        self.assertIn("feuille {} « Variante {} » [écartée]".format(code_b, code_b), r["prompt"])
+        self.assertIn("Pas de doublon", r["prompt"])
+        self.assertIn(brick["code"], [c["code"] for c in r["brick_list"]])
+        s = self.admin.get(self.base + "/concepts/round?scope=s{}".format(a["id"]))
+        self.assertEqual(s["sheet"]["code"], code_a)
+        self.assertIn("Raffine la feuille {}".format(code_a), s["prompt"])
+        self.assertIn("→ À RAFFINER : feuille " + code_a, s["prompt"])
+        self.assertIn('"code": "{}"'.format(code_a), s["prompt"])  # the example keeps its code
+        status, headers, body = self.admin.raw_get(self.base + "/concepts/round/context.zip?scope=s{}".format(a["id"]))
+        self.assertIn("contexte_feuilles_{}.zip".format(code_a), headers.get("Content-Disposition", ""))
+        z = zipfile.ZipFile(io.BytesIO(body))
+        pictures = [x for x in z.namelist() if x.startswith("images/")]
+        self.assertEqual(len(pictures), 1)
+        self.assertTrue(pictures[0].startswith("images/" + code_a + "_"))
+        ctx = json.loads(z.read("contexte.json"))
+        self.assertEqual(ctx["focus"], code_a)
+        self.assertIn(code_b, [x["code"] for x in ctx["sheets"]])  # the others as text: nothing proposed twice
+        legacy = self.admin.get(self.base + "/concepts/round?fid=all")  # the ?fid= of 0.60.132 still works
+        self.assertEqual(legacy["key"], "all")
+        for bad in ("x1", "s999999", "c999999"):
+            with self.assertRaises(ApiFailure) as caught:
+                self.admin.get(self.base + "/concepts/round?scope=" + bad)
+            self.assertEqual(caught.exception.status, 400)
+        frozen = next(c for c in self._bricks().values() if c["frozen"])
+        f = self.admin.get(self.base + "/concepts/round?scope=c{}".format(frozen["id"]))
+        self.assertEqual((f["prompt"], f["frozen"]), ("", [frozen["code"]]))
+        self.assertIn("figées", f["error"])
+
+    def test_06_no_duplicate_of_the_ai(self):
+        """0.60.135 (D-O-148): a new code that repeats the title or the principle of a sheet of its brick (even dropped), or of a
+        sheet new in the same answer, is refused with the code to keep; the refined sheet keeps its code and its sketch."""
+        brick = next(c for c in self._bricks().values() if c["kind"] == "to_define" and not c["frozen"])
+        n = brick["number"]
+        sheets = self._sheets(brick["code"])
+        old = sheets["CB-{}.71".format(n)]  # dropped in test_05
+        before = len(sheets)
+        nxt = "CB-{}.{}".format(n, 80)
+        answer = {"sheets": [
+            {"code": "CB-{}.81".format(n), "concept": brick["code"], "title": old["title"].upper() + " !", "principle": "Autre"},
+            {"code": "CB-{}.82".format(n), "concept": brick["code"], "title": "Tout autre titre", "principle": old["principle"]},
+            {"code": nxt, "concept": brick["code"], "title": "Idée neuve", "principle": "Principe vraiment neuf et différent"},
+            {"code": "CB-{}.83".format(n), "concept": brick["code"], "title": "idée NEUVE", "principle": "Encore autre chose"},
+            {"code": "CB-{}.70".format(n), "concept": brick["code"], "title": "Variante raffinée", "principle": "Mieux dit",
+             "image": "images/CB-{}.70_v2.png".format(n)}]}
+        done = self._import(zipped({"reponse.json": json.dumps(answer, ensure_ascii=False).encode(),
+                                    "images/CB-{}.70_v2.png".format(n): png(5, 3, (1, 200, 1))}))
+        lines = {e["code"]: e for e in done["entries"]}
+        self.assertEqual(lines["CB-{}.81".format(n)]["status"], "refused")
+        self.assertIn("doublon de {} ".format(old["code"]), lines["CB-{}.81".format(n)]["reason"])
+        self.assertIn("(écartée)", lines["CB-{}.81".format(n)]["reason"])
+        self.assertIn("même principe", lines["CB-{}.82".format(n)]["reason"])
+        self.assertEqual(lines[nxt]["status"], "new")
+        self.assertIn("doublon de " + nxt, lines["CB-{}.83".format(n)]["reason"])
+        self.assertEqual(lines["CB-{}.70".format(n)]["status"], "update")
+        self.assertEqual((done["created"], done["updated"]), (1, 1))
+        after = self._sheets(brick["code"])
+        self.assertEqual(len(after), before + 1)
+        refined = after["CB-{}.70".format(n)]
+        self.assertEqual(refined["title"], "Variante raffinée")
+        self.assertNotEqual(refined["figure_id"], sheets["CB-{}.70".format(n)]["figure_id"])  # the new sketch
+
 
 if __name__ == "__main__":
     unittest.main()

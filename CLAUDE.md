@@ -173,6 +173,11 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.135** (2026-11-27) : Diamond — **imports / exports IA sans doublon, texte et croquis** (D-O-148) : « ↔ IA : feuilles de concept »
+  sur toutes les branches, une branche, une brique ou une feuille à raffiner (`concept_round.py`, `D.roundButton` : page d'une brique, carte
+  « Raffiner avec l'IA », R dans « ▶ Revue », tableau morphologique) ; code nouveau au titre ou au principe d'une feuille de sa brique refusé ;
+  « ↔ IA » de Diamond : un élément rendu sans son code le retrouve, un doublon arrive décoché (`rt_dup.py`), feuilles en lecture seule, routes
+  dans `rt_api.py` ; `concept_ai.py` / `.js` (prompt JSON d'une brique) retirés.
 - **0.60.134** (2026-11-27) : Diamond — **revue, retour arrière** (D-O-147) : liste de la revue figée (← retrouve une feuille gardée ou
   écartée), G sur une feuille « Dropped » la remet en course, bande de pastilles par branche pour sauter à une feuille, Ctrl+Z défait garder / écarter.
 - **0.60.133** (2026-11-27) : Diamond — **« ▶ Revue »** des feuilles de concept (`static/js/diamond/concept_review.js`, `modules/diamond/concept_review.py`) :

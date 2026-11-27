@@ -1,6 +1,8 @@
 /* Diamond · one brick (0.60.105, D-O-117): #/diamond/KEY/concepts/CB-3. Its card (nature, reference, functions), then what hangs
    under it: its concept sheets (digital, AI, scanned paper -- concept_sheets.js) and the Pugh matrices that judge it with other
-   bricks. « Générer avec l'IA » copies the prompt of its sheets; « Importer » brings the assistant's answer back. */
+   bricks. 0.60.135 (D-O-148): « ↔ IA : feuilles de concept » on this brick (concept_round.js: the prompt, the context .zip, the .zip
+   of the AI back, text and sketch) replaces « Générer avec l'IA » / « Importer la réponse de l'IA » (a JSON block, no sketch, a
+   duplicate at each import); « ▶ Revue » goes through its sheets one at a time. */
 (function () {
   "use strict";
 
@@ -34,7 +36,9 @@
     const fns = c.function_ids.map((id) => functions.find((f) => f.id === id)).filter(Boolean);
     holder.append(A.pageHead(ctx, [el("a", { href: A.href(ctx, "concepts") }, "Briques technologiques"), el("span", null, c.code)], [
       el("a", { class: "btn btn-small", href: A.href(ctx, "ftree") }, "Voir dans l'arbre"),
-      ...D.sheetAiButtons(ctx, c, editable, state.reload),
+      c.frozen ? null : D.roundButton(ctx, "c" + c.id, state.reload),
+      sheets.length ? el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.135-brick-review",
+        onclick: () => D.openReview(ctx, state.reload, { scope: "c" + c.id }) }, "▶ Revue") : null,
       editable ? el("button", { type: "button", class: "btn btn-small btn-primary",
         onclick: () => D.openPughCreate(ctx, state.data, sheets, [c.id]) }, "Nouvelle matrice de Pugh") : null]));
     holder.append(el("div", { class: "page-head dm-intro" },

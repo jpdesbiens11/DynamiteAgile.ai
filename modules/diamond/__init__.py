@@ -18,7 +18,7 @@ Sub-modules, one per iteration:
            shown with the symbols of the Space's customer.
   0.60.102 Caractéristiques C-n (characteristics.py, char_spec.py, char_links.py, char_export.py): the exact dimension of
            the exact part, its drawing, its required Cpk, its test; the summary of the special characteristics.
-  0.60.105 Concept / Brique technologique (concepts.py, concept_sheets.py, concept_pugh.py, concept_ai.py): the column after
+  0.60.105 Concept / Brique technologique (concepts.py, concept_sheets.py, concept_pugh.py; the AI by concept_round.py): the column after
            the tertiary functions, the concept sheets of a brick, the Pugh matrices of groups of bricks; Idéation, Pugh and
            Kepner-Tregoe of Tools now open here.
   0.60.116 Compétences et équipe (competencies.py, competency_catalog.py, competency_bdc.py, rt_sections_d.py): a rating of each
@@ -33,11 +33,11 @@ from .change_link import change_link  # noqa: F401  (« Changements », core lot
 from . import migrations_a, migrations_b  # noqa: E402
 from . import docx_pages, pdf_pages  # noqa: E402  (0.60.123, D-O-136; Word 0.60.124, D-O-137)
 from . import ai_io, ai_prompts, ai_prompts_process, cp_io, dfmea_io, pfmea_io  # noqa: E402,F401 (0.60.104, D-O-116)
-from . import concept_ai, concept_pugh, concept_sheets, concepts  # noqa: E402 (0.60.105, D-O-117)
+from . import concept_pugh, concept_sheets, concepts  # noqa: E402 (0.60.105, D-O-117; concept_ai.py gone in 0.60.135, D-O-148)
 from . import concept_cards, concept_sheet_api  # noqa: E402 (0.60.125, D-O-138: sheets by batch, the sheet on its template)
 from . import concept_review  # noqa: E402 (0.60.133, D-O-146: « Revue » of the concept sheets)
 from . import concept_round  # noqa: E402 (0.60.132, D-O-145: « ↔ IA : feuilles de concept », the round trip with the AI)
-from . import rt  # noqa: E402 (0.60.111, D-O-124: « ↔ IA », the round trip of every page)
+from . import rt, rt_api  # noqa: E402,F401 (0.60.111, D-O-124: « ↔ IA », the round trip of every page; routes in rt_api, 0.60.135)
 from . import competencies, competency_catalog, competency_export, competency_profiles, concept_freeze  # noqa: E402 (0.60.116, D-O-129: competencies, frozen bricks)
 from . import actions, capability, char_export, characteristics, classes_api, company_pn, control_plans, impact, pfmea, pfmea_ai, pn_ai, prio, process, costs, costs_budget, costs_import, costs_prompt, dfmea, dfmea_complete, example, export_api, functions, parts, risks, story, story_ai, story_docx, structure
 
@@ -90,16 +90,12 @@ ROUTES = [
     ("POST", P + r"/concepts", concepts.api_create, "user"),
     ("POST", P + r"/concepts/link", concepts.api_link, "user"),
     ("POST", P + r"/concepts/order", concepts.api_move, "user"),
-    ("GET", P + r"/concepts/prompt", concept_ai.api_prompt, "user"),
-    ("GET", P + r"/concepts/branch-prompt", concept_ai.api_branch_prompt, "user"),  # 0.60.125 (D-O-138)
     ("GET", P + r"/concepts/round", concept_round.api_round, "user"),  # 0.60.132 (D-O-145)
     ("GET", P + r"/concepts/round/context\.zip", concept_round.api_context, "user"),
     ("POST", P + r"/concepts/round/import", concept_round.api_import, "user"),
-    ("POST", P + r"/concepts/ai", concept_ai.api_import, "user"),
     ("GET", CB, concepts.api_get, "user"),
     ("PATCH", CB, concepts.api_update, "user"),
     ("POST", CB + r"/archive", concepts.api_archive, "user"),
-    ("GET", CB + r"/prompt", concept_ai.api_sheet_prompt, "user"),
     ("POST", CB + r"/sheets", concept_sheets.api_create, "user"),
     ("GET", P + r"/sheets", concept_sheets.api_list, "user"),
     ("POST", P + r"/sheets/upload", concept_sheets.api_upload, "user"),
@@ -229,12 +225,12 @@ ROUTES = [
     ("GET", P + r"/dfmea/export\.csv", dfmea.api_export, "user"),
     ("GET", P + r"/dfmea/prompt", ai_prompts.api_dfmea_prompt, "user"),  # 0.60.104 (D-O-116): interview / review for an AI assistant
     ("POST", P + r"/dfmea/import", dfmea_io.api_import, "user"),
-    ("GET", P + r"/rt/sections", rt.api_sections, "user"),  # 0.60.111 (D-O-124): « ↔ IA » on every Diamond page
-    ("GET", P + r"/rt/prompt", rt.api_prompt, "user"),
-    ("GET", P + r"/rt/export\.json", rt.api_export, "user"),
+    ("GET", P + r"/rt/sections", rt_api.api_sections, "user"),  # 0.60.111 (D-O-124): « ↔ IA » on every Diamond page
+    ("GET", P + r"/rt/prompt", rt_api.api_prompt, "user"),
+    ("GET", P + r"/rt/export\.json", rt_api.api_export, "user"),
     ("POST", P + r"/pdf", pdf_pages.api_pdf, "user"),  # 0.60.123 (D-O-136): « PDF » next to « ↔ IA »
     ("POST", P + r"/docx", docx_pages.api_docx, "user"),  # 0.60.124 (D-O-137): « Word », the same document on the report template
-    ("POST", P + r"/rt/import", rt.api_import, "user"),
+    ("POST", P + r"/rt/import", rt_api.api_import, "user"),
     ("POST", P + r"/dfmea/from-tree", dfmea.api_from_tree, "user"),
     ("POST", P + r"/dfmea/from-risks", dfmea.api_from_risks, "user"),
     ("POST", P + r"/dfmea/complete", dfmea_complete.api_complete, "user"),

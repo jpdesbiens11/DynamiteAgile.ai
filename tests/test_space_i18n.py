@@ -121,10 +121,10 @@ class SpaceI18nTest(unittest.TestCase):
         self.assertIn('<script src="/js/admin_space_i18n.js" defer></script>', (BASE_DIR / "static" / "index.html").read_text("utf-8"))
 
     def test_06_technical_terms_in_english_in_every_prompt(self):
-        from modules.diamond import ai_prompts, concept_ai, costs_prompt, pfmea_ai, story_ai
-        for mod in (ai_prompts, pfmea_ai, story_ai, concept_ai, costs_prompt):
+        from modules.diamond import ai_prompts, concept_round, costs_prompt, pfmea_ai, story_ai  # concept_ai gone: 0.60.135
+        for mod in (ai_prompts, pfmea_ai, story_ai, concept_round, costs_prompt):
             self.assertIn("terms", Path(mod.__file__).read_text("utf-8"), mod.__name__)
-        self.assertIn("{terms}", concept_ai.GUIDE_BRICKS + concept_ai.GUIDE_SHEETS + story_ai.GUIDE + costs_prompt.GUIDE)
+        self.assertIn("{terms}", concept_round.GUIDE + story_ai.GUIDE + costs_prompt.GUIDE)
         self.assertIn("anglais", terms.RULE_FR)
         self.assertIn("Termes techniques", (BASE_DIR / "tools" / "site" / "starter.md").read_text("utf-8"))
         self.assertIn("Technical terms always in", (BASE_DIR / "tools" / "site" / "en" / "starter.md").read_text("utf-8"))

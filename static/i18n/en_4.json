@@ -1,5 +1,4 @@
 {
-"Les trois niveaux de la structure, la chaîne de défaillance (effet, mode, cause), S / O / D, RPN et Action Priority.": "The three levels of the structure, the failure chain (effect, mode, cause), S / O / D, RPN and Action Priority.",
 "Les vacances et les congés ne sont jamais réclamés à un organisme : INT-VAC et INT-SAN ne sont pas « réclamables » et ne sortent pas dans l'export Excel ni dans le rapport Word d'une réclamation.": "Vacation and leave are never claimed from an agency: INT-VAC and INT-SAN are not “claimable” and do not appear in the Excel export or in the Word report of a claim.",
 "Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them.",
 "Les échelles de 1 à 10": "The 1-to-10 scales",
@@ -1429,5 +1428,11 @@
 "Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
 "Questions fréquentes": "FAQ",
 "Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
-"Questions fréquentes sur ": "Frequently asked questions about "
+"Questions fréquentes sur ": "Frequently asked questions about ",
+"Questions ouvertes (?)": "Open questions (?)",
+"Qui a fait Dynamite | Agile, et comment": "Who made Dynamite | Agile, and how",
+"Qui contacter ?": "Who to contact?",
+"Qui dans l'équipe": "Who in the team",
+"Qui et combien de temps": "Who and for how long",
+"Qui fait quoi, maintenant ?": "Who does what, now?"
 }
