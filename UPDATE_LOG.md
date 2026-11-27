@@ -1,4 +1,15 @@
-# Journal de mise à jour — 0.60.133
+# Journal de mise à jour — 0.60.134
+
+- **Version :** 0.60.133 → 0.60.134 (2026-11-27)
+- **Changements :**
+  1. **Diamond : « ▶ Revue » — revenir à une feuille déjà gardée ou écartée, la remettre en course, sauter à n'importe quelle feuille, Ctrl+Z** (D-O-147).
+- **Base de données :** aucune migration.
+- **Champs [new] :** `0.60.134-review-strip`, `0.60.134-review-back`.
+- **Tests :** `tests/test_diamond_concept_review.py`, suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.133
 
 - **Version :** 0.60.132 → 0.60.133 (2026-11-27)
 - **Changements :**
@@ -7,8 +18,6 @@
 - **Base de données :** migration diamond 23 (additive : `reviewed_at`, `reviewed_by` des feuilles de concept).
 - **Champs [new] :** `0.60.133-review`, `0.60.133-review-branch`.
 - **Tests :** `tests/test_diamond_concept_review.py` (nouveau), suite complète.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.132
 

@@ -116,9 +116,22 @@ body.dm-review-on { overflow: hidden; }
 .dm-review-nav { align-self: center; height: 5rem; font-size: 2.2rem; line-height: 1; border: 1px solid var(--line); border-radius: var(--radius-sm);
   background: var(--surface); color: var(--ink); cursor: pointer; }
 .dm-review-nav:hover, .dm-review-nav:focus-visible { border-color: var(--agile); color: var(--agile); }
-.dm-review-undo { position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); display: flex; gap: .8rem; align-items: center;
+.dm-review-undo { position: fixed; left: 50%; bottom: 4.6rem; transform: translateX(-50%); display: flex; gap: .8rem; align-items: center;
   padding: .55rem .9rem; border-radius: var(--radius-sm); background: var(--ink); color: var(--surface); }
 .dm-fold-review { margin-left: .6rem; }
+/* 0.60.134 (D-O-147): the strip of every sheet of the review, by branch, coloured by status; a click jumps to it */
+.dm-review-strip { display: flex; gap: .3rem; align-items: center; overflow-x: auto; padding: .5rem 1rem; border-top: 1px solid var(--line);
+  scrollbar-width: thin; }
+.dm-review-strip-branch { flex: none; margin-left: .5rem; font-size: .74rem; font-weight: 700; color: var(--muted); }
+.dm-review-strip-branch:first-child { margin-left: 0; }
+.dm-chip { flex: none; padding: .15rem .45rem; font-family: var(--mono); font-size: .74rem; line-height: 1.4; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); }
+.dm-chip-kept { border-color: var(--ok); color: var(--ok); }
+.dm-chip-kept::before { content: "✓ "; }
+.dm-chip-dropped { border-style: dashed; color: var(--muted); text-decoration: line-through; }
+.dm-chip-selected { border-color: var(--warn); color: var(--warn); font-weight: 700; }
+.dm-chip-on { outline: 3px solid var(--agile); outline-offset: 1px; }
+.dm-undo-hint { opacity: .75; }
 @media (max-width: 900px) {
   .dm-review-body { grid-template-columns: 1fr; overflow: auto; }
   .dm-review-nav { display: none; }

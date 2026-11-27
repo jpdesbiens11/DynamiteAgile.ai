@@ -1,0 +1,48 @@
+{
+  "version": "0.60.134",
+  "date": "2026-11-27",
+  "summary": {
+    "fr": "Diamond : « ▶ Revue » — revenir à une feuille gardée ou écartée, la remettre en course, sauter à n'importe quelle feuille, Ctrl+Z.",
+    "en": "Diamond: « ▶ Revue » (Review) — go back to a kept or dropped sheet, put it back in the running, jump to any sheet, Ctrl+Z."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : « ▶ Revue » — revenir à une feuille déjà gardée ou écartée, la remettre en course, sauter à n'importe quelle feuille, Ctrl+Z",
+      "why": "En revue, « Garder » ne remettait pas en course une feuille « Dropped », et avec le filtre « À revoir » une feuille gardée ou écartée sortait de la liste : ← ne la retrouvait plus. Maintenant : G sur une feuille écartée la remet en course (« Remettre en course ») ; la liste d'une revue est figée quand elle commence, ← retrouve toujours une feuille déjà traitée ; une bande de pastilles par branche, colorées par statut, saute à n'importe quelle feuille ; Ctrl+Z / « Annuler » défait la dernière action (garder, écarter, supprimer pendant 5 s).",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.134.json",
+        "modules/diamond/concept_review.py",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/css/diamond_concepts.css",
+        "static/i18n/en_1.json",
+        "static/i18n/en_2.json",
+        "static/i18n/en_3.json",
+        "static/i18n/en_4.json",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/diamond/concept_review.js",
+        "tests/test_diamond_concept_review.py",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}

@@ -173,6 +173,8 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.134** (2026-11-27) : Diamond — **revue, retour arrière** (D-O-147) : liste de la revue figée (← retrouve une feuille gardée ou
+  écartée), G sur une feuille « Dropped » la remet en course, bande de pastilles par branche pour sauter à une feuille, Ctrl+Z défait garder / écarter.
 - **0.60.133** (2026-11-27) : Diamond — **« ▶ Revue »** des feuilles de concept (`static/js/diamond/concept_review.js`, `modules/diamond/concept_review.py`) :
   une feuille à la fois en plein écran, ordre de l'arbre, ← / → d'une branche à l'autre, G garder, E écarter, Suppr supprimer (Annuler 5 s),
   M modifier ; « vue » partagée par l'équipe (migration diamond 23) ; le « ↔ IA » général retiré de cette page (D-O-146).
