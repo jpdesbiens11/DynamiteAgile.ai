@@ -21,7 +21,10 @@ already in the brick is left as it is, so the same .zip can be imported twice. p
 0.60.129 (D-O-142): a picture or a PDF without a card whose name STARTS with the code of a sheet of the Space (CB-1.1_croquis.png,
 CB-6.2-v2.jpg, CB-1.1.png) goes on that sheet instead of making a new one (concept_cards_attach.py); its nature stays as it is.
 The preview has one line per sheet or file, each ticked (apply ?skip=<JSON list of keys> leaves out the unticked ones), and apply
-writes a backup of the Space first. A reponse.json in the .zip is left aside with a warning (« Importer la réponse de l'IA »).
+writes a backup of the Space first.
+0.60.131 (D-O-144): a reponse.json in the .zip ({"sheets": [...]}, the answer of « ↔ IA ») is read (concept_cards_json.py): a new
+code creates an « ai » sheet with all its text and its sketch drawn on the template, an existing code updates its sheet; one line per
+sheet of the answer in the preview and in the report of apply, never a silent skip or a Scan. Lines sorted CB-6.9 before CB-6.10.
 """
 import io
 import re
@@ -31,6 +34,7 @@ from core import audit, uploads, validate
 from core.errors import ApiError
 
 from . import concept_cards_attach as AT
+from . import concept_cards_json as J
 from . import concept_sheets as S
 from . import concepts as C
 from . import functions as F
@@ -100,15 +104,16 @@ def read_zip(data):
         if not name or name.startswith(".") or info.filename.startswith("__MACOSX"):
             continue
         ext = "." + name.rsplit(".", 1)[-1].lower() if "." in name else ""
-        if ext == ".json":  # 0.60.129 (D-O-142): the AI's answer travels another way
-            warnings.append("« {} » ignoré : une réponse de l'IA s'importe par « Importer la réponse de l'IA ».".format(name))
-            continue
-        if ext not in KINDS and ext not in (".md", ".txt"):
+        if ext not in KINDS and ext not in (".md", ".txt", ".json"):
             continue
         if info.file_size > MAX_FILE_MB * 1048576:
             raise ApiError(413, "« {} » fait plus de {} Mo.".format(name, MAX_FILE_MB))
         body = z.read(info)
-        if ext in (".md", ".txt"):
+        if ext == ".json":  # 0.60.131 (D-O-144): the AI's answer, read (was left aside in 0.60.129)
+            got, said = J.read(name, body)
+            cards += got
+            warnings += said
+        elif ext in (".md", ".txt"):
             cards += parse_cards(body.decode("utf-8", "replace"))
         else:
             files[name] = (body, KINDS[ext])
@@ -130,9 +135,11 @@ def _title_of(name):
 def plan(conn, pid, pack, target=None, extras=False):
     """What the import would do: one entry per sheet, and the files left aside."""
     bricks = {c["number"]: c for c in C.rows(conn, pid)}
-    have = {}
+    have, active = {}, {}
     for s in S.rows(conn, pid):
         have.setdefault(s["concept_id"], set()).add(_norm(s["title"]))
+        active[s["code"]] = s
+    archived = AT._sheets(conn, pid)[1]
     used, entries = set(), []
     by_code = {}
     for name in sorted(pack["files"]):
@@ -143,20 +150,44 @@ def plan(conn, pid, pack, target=None, extras=False):
     def entry(card, names, kind):
         brick = target or bricks.get(card["brick"])
         e = {"code": card["code"], "title": card["title"], "files": names, "kind": kind, "card": card}
-        if brick is None:
+        by_title = not (card.get("source") == "json" and card["code"])  # 0.60.131: a code of the answer is its identity
+        if card.get("error"):
+            e.update(status="refused", reason=card["error"])
+        elif brick is None:
             e.update(status="refused", reason="brique CB-{} introuvable dans ce Space : créez-la, ou choisissez la brique cible"
                      .format(card["brick"]) if card["brick"] else "aucun code CB-n.m : choisissez la brique cible")
         elif brick.get("frozen"):
             e.update(status="refused", reason="{} est figée".format(brick["code"]))
-        elif _norm(card["title"]) in have.get(brick["id"], set()):
+        elif by_title and _norm(card["title"]) in have.get(brick["id"], set()):
             e.update(status="exists", brick=brick["code"], reason="une feuille de ce titre existe déjà dans " + brick["code"])
         else:
             e.update(status="new", brick=brick["code"], concept_id=brick["id"])
             have.setdefault(brick["id"], set()).add(_norm(card["title"]))
         entries.append(e)
 
+    seen = set()
     for card in pack["cards"]:
         names = by_code.get(card["code"] or "", [])
+        if card.get("source") == "json":  # 0.60.131 (D-O-144)
+            names = J.files_of(card, names, pack["files"])
+            used.update(names)
+            sheet = active.get(card["code"]) if card["code"] and not target else None
+            if card["code"] in seen:
+                card["error"] = "{} en double dans la réponse : seule la première est retenue".format(card["code"])
+            seen.add(card["code"])
+            if sheet is not None and not card.get("error"):
+                e = J.update_entry(conn, card, sheet, names, pack["files"])
+                if sheet["concept_id"] in {b["id"] for b in bricks.values() if b.get("frozen")}:
+                    e.update(status="refused", reason="{} est figée".format(e["brick"]))
+                entries.append(e)
+            else:
+                entry(card, names, card["kind"])
+                if card["code"] in archived and entries[-1]["status"] == "new":
+                    entries[-1]["warning"] = "{} est archivée : la feuille prend le numéro libre suivant".format(card["code"])
+            lost = J.missing(card, pack["files"])
+            if lost:
+                entries[-1]["warning"] = "{} : fichier absent du .zip : {}".format(card["code"] or card["title"], ", ".join(lost))
+            continue
         used.update(names)
         entry(card, names, "ai")
     for e in entries:
@@ -183,11 +214,13 @@ def plan(conn, pid, pack, target=None, extras=False):
         left = []
     for e in entries:
         e.setdefault("key", "file:" + e["files"][0] if e["files"] else "card:" + str(e["code"] or e["title"]))
-        if e["status"] == "new":
+        if e["status"] in ("new", "update"):
             bad = AT.unreadable(e["files"], pack["files"])
             if bad:
                 e.update(status="refused", reason=bad)
-    return attached + entries, left
+    out = attached + entries
+    out.sort(key=lambda e: J.code_key(e.get("code")))  # 0.60.131: CB-6.9 before CB-6.10
+    return out, left
 
 
 def _store(ctx, pid, name, data, mime):
@@ -211,27 +244,37 @@ def api_import(ctx):
             raise ApiError(404, "Brique cible introuvable dans ce Space (archivée ?). Correctif : rechargez la page.")
     pack = read_zip(data)
     if not pack["cards"] and not pack["files"]:
-        raise ApiError(400, "Le .zip ne contient ni carte (.md) ni image ni PDF.")
+        raise ApiError(400, "Le .zip ne contient ni carte (.md ou reponse.json) ni image ni PDF." + "".join(" ⚠ " + w for w in pack["warnings"]))
     entries, left = plan(ctx.conn, pid, pack, target, str(q.get("extras") or "") in ("1", "true"))
-    counts = {k: sum(1 for e in entries if e["status"] == k) for k in ("new", "attach", "exists", "refused")}
+    counts = {k: sum(1 for e in entries if e["status"] == k) for k in ("new", "update", "attach", "exists", "refused")}
     view = [{k: e.get(k) for k in ("key", "code", "title", "files", "status", "reason", "brick", "kind", "action", "replaces",
-                                   "warning")} for e in entries]
+                                   "warning", "changes")} for e in entries]
     warnings = pack["warnings"] + [e["warning"] for e in entries if e.get("warning")]
     if q.get("mode") != "apply":
         return {"entries": view, "left": left, "counts": counts, "cards": len(pack["cards"]), "files": len(pack["files"]),
                 "warnings": warnings}
     skip = AT.skip_keys(q.get("skip"))
-    todo = [e for e in entries if e["status"] in ("new", "attach") and e["key"] not in skip]
+    todo = [e for e in entries if e["status"] in ("new", "update", "attach") and e["key"] not in skip]
     if not todo:
         raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).")
     from .import_merge import backup
     saved = backup(ctx, pid)  # 0.60.129 (D-O-142): as for the other imports, a backup of the Space first
     attached = AT.apply(ctx, pid, [e for e in todo if e["status"] == "attach"], pack["files"], _store)
-    created = []
+    outcome = {e["key"]: "fichier posé sur " + e["code"] for e in todo if e["status"] == "attach"}
+    created, updated = [], []
     for e in todo:
+        if e["status"] == "update":
+            outcome[e["key"]] = J.apply_update(ctx, pid, e, pack["files"], _store)
+            updated.append(e["code"])
+            continue
         if e["status"] != "new":
             continue
         card = e["card"]
+        if card.get("source") == "json":
+            sid, made = J.create(ctx, pid, e, pack["files"], _store)
+            created.append(sid)
+            outcome[e["key"]] = "créée " + made + (" (au lieu de {})".format(e["code"]) if e["code"] and made != e["code"] else "")
+            continue
         fields = S._fields(dict({k: card.get(k) or "" for k in S.LIMITS}, kind=e["kind"]))
         pics = [n for n in e["files"] if pack["files"][n][1] != "application/pdf"]
         pdfs = [n for n in e["files"] if pack["files"][n][1] == "application/pdf"]
@@ -240,7 +283,11 @@ def api_import(ctx):
         pdf_id = _store(ctx, pid, pdfs[0], *pack["files"][pdfs[0]]) if pics and pdfs else None
         sid = S.add(ctx.conn, ctx.user["id"], pid, e["concept_id"], fields, main_id, number=card.get("number"), pdf_id=pdf_id)
         created.append(sid)
+        outcome[e["key"]] = "créée"
     audit.log_action(ctx.conn, ctx.user["id"], "diamond_sheets_import", "project", pid,
-                     dict(counts, sheets=created, attached=attached, skipped=len(skip), files=len(pack["files"]), backup=saved), ctx.ip)
-    return {"entries": view, "left": left, "counts": counts, "created": len(created), "attached": len(attached),
-            "backup": saved, "warnings": warnings, "imported": True}
+                     dict(counts, sheets=created, updated=updated, attached=attached, skipped=len(skip), files=len(pack["files"]),
+                          backup=saved), ctx.ip)
+    for line in view:  # 0.60.131 (D-O-144): the report, one line per sheet or file
+        line["outcome"] = outcome.get(line["key"]) or ("décochée" if line["key"] in skip else "rien à faire : " + (line["reason"] or ""))
+    return {"entries": view, "left": left, "counts": counts, "created": len(created), "updated": len(updated),
+            "attached": len(attached), "backup": saved, "warnings": warnings, "imported": True}

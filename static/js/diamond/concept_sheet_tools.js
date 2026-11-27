@@ -4,6 +4,8 @@
    - « Importer un lot (.zip) »: the cards (.md) of a brainstorm with the picture and the PDF of each sheet; preview, then import;
      0.60.129 (D-O-142): a file named by the code of an existing sheet (CB-1.1_croquis.png) goes on that sheet; one ticked line per
      sheet or file; a sheet with its own picture is shown and exported (PNG, PDF) as that picture;
+     0.60.131 (D-O-144): the reponse.json of the .zip is read (new code → « ai » sheet on the template, existing code → updated),
+     and the import ends on its report, one line per sheet or file (created, updated, attached, nothing to do and why);
    - « IA : une branche »: the prompt of every brick to define under one secondary function of the tree, to iterate with the
      assistant branch by branch; its answer comes back through « Importer la réponse de l'IA » (concept_ai.js). */
 (function () {
@@ -82,13 +84,18 @@
       go.disabled = true;
       try {
         const r = await api.upload(url("apply"), file.files[0]);
-        close();
-        toast(r.created + " feuille(s) créée(s), " + r.attached + " fichier(s) posé(s) sur des feuilles existantes. Sauvegarde du Space : "
-          + r.backup + ".", "success");
+        toast(r.created + " feuille(s) créée(s), " + (r.updated || 0) + " mise(s) à jour, " + r.attached
+          + " fichier(s) posé(s) sur des feuilles existantes. Sauvegarde du Space : " + r.backup + ".", "success");
+        ticks.clear();
+        clear(result);
+        result.append(report(r));  // 0.60.131 (D-O-144): what happened to each line, before closing
         done();
       } catch (err) { go.disabled = false; toast(err.message, "error"); }
     });
     close = modal("Importer des feuilles de concept", el("div", { class: "ag-form", "data-new": "0.60.125-sheets-import" },
+      el("p", { class: "muted", "data-new": "0.60.131-sheets-json" }, "Un reponse.json ({\"sheets\": […]}, la réponse de « ↔ IA ») "
+        + "dans le .zip est lu : un code nouveau (CB-6.6) crée la feuille IA avec tout son texte et son croquis dessiné sur le gabarit ; "
+        + "un code existant met sa feuille à jour, sans doublon."),
       el("p", { class: "muted" }, "Un .zip : les cartes au format de la plateforme (.md : « ## CB-3.2 — Titre », « **Principle:** … », "
         + "la description, puis une ligne par « + », « − » et « ? », « **Badge:** … ») et l'image (PNG, JPEG) et le PDF de chaque feuille, "
         + "nommés par leur code (CB-3.2_bras.png). Rien n'est écrasé : une feuille du même titre déjà dans la brique est laissée."),
@@ -104,14 +111,15 @@
 
   /* The preview: one line per sheet to create or file to put on a sheet, ticked (0.60.129, D-O-142) */
   function preview(r, ticks, refresh) {
-    const label = { new: "Nouvelle", attach: "Sur la feuille", exists: "Déjà là", refused: "Refusée" };
-    const badge = { new: "badge-ok", attach: "badge-info", exists: "badge-neutral", refused: "badge-off" };
+    const label = { new: "Nouvelle", update: "Mise à jour", attach: "Sur la feuille", exists: "Déjà là", refused: "Refusée" };
+    const badge = { new: "badge-ok", update: "badge-warn", attach: "badge-info", exists: "badge-neutral", refused: "badge-off" };
     const what = (e) => {
-      if (!e.action) return e.status === "new" ? "nouvelle feuille " + (e.kind === "scan" ? "Scan" : "IA") : "—";
+      if (e.status === "update") return "mise à jour de " + e.code + " : " + (e.changes || []).join(", ");
+      if (!e.action) return e.status === "new" ? "nouvelle feuille " + (e.kind === "scan" ? "Scan" : e.kind === "digital" ? "numérique" : "IA") : "—";
       return (e.action === "pdf" ? "PDF" : "image") + " → " + e.code + (e.replaces ? " (remplace " + (e.action === "pdf" ? "le PDF actuel)" : "l'image actuelle)") : "");
     };
     const box = (e) => {
-      if (e.status !== "new" && e.status !== "attach") return null;
+      if (!["new", "update", "attach"].includes(e.status)) return null;
       const b = el("input", { type: "checkbox", checked: true, "aria-label": "Importer " + (e.files[0] || e.title) });
       b.addEventListener("change", refresh);
       ticks.set(e.key, b);
@@ -121,15 +129,27 @@
     all.addEventListener("change", () => { ticks.forEach((b) => { b.checked = all.checked; }); refresh(); });
     return el("div", { class: "dm-import-preview", "data-new": "0.60.129-sheets-attach-preview" },
       el("p", null, el("strong", null, "Aperçu : "), r.cards + " carte(s), " + r.files + " fichier(s) — " + r.counts.new + " nouvelle(s) feuille(s), "
-        + r.counts.attach + " fichier(s) sur des feuilles existantes, " + r.counts.exists + " déjà là, " + r.counts.refused + " refusé(s)."),
+        + (r.counts.update || 0) + " mise(s) à jour, " + r.counts.attach + " fichier(s) sur des feuilles existantes, " + r.counts.exists + " déjà là, " + r.counts.refused + " refusé(s)."),
       (r.warnings || []).length ? el("ul", { class: "dm-import-warnings", role: "note" }, r.warnings.map((w) => el("li", null, "⚠ " + w))) : null,
       r.entries.length ? DA.table([all, "Fichier ou feuille", "Action", "Brique", "Statut"], r.entries.map((e) => el("tr", null,
         el("td", null, box(e)),
         el("td", null, e.code ? el("span", { class: "dm-code" }, e.code + " ") : null, e.action ? e.files[0] : e.title,
           !e.action && (e.files || []).length ? el("div", { class: "muted" }, e.files.join(", ")) : null),
         el("td", null, what(e)), el("td", null, e.brick || "—"),
-        el("td", null, el("span", { class: "badge " + badge[e.status] }, label[e.status]), e.reason ? el("span", { class: "muted" }, " " + e.reason) : null)))) : null,
+        el("td", null, el("span", { class: "badge " + badge[e.status] }, label[e.status]), e.reason ? el("span", { class: "muted" }, " " + e.reason) : null,
+          e.warning ? el("div", { class: "muted" }, "⚠ " + e.warning) : null)))) : null,
       r.left.length ? el("p", { class: "muted" }, "Laissés de côté (sans code de feuille) : " + r.left.join(", ") + ".") : null);
+  }
+
+  /* The report of an import (0.60.131, D-O-144): one line per sheet or file, what was done */
+  function report(r) {
+    return el("div", { class: "dm-import-preview", "data-new": "0.60.131-sheets-import-report" },
+      el("p", { class: "up-ok" }, "✓ Import terminé : " + r.created + " créée(s), " + (r.updated || 0) + " mise(s) à jour, " + r.attached
+        + " fichier(s) posé(s). Sauvegarde du Space : " + r.backup + "."),
+      (r.warnings || []).length ? el("ul", { class: "dm-import-warnings", role: "note" }, r.warnings.map((w) => el("li", null, "⚠ " + w))) : null,
+      DA.table(["Fichier ou feuille", "Brique", "Résultat"], r.entries.map((e) => el("tr", null,
+        el("td", null, e.code ? el("span", { class: "dm-code" }, e.code + " ") : null, e.action ? e.files[0] : e.title),
+        el("td", null, e.brick || "—"), el("td", null, e.outcome || "—")))));
   }
 
   /* « IA : une branche » */

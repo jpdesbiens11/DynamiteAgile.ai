@@ -173,6 +173,9 @@
   limites d'Excel (16 384 colonnes, 1 048 576 lignes) et à 2 millions de cellules par classeur.
 - **0.60.88** (2026-11-07) : **sceau des paquets** (D-O-094, `core/seal.py`) : seul le nombre d'itérations PBKDF2 de la plateforme
   (310 000) est accepté à l'ouverture d'un paquet Données / Site complet.
+- **0.60.131** (2026-11-27) : Diamond — « Importer un lot (.zip) » **lit le reponse.json** de l'IA (`modules/diamond/concept_cards_json.py`) :
+  un code nouveau crée une feuille « ai » avec tout son texte et son croquis dessiné sur le gabarit (`figure_id`), un code existant met
+  sa feuille à jour sans doublon, `questions` / `badge` facultatifs, tri CB-6.9 avant CB-6.10, rapport par feuille après l'import (D-O-144).
 - **0.60.130** (2026-11-26) : Diamond — le « Profil » des compétences devient un **filtre d'affichage** (`static/js/diamond/competency_profiles.js`,
   `D.competencyFilter`) : « Grille du Space », « Tous », un métier / groupe technique ; aucune note effacée, gardé par Space dans le navigateur (D-O-143).
 - **0.60.129** (2026-11-23) : Diamond — « Importer un lot (.zip) » pose une image ou un PDF nommé par le code d'une feuille
