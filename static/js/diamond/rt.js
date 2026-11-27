@@ -191,6 +191,7 @@
 
   /** The button of every Diamond page head (SHELL.headTools). */
   D.rtButton = function (ctx) {
+    if (ctx.view === "csheets") return null;  // 0.60.133 (D-O-146): « ↔ IA : feuilles de concept » is the one AI button of that page
     return el("button", { type: "button", class: "btn btn-small dm-rt-btn", "data-new": "0.60.111-rt", title: "Aller-retour avec un assistant IA : "
       + "exporter cette page ou tout Diamond, importer la réponse, tout reste synchronisé", onclick: () => open(ctx) }, "↔ IA");
   };

@@ -142,14 +142,17 @@
           el("button", { type: "button", class: "btn btn-small btn-primary", "data-new": "0.60.125-sheets-new",
             onclick: () => openSheet(ctx, null, null, reload, open) }, "Nouvelle feuille"),
           el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.132-round",
-            onclick: () => D.openConceptRound(ctx, reload) }, "↔ IA : feuilles de concept")] : null),
+            onclick: () => D.openConceptRound(ctx, reload) }, "↔ IA : feuilles de concept"),
+          el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.133-review",
+            onclick: () => D.openReview(ctx, reload) }, "▶ Revue")] : null),
         el("div", { class: "page-head dm-intro" }, el("h1", { "data-new": "0.60.105-csheets" }, "Feuilles de concept"),
-          el("p", { class: "muted" }, "Toutes les solutions dessinées, brique par brique, sur le gabarit de la plateforme. « ↔ IA : feuilles "
-            + "de concept » : choisissez une branche ou toutes, copiez le prompt pour votre assistant IA, puis déposez le .zip qu'il rend ; "
-            + "recommencez à chaque tour de créativité. Elles nourrissent le tableau morphologique et les matrices de Pugh.")));
+          el("p", { class: "muted" }, "Toutes les solutions dessinées, brique par brique, sur le gabarit de la plateforme. « ↔ IA : feuilles de concept » : choisissez "
+            + "une branche ou toutes, copiez le prompt pour votre assistant IA, puis déposez le .zip qu'il rend ; recommencez à chaque tour "
+            + "de créativité. « ▶ Revue » : une feuille à la fois, au clavier, pour garder, écarter ou supprimer. Elles nourrissent le "
+            + "tableau morphologique et les matrices de Pugh.")));
       if (!data.sheets.length) {
         holder.append(el("div", { class: "empty" }, el("p", null, open.length
-          ? "Aucune feuille pour l'instant : « Nouvelle feuille » ou « ↔ IA : feuilles de concept » (en haut à droite)."
+          ? "Aucune feuille pour l'instant : « Nouvelle feuille » ou « ↔ IA : feuilles de concept » (en haut)."
           : "Aucune brique où dessiner une feuille : créez d'abord les briques technologiques."),
         el("a", { class: "btn" + (open.length ? "" : " btn-primary"), href: A.href(ctx, "concepts") }, "Briques technologiques")));
         return;
@@ -161,5 +164,6 @@
   }
 
   D.sheetSection = sheetSection;
+  D.editSheet = (ctx, s, done) => openSheet(ctx, s.concept_id, s, done);  // 0.60.133 (D-O-146): « M » in « Revue »
   A.views.csheets = listView;
 })();

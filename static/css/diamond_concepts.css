@@ -92,3 +92,35 @@ html[data-term] .dm-concept-initial { color: var(--acc); }
 .dm-fold-body { display: flex; flex-direction: column; gap: .5rem; padding: .6rem; }
 .dm-fold .dm-fold { background: var(--surface-2); }
 .dm-fold .dm-fold > .dm-sheets { padding: .6rem; }
+
+/* 0.60.133 (D-O-146): « Revue » of the concept sheets -- one sheet at a time, full screen, under the edit window (.modal: 100) */
+body.dm-review-on { overflow: hidden; }
+.dm-review { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--surface); color: var(--ink); }
+.dm-review-bar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--line); }
+.dm-review-bar select { width: auto; max-width: 20rem; }
+.dm-review-count { font-family: var(--mono); font-size: .86rem; }
+.dm-review-keys { margin-left: auto; font-size: .8rem; }
+.dm-review-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 3rem minmax(0, 1fr) minmax(18rem, 26rem) 3rem; gap: 1rem; padding: 1rem; }
+.dm-review-stage { min-height: 0; display: grid; place-items: center; overflow: auto; }
+.dm-review-img { max-width: 100%; max-height: 100%; object-fit: contain; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+.dm-review-side { min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: .55rem; }
+.dm-review-side h2 { margin: 0; font-size: 1.2rem; line-height: 1.25; }
+.dm-review-crumbs { font-size: .82rem; }
+.dm-review-field { display: flex; flex-direction: column; gap: .1rem; font-size: .9rem; }
+.dm-review-field strong { font-size: .78rem; color: var(--muted); }
+.dm-review-pros div { color: var(--ok); }
+.dm-review-cons div { color: var(--danger); }
+.dm-review-q div { color: var(--agile); }
+.dm-review-acts { display: flex; flex-wrap: wrap; gap: .4rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+.dm-review-acts kbd { font-family: var(--mono); font-size: .72rem; padding: 0 .3rem; border: 1px solid currentColor; border-radius: 4px; opacity: .8; }
+.dm-review-nav { align-self: center; height: 5rem; font-size: 2.2rem; line-height: 1; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--ink); cursor: pointer; }
+.dm-review-nav:hover, .dm-review-nav:focus-visible { border-color: var(--agile); color: var(--agile); }
+.dm-review-undo { position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); display: flex; gap: .8rem; align-items: center;
+  padding: .55rem .9rem; border-radius: var(--radius-sm); background: var(--ink); color: var(--surface); }
+.dm-fold-review { margin-left: .6rem; }
+@media (max-width: 900px) {
+  .dm-review-body { grid-template-columns: 1fr; overflow: auto; }
+  .dm-review-nav { display: none; }
+  .dm-review-keys { display: none; }
+}

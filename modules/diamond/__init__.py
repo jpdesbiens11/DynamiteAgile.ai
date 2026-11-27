@@ -35,6 +35,7 @@ from . import docx_pages, pdf_pages  # noqa: E402  (0.60.123, D-O-136; Word 0.60
 from . import ai_io, ai_prompts, ai_prompts_process, cp_io, dfmea_io, pfmea_io  # noqa: E402,F401 (0.60.104, D-O-116)
 from . import concept_ai, concept_pugh, concept_sheets, concepts  # noqa: E402 (0.60.105, D-O-117)
 from . import concept_cards, concept_sheet_api  # noqa: E402 (0.60.125, D-O-138: sheets by batch, the sheet on its template)
+from . import concept_review  # noqa: E402 (0.60.133, D-O-146: « Revue » of the concept sheets)
 from . import concept_round  # noqa: E402 (0.60.132, D-O-145: « ↔ IA : feuilles de concept », the round trip with the AI)
 from . import rt  # noqa: E402 (0.60.111, D-O-124: « ↔ IA », the round trip of every page)
 from . import competencies, competency_catalog, competency_export, competency_profiles, concept_freeze  # noqa: E402 (0.60.116, D-O-129: competencies, frozen bricks)
@@ -107,6 +108,7 @@ ROUTES = [
     ("GET", SH + r"/sheet\.pdf", concept_sheet_api.api_pdf, "user"),
     ("PATCH", SH, concept_sheets.api_update, "user"),
     ("POST", SH + r"/archive", concept_sheets.api_archive, "user"),
+    ("POST", SH + r"/review", concept_review.api_review, "user"),  # 0.60.133 (D-O-146)
     ("DELETE", SH, concept_sheets.api_delete, "user"),  # 0.60.128 (D-O-141)
     ("GET", SH + r"/file", concept_sheets.api_file, "user"),
     ("GET", P + r"/pugh", concept_pugh.api_list, "user"),  # Goldmine's Pugh matrix, with the bricks and the functions

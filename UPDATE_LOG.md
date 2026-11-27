@@ -1,4 +1,16 @@
-# Journal de mise à jour — 0.60.132
+# Journal de mise à jour — 0.60.133
+
+- **Version :** 0.60.132 → 0.60.133 (2026-11-27)
+- **Changements :**
+  1. **Diamond : « ▶ Revue » des feuilles de concept — une à la fois au clavier, d'une branche à l'autre ; garder, écarter, supprimer (avec Annuler)** (D-O-146).
+  2. **Diamond : un seul bouton IA sur « Feuilles de concept »** (D-O-146).
+- **Base de données :** migration diamond 23 (additive : `reviewed_at`, `reviewed_by` des feuilles de concept).
+- **Champs [new] :** `0.60.133-review`, `0.60.133-review-branch`.
+- **Tests :** `tests/test_diamond_concept_review.py` (nouveau), suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.132
 
 - **Version :** 0.60.131 → 0.60.132 (2026-11-27)
 - **Changements :**
@@ -6,8 +18,6 @@
 - **Base de données :** aucune migration.
 - **Champs [new] :** `0.60.132-round`, `0.60.132-round-scope`, `0.60.132-round-context`, `0.60.132-round-report`.
 - **Tests :** `tests/test_diamond_concept_round.py` (nouveau), suite complète.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.131
 

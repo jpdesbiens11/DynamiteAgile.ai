@@ -441,4 +441,9 @@ MIGRATIONS = [
         -- 0.60.128 (D-O-141): a concept sheet may be deleted; its number is not given again by the automatic numbering
         ALTER TABLE diamond_concepts ADD COLUMN sheet_floor INTEGER NOT NULL DEFAULT 0;
     """),
+    (23, """
+        -- 0.60.133 (D-O-146): the review of the concept sheets, shared by the team -- who saw a sheet, and when
+        ALTER TABLE diamond_concept_sheets ADD COLUMN reviewed_at TEXT;
+        ALTER TABLE diamond_concept_sheets ADD COLUMN reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL;
+    """),
 ]

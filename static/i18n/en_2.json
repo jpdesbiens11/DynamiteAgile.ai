@@ -1,4 +1,8 @@
 {
+"Bilan thermique ; modèle thermique et rapport ; choix du heat sink ou du cold plate ; plan d'essai thermique.": "Thermal budget; thermal model and report; choice of the heat sink or cold plate; thermal test plan.",
+"Bilan thermique calculé ou simulé, température de jonction au moins 20 °C sous le maximum du composant": "Thermal budget calculated or simulated, junction temperature at least 20 °C below the component maximum",
+"Binning des LED pour une couleur constante d'un produit à l'autre": "LED binning for constant color from one product to the next",
+"Bleu": "Blue",
 "Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
 "Bloc de code": "Code block",
 "Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator",
@@ -54,6 +58,8 @@
 "Brique cible introuvable dans ce Space (archivée ?). Correctif : rechargez la page.": "Target brick not found in this Space (archived?). Fix: reload the page.",
 "Brique créée.": "Building block created.",
 "Brique de F": "Building block of F",
+"Brique figée": "Frozen brick",
+"Brique figée : lecture seule.": "Frozen brick: read only.",
 "Brique introuvable dans ce Space (archivée ?). Correctif : rechargez la page.": "Building block not found in this Space (archived?). Fix: reload the page.",
 "Brique technologique": "Technology brick",
 "Brique technologique (après le pointillé)": "Technology building block (after the dotted line)",
@@ -279,6 +285,7 @@
 "Cette clé de Space existe déjà.": "This Space key already exists.",
 "Cette connexion": "This connection",
 "Cette entrée": "This input",
+"Cette feuille est retenue par une matrice de Pugh : elle ne peut pas être écartée ici. Correctif : rouvrez la décision de la matrice.": "This sheet is retained by a Pugh matrix: it cannot be dropped here. Fix: reopen the decision of the matrix.",
 "Cette fonction n'est pas dans la structure fonctionnelle (fonction secondaire ou tertiaire de l'arbre, sans les fonctions techniques). Correctif : choisissez une fonction de la liste.": "This function is not in the functional structure (secondary or tertiary function of the tree, without the technical functions). Fix: choose a function from the list.",
 "Cette opération n'est pas sur la ligne du plan. Correctif : une opération de sa ligne.": "This operation is not on the plan's line. Fix: an operation of its line.",
 "Cette page": "This page",
@@ -1420,8 +1427,5 @@
 "En faire la fonction primaire": "Make it the primary function",
 "En pratique, ce sont les clients et les investisseurs qui décident où vont les ressources : une entreprise qui écoute bien ses meilleurs clients finance ce qu'ils demandent, pas ce qui les remplacera.": "In practice, customers and investors decide where the resources go: a company that listens well to its best customers funds what they ask for, not what will replace them.",
 "En retard": "Overdue",
-"En service : ": "In service: ",
-"En une phrase :": "In one sentence:",
-"En vrac": "Loose",
-"En vrac : tout ce que la scène fait penser, sans filtrer.": "Brain dump: everything the scene makes you think of, unfiltered."
+"En service : ": "In service: "
 }
