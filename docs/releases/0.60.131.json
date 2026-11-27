@@ -1,0 +1,49 @@
+{
+  "version": "0.60.131",
+  "date": "2026-11-27",
+  "summary": {
+    "fr": "Diamond : « Importer un lot (.zip) » lit le reponse.json de l'IA — un code nouveau crée la feuille IA dessinée sur le gabarit, un code existant la met à jour, un rapport par feuille.",
+    "en": "Diamond: « Importer un lot (.zip) » (Import a batch) reads the AI's reponse.json — a new code creates the AI sheet drawn on the template, an existing code updates it, a report per sheet."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : « Importer un lot (.zip) » lit le reponse.json de l'IA — feuilles IA sur le gabarit, codes existants mis à jour, rapport par feuille",
+      "why": "« Importer un lot (.zip) » laissait de côté le reponse.json du .zip : un lot de codes nouveaux CB-6.6 à CB-6.10 ne donnait qu'une feuille CB-6.10 « Scan » titrée « Schema », sans texte, l'image brute (doublon jugé au titre, tri « CB-6.10 » avant « CB-6.6 »). Le reponse.json est maintenant lu : un code nouveau crée la feuille « ai » avec tout son texte (principle, description, pros, cons, questions et badge facultatifs) et son croquis dessiné sur le gabarit de la plateforme, comme par « ↔ IA » ; un code existant met sa feuille à jour, sans doublon (rien de changé → « Déjà là ») ; une feuille Scan que la réponse dit « ai » redevient « ai ». Lignes triées par numéro, chaque feuille de la réponse a sa ligne (nouvelle, mise à jour, déjà là, refusée avec sa raison) et l'import se termine sur un rapport par feuille. Cartes .md et images seules inchangées.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.131.json",
+        "modules/diamond/concept_cards.py",
+        "modules/diamond/concept_cards_json.py",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/i18n/en_1.json",
+        "static/i18n/en_2.json",
+        "static/i18n/en_3.json",
+        "static/i18n/en_4.json",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/diamond/concept_sheet_tools.js",
+        "tests/test_diamond_concept_cards.py",
+        "tests/test_diamond_sheets_json_import.py",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}

@@ -110,7 +110,7 @@ class ConceptCardsTest(unittest.TestCase):
         data = make_zip(n)
         url = self.base + "/sheets/import?mode=preview"
         prev = self.admin.upload(url, data, "application/zip", "lot.zip")
-        self.assertEqual(prev["counts"], {"new": 3, "attach": 0, "exists": 0, "refused": 0})
+        self.assertEqual(prev["counts"], {"new": 3, "update": 0, "attach": 0, "exists": 0, "refused": 0})
         self.assertEqual(sorted(prev["left"]), sorted(["CB-{}_synthese.png".format(n), "CB-{}_synthese.pdf".format(n),
                                                         "CB-{0}.7-{0}.8_brainwriting.pdf".format(n)]))
         arm = next(e for e in prev["entries"] if e["code"] == "CB-{}.7".format(n))
@@ -202,7 +202,7 @@ class ConceptCardsTest(unittest.TestCase):
         first = png(4, 3, (200, 30, 30))
         data = zipped({"images/{}_croquis_ia.png".format(code): first, "reponse.json": b'{"sheets": []}'})
         prev = self.admin.upload(self.base + "/sheets/import?mode=preview", data, "application/zip", "lot.zip")
-        self.assertEqual(prev["counts"], {"new": 0, "attach": 1, "exists": 0, "refused": 0})
+        self.assertEqual(prev["counts"], {"new": 0, "update": 0, "attach": 1, "exists": 0, "refused": 0})
         line = prev["entries"][0]
         self.assertEqual((line["code"], line["action"], line["replaces"], line["kind"]), (code, "image", False, "ai"))
         self.assertTrue(any("reponse.json" in w for w in prev["warnings"]))  # left aside, said
@@ -248,7 +248,7 @@ class ConceptCardsTest(unittest.TestCase):
                        "croquis_libre.png": png(2, 2, (7, 8, 9))})
         url = self.base + "/sheets/import?extras=1&cid={}&mode=".format(brick["id"])
         prev = self.admin.upload(url + "preview", data, "application/zip", "c.zip")
-        self.assertEqual(prev["counts"], {"new": 3, "attach": 0, "exists": 0, "refused": 0})
+        self.assertEqual(prev["counts"], {"new": 3, "update": 0, "attach": 0, "exists": 0, "refused": 0})
         self.assertTrue(any("archivée" in w for w in prev["warnings"]))
         self.assertTrue(any("CB-{}.30".format(n) in w and "aucune feuille" in w for w in prev["warnings"]))
         self.admin.upload(url + "apply", data, "application/zip", "c.zip")

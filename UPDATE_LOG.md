@@ -1,11 +1,20 @@
-# Journal de mise à jour — 0.60.130
+# Journal de mise à jour — 0.60.131
+
+- **Version :** 0.60.130 → 0.60.131 (2026-11-27)
+- **Changements :**
+  1. **Diamond : « Importer un lot (.zip) » lit le reponse.json de l'IA — un code nouveau crée la feuille IA sur le gabarit, un code existant la met à jour, rapport par feuille** (D-O-144).
+- **Base de données :** aucune migration.
+- **Champs [new] :** `0.60.131-sheets-json`, `0.60.131-sheets-import-report`.
+- **Tests :** `tests/test_diamond_sheets_json_import.py` (nouveau), `tests/test_diamond_concept_cards.py`, suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.130
 
 - **Version :** 0.60.129 → 0.60.130 (2026-11-26)
 - **Changements :**
   1. **Diamond : le « Profil » des compétences devient un filtre — « Grille du Space », « Tous », un métier ou groupe technique ; aucune note effacée** (D-O-143).
 - **Base de données :** aucune migration.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.129
 
