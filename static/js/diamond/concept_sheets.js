@@ -6,7 +6,8 @@
    by batch from a .zip of cards with their pictures and PDF, or with an AI, one branch of the tree at a time.
    0.60.132 (D-O-145): the AI tools of the page are one button, « ↔ IA : feuilles de concept » (concept_round.js): the prompt and
    the context .zip out, the .zip of the AI back in at once; « Importer un lot (.zip) » and « IA : une branche » are gone.
-   0.60.135 (D-O-148): « Raffiner avec l'IA » on each card: the same round on that one sheet. */
+   0.60.135 (D-O-148): « Raffiner avec l'IA » on each card: the same round on that one sheet.
+   0.60.136 (D-O-149): the card is compact (title, thumbnail, principle, buttons); a double-click shows the sheet in detail. */
 (function () {
   "use strict";
 
@@ -14,19 +15,18 @@
   const A = DA.agile;
   const D = DA.diamond;
 
+  /* 0.60.136 (D-O-149): a compact card -- code and badges, title, the sheet as a thumbnail, principle, every button; the rest
+     (description, + / − / ?, author) is one double-click away (or « Détails », or Entrée): « ▶ Revue » opens on this sheet,
+     with all its text and its actions, and goes on to the other sheets of its brick. */
   function card(ctx, s, editable, done, labels) {
     const status = (labels && labels.status ? labels.status : { open: "Open", selected: "Selected", dropped: "Dropped" })[s.status];
-    const row = (label, text) => (text ? el("p", null, el("strong", null, label + " "), text) : null);
-    return el("article", { class: "dm-sheet dm-sheet-" + s.kind + " dm-sheet-st-" + s.status },
-      el("div", { class: "dm-cb-top" }, el("span", { class: "dm-code" }, s.code),
-        el("span", { class: "badge badge-neutral" }, { digital: "Numérique", ai: "IA", scan: "Scan" }[s.kind] || s.kind),
-        s.badge ? el("span", { class: "badge badge-warn" }, s.badge) : null,
-        s.status !== "open" ? el("span", { class: "badge " + (s.status === "selected" ? "badge-ok" : "badge-off") }, status) : null),
-      el("h3", null, s.title), ...D.sheetVisual(ctx, s),
-      row("Principe :", s.principle), s.description ? el("p", { class: "dm-sheet-desc" }, s.description) : null,
-      row("+", s.pros), row("−", s.cons), row("?", s.questions),
-      el("p", { class: "muted dm-sheet-by" }, (s.author_name || "") + " · " + DA.formatDate(s.updated_at || s.created_at)),
-      editable ? el("div", { class: "dm-actions" },
+    const details = () => D.openReview(ctx, done, { scope: "c" + s.concept_id, id: s.id, filter: "all" });
+    const [thumb, buttons] = D.sheetVisual(ctx, s, { thumb: true });
+    buttons.classList.add("dm-sheet-buttons");
+    buttons.append(el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.136-sheet-details",
+      "data-tip": "La feuille en détail : description, + / − / ?, auteur (double-clic sur la carte)", onclick: details }, "Détails"));
+    if (editable) {
+      buttons.append(
         el("button", { type: "button", class: "btn btn-small", onclick: () => openSheet(ctx, s.concept_id, s, done) }, "Modifier"),
         D.roundButton(ctx, "s" + s.id, done, "Raffiner avec l'IA"),  // 0.60.135 (D-O-148): one sheet, text and sketch, its code kept
         el("button", { type: "button", class: "btn btn-small btn-danger", onclick: async () => {
@@ -37,7 +37,21 @@
           if (!window.confirm("Supprimer définitivement la feuille " + s.code + " « " + s.title + " » ? Elle ne pourra pas être récupérée "
             + "(sauf par une sauvegarde du Space). Son numéro ne sera pas redonné.")) return;
           try { await api.del(D.base(ctx) + "/sheets/" + s.id); toast(s.code + " supprimée.", "success"); done(); } catch (err) { toast(err.message, "error"); }
-        } }, "Supprimer")) : null);
+        } }, "Supprimer"));
+    }
+    const box = el("article", { class: "dm-sheet dm-sheet-compact dm-sheet-" + s.kind + " dm-sheet-st-" + s.status, tabindex: "0",
+      "data-new": "0.60.136-sheet-compact", "aria-label": "Feuille " + s.code + " " + s.title + " — double-clic ou Entrée : en détail" },
+      el("div", { class: "dm-cb-top" }, el("span", { class: "dm-code" }, s.code),
+        el("span", { class: "badge badge-neutral" }, { digital: "Numérique", ai: "IA", scan: "Scan" }[s.kind] || s.kind),
+        s.badge ? el("span", { class: "badge badge-warn" }, s.badge) : null,
+        s.status !== "open" ? el("span", { class: "badge " + (s.status === "selected" ? "badge-ok" : "badge-off") }, status) : null),
+      el("h3", null, s.title), thumb,
+      s.principle ? el("p", { class: "dm-sheet-principle" }, el("strong", null, "Principe : "), s.principle) : null,
+      buttons);
+    const own = (ev) => ev.target.closest("button, a, input, select, textarea");
+    box.addEventListener("dblclick", (ev) => { if (!own(ev)) { ev.preventDefault(); details(); } });
+    box.addEventListener("keydown", (ev) => { if (ev.key === "Enter" && ev.target === box) { ev.preventDefault(); details(); } });
+    return box;
   }
 
   function sheetSection(ctx, state, editable) {

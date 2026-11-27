@@ -1,0 +1,49 @@
+{
+  "version": "0.60.136",
+  "date": "2026-11-27",
+  "summary": {
+    "fr": "Diamond : cartes de feuilles de concept compactes (titre, vignette, principe, boutons) ; le détail au double-clic.",
+    "en": "Diamond: compact concept sheet cards (title, thumbnail, principle, buttons); the details on double-click."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : la carte d'une feuille de concept, compacte — titre, vignette, principe et tous les boutons ; le détail au double-clic",
+      "why": "Chaque carte de feuille de concept montrait tout (feuille en grand, description, + / − / ?, auteur) et il fallait défiler pour atteindre « Modifier ». La carte montre maintenant le code et ses badges, le titre, la feuille en vignette, le principe et tous les boutons (PNG, PDF, Détails, Modifier, Raffiner avec l'IA, Archiver, Supprimer). Un double-clic sur la carte (ou Entrée, ou « Détails ») ouvre la feuille en détail dans « ▶ Revue », avec tout son texte, ses actions et les autres feuilles de sa brique.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.136.json",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/css/diamond_concepts.css",
+        "static/i18n/en_1.json",
+        "static/i18n/en_2.json",
+        "static/i18n/en_3.json",
+        "static/i18n/en_4.json",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/diamond/concept_review.js",
+        "static/js/diamond/concept_sheet_tools.js",
+        "static/js/diamond/concept_sheets.js",
+        "tests/test_diamond_concept_review.py",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}

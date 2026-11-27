@@ -46,7 +46,8 @@
     if (!all.length) { toast("Aucune feuille de concept à revoir.", "info"); return; }
     const editable = A.canEdit(ctx);
     const kept = remembered(ctx);
-    const state = { scope: (start && start.scope) || kept.scope || "all", filter: kept.filter || "all", id: (start && start.id) || kept.id };
+    const state = { scope: (start && start.scope) || kept.scope || "all", filter: (start && start.filter) || kept.filter || "all",
+      id: (start && start.id) || kept.id };  // start.filter: 0.60.136, a sheet opened from its card is always in the list
     const pending = new Map();  // sheet id -> { timer, item }: deletions waiting for their 5 s
     const history = [];  // the last actions, for Ctrl+Z: { kind: "review", id, before } | { kind: "delete", id }
     let queue = [];  // the ids of the review's list, fixed until the scope or the filter changes
@@ -305,7 +306,7 @@
     filterSel.addEventListener("change", restart);
     root.append(
       el("div", { class: "dm-review-bar" }, el("strong", null, "Revue des feuilles de concept"), scopeSel, filterSel, counter,
-        el("span", { class: "dm-review-keys muted" }, "← → · G garder · E écarter · Suppr supprimer · M modifier · Ctrl+Z annuler · Échap"),
+        el("span", { class: "dm-review-keys muted" }, "← → · G garder · E écarter · Suppr supprimer · M modifier · R raffiner avec l'IA · Ctrl+Z annuler · Échap"),
         el("button", { type: "button", class: "btn btn-small", onclick: close }, "Fermer")),
       el("div", { class: "dm-review-body" },
         el("button", { type: "button", class: "dm-review-nav", "aria-label": "Feuille précédente", onclick: () => go(-1) }, "‹"),

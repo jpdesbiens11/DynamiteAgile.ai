@@ -137,3 +137,11 @@ body.dm-review-on { overflow: hidden; }
   .dm-review-nav { display: none; }
   .dm-review-keys { display: none; }
 }
+/* 0.60.136 (D-O-149): compact concept sheet card -- title, thumbnail, principle, buttons; the rest on double-click */
+.dm-sheet-compact { cursor: default; }
+.dm-sheet-compact:focus-visible { outline: 2px solid var(--agile); outline-offset: 2px; }
+.dm-sheet-thumb { display: flex; justify-content: center; }
+.dm-sheet-thumb .dm-sheet-scan { max-height: 130px; width: auto; }
+.dm-sheet-principle { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; font-size: .88rem; }
+.dm-sheet-buttons { gap: .3rem; margin-top: auto; padding-top: .3rem; }
+.dm-sheet-buttons .btn { padding: .15rem .5rem; }

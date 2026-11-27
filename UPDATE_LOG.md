@@ -1,4 +1,15 @@
-# Journal de mise à jour — 0.60.135
+# Journal de mise à jour — 0.60.136
+
+- **Version :** 0.60.135 → 0.60.136 (2026-11-27)
+- **Changements :**
+  1. **Diamond : la carte d'une feuille de concept, compacte — titre, vignette, principe et tous les boutons ; le détail au double-clic** (D-O-149).
+- **Base de données :** aucune migration.
+- **Champs [new] :** `0.60.136-sheet-compact`, `0.60.136-sheet-details`.
+- **Tests :** `tests/test_diamond_concept_review.py`, suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.135
 
 - **Version :** 0.60.134 → 0.60.135 (2026-11-27)
 - **Changements :**
@@ -7,8 +18,6 @@
 - **Retirés :** `modules/diamond/concept_ai.py`, `static/js/diamond/concept_ai.js` et les routes `/concepts/prompt`, `/concepts/<id>/prompt`, `/concepts/branch-prompt`, `POST /concepts/ai`.
 - **Champs [new] :** `0.60.135-round-brick`, `0.60.135-round-sheet`, `0.60.135-round-refine`, `0.60.135-round-button`, `0.60.135-brick-review`, `0.60.135-review-refine`, `0.60.135-morpho-review`, `0.60.135-rt-dup`, `0.60.135-rt-read-only`.
 - **Tests :** `tests/test_diamond_concept_round.py`, `tests/test_diamond_sheets_json_import.py`, `tests/test_diamond_rt.py`, `tests/test_diamond_rt_b.py`, `tests/test_diamond_concepts.py`, suite complète.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.134
 
