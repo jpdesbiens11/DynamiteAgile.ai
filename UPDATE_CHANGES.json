@@ -2,21 +2,17 @@
   "changes": [
     {
       "id": "C1",
-      "title": "Diamond : « ▶ Revue » des feuilles de concept — une à la fois au clavier, d'une branche à l'autre ; garder, écarter, supprimer (avec Annuler)",
-      "why": "Après un tour de créativité avec l'IA (45 feuilles), revoir demandait d'ouvrir chaque branche et chaque brique. « ▶ Revue » (en haut de la page et sur chaque branche) montre une feuille à la fois en plein écran, dans l'ordre de l'arbre, d'une branche à l'autre : ← / →, G garder, E écarter (réversible), Suppr supprimer (Annuler pendant 5 s), M modifier, Échap. La revue est partagée par l'équipe (vue par qui, migration diamond 23 additive). Une feuille retenue par une matrice de Pugh n'est ni écartée ni supprimée ; une brique figée est en lecture seule.",
+      "title": "Diamond : « ▶ Revue » — revenir à une feuille déjà gardée ou écartée, la remettre en course, sauter à n'importe quelle feuille, Ctrl+Z",
+      "why": "En revue, « Garder » ne remettait pas en course une feuille « Dropped », et avec le filtre « À revoir » une feuille gardée ou écartée sortait de la liste : ← ne la retrouvait plus. Maintenant : G sur une feuille écartée la remet en course (« Remettre en course ») ; la liste d'une revue est figée quand elle commence, ← retrouve toujours une feuille déjà traitée ; une bande de pastilles par branche, colorées par statut, saute à n'importe quelle feuille ; Ctrl+Z / « Annuler » défait la dernière action (garder, écarter, supprimer pendant 5 s).",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
         "UPDATE_LOG.md",
         "core/__init__.py",
-        "core/modules.py",
         "docs/DECISIONS.md",
         "docs/ETAT_PROJET.md",
-        "docs/releases/0.60.133.json",
-        "modules/diamond/__init__.py",
+        "docs/releases/0.60.134.json",
         "modules/diamond/concept_review.py",
-        "modules/diamond/concept_sheets.py",
-        "modules/diamond/migrations_b.py",
         "site/en/guide.html",
         "site/en/home.html",
         "site/en/index.html",
@@ -38,18 +34,8 @@
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
         "static/js/diamond/concept_review.js",
-        "static/js/diamond/concept_sheet_fold.js",
-        "static/js/diamond/concept_sheets.js",
         "tests/test_diamond_concept_review.py",
         "tests/test_open_v060.py"
-      ]
-    },
-    {
-      "id": "C2",
-      "title": "Diamond : un seul bouton IA sur « Feuilles de concept »",
-      "why": "« ↔ IA : feuilles de concept » et le « ↔ IA » général de Diamond se répétaient sur la même page : seul le premier reste sur « Feuilles de concept » ; le « ↔ IA » général reste sur les autres pages de Diamond.",
-      "files": [
-        "static/js/diamond/rt.js"
       ]
     }
   ]

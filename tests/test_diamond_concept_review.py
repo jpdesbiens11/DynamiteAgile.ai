@@ -72,6 +72,10 @@ class ConceptReviewTest(unittest.TestCase):
         self.assertEqual(listed[b["id"]]["status"], "dropped")
         back = self._review(b, "reopen")
         self.assertEqual((back["status"], back["reviewed_at"]), ("open", None))
+        self._review(b, "drop")
+        again = self._review(b, "keep")  # 0.60.134 (D-O-147): keep on a dropped sheet = back in the running, seen
+        self.assertEqual(again["status"], "open")
+        self.assertTrue(again["reviewed_at"])
 
     def test_02_refusals(self):
         c = self.sheets[2]

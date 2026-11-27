@@ -2,7 +2,7 @@
 (static/js/diamond/concept_review.js). The review is shared by the team: a sheet seen is marked (reviewed_at, reviewed_by,
 migration diamond 23) so the page counts « 30 / 45 vues » for everyone.
 
-    POST /sheets/<sid>/review {action}   keep    seen, stays as it is
+    POST /sheets/<sid>/review {action}   keep    seen; a « Dropped » sheet is back in the running (« Open »), 0.60.134 (D-O-147)
                                          drop    seen and « Dropped » (reversible; a Pugh matrix shows it dropped)
                                          reopen  back to « Open » and not seen
 Deleting a sheet stays DELETE /sheets/<sid> (concept_sheets.api_delete: refused for a sheet a Pugh matrix uses or retained); the
@@ -28,6 +28,8 @@ def api_review(ctx):
     now = db.utc_now()
     if action == "keep":
         sets = {"reviewed_at": now, "reviewed_by": ctx.user["id"]}
+        if s["status"] == "dropped":  # 0.60.134 (D-O-147): keeping a dropped sheet puts it back in the running
+            sets["status"] = "open"
     elif action == "drop":
         if s["status"] == "selected":
             raise ApiError(409, "Cette feuille est retenue par une matrice de Pugh : elle ne peut pas être écartée ici. "

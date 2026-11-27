@@ -1,9 +1,12 @@
 /* Diamond · « Revue » of the concept sheets (0.60.133, D-O-146): one sheet at a time, full screen, in the order of the tree
    (branch, brick, number: CB-6.9 before CB-6.10); « Suivant » on the last sheet of a branch goes on to the next branch.
    Scope: every branch, one branch or one brick; filter: all, to review (Open and not seen), dropped.
-   ← / → previous / next · G keep (seen) · E drop (« Dropped », seen) · Suppr delete (gone at once, « Annuler » for 5 s: the
-   server is called only after) · M edit · Échap close. Seen is shared by the team (concept_review.py); the place in the review
-   is remembered in this browser for the Space. A frozen brick is read only; a sheet retained by a Pugh matrix cannot be deleted. */
+   ← / → previous / next · G keep (seen; a dropped sheet is back in the running) · E drop (« Dropped », seen) · Suppr delete (gone at
+   once, « Annuler » for 5 s: the server is called only after) · M edit · Ctrl+Z undo the last keep, drop or delete · Échap close.
+   0.60.134 (D-O-147): the list of a review is fixed when it starts (or when the scope or the filter changes): a sheet kept or dropped
+   stays in it with its new status, so ← always goes back to it; a strip of every sheet of the list, by branch, coloured by status,
+   jumps to any of them. Seen is shared by the team (concept_review.py); the place in the review is remembered in this browser for the
+   Space. A frozen brick is read only; a sheet retained by a Pugh matrix cannot be dropped or deleted. */
 (function () {
   "use strict";
 
@@ -11,6 +14,7 @@
   const D = DA.diamond;
   const A = DA.agile;
   const UNDO_MS = 5000;
+  const BAR_MS = 6000;
   const store = (ctx) => "dm-review-" + ctx.key;
 
   function remembered(ctx) {
@@ -30,6 +34,10 @@
 
   const seen = (s) => Boolean(s.reviewed_at);
   const FILTERS = { all: () => true, todo: (s) => s.status === "open" && !seen(s), dropped: (s) => s.status === "dropped" };
+  const DONE = { keep: "gardée", drop: "écartée", reopen: "rouverte" };
+  /* The action that puts a sheet back as it was (Ctrl+Z) */
+  const reverse = (before) => (before.status === "dropped" ? "drop" : before.seen ? "keep" : "reopen");
+  const chipState = (s) => (s.status === "selected" ? "selected" : s.status === "dropped" ? "dropped" : seen(s) ? "kept" : "todo");
 
   async function open(ctx, done, start) {
     const [data, cdata] = await Promise.all([api.get(D.base(ctx) + "/sheets"), api.get(D.base(ctx) + "/concepts")]);
@@ -38,8 +46,11 @@
     const editable = A.canEdit(ctx);
     const kept = remembered(ctx);
     const state = { scope: (start && start.scope) || kept.scope || "all", filter: kept.filter || "all", id: (start && start.id) || kept.id };
-    const pending = new Map();  // sheet id -> { timer, item, index }
+    const pending = new Map();  // sheet id -> { timer, item }: deletions waiting for their 5 s
+    const history = [];  // the last actions, for Ctrl+Z: { kind: "review", id, before } | { kind: "delete", id }
+    let queue = [];  // the ids of the review's list, fixed until the scope or the filter changes
     let changed = false;
+    let barTimer = null;
 
     const branches = [];
     all.forEach((it) => { if (it.branch && !branches.some((b) => b.id === it.branch.id)) branches.push(it.branch); });
@@ -53,23 +64,39 @@
     if (scopeSel.value !== state.scope) scopeSel.value = state.scope = "all";
     filterSel.value = state.filter;
 
-    const inScope = () => all.filter((it) => !pending.has(it.sheet.id) && (state.scope === "all"
+    const byId = () => new Map(all.map((it) => [it.sheet.id, it]));
+    const inScope = () => all.filter((it) => state.scope === "all"
       || (state.scope[0] === "f" && it.branch && "f" + it.branch.id === state.scope)
-      || (state.scope[0] === "c" && "c" + it.concept.id === state.scope)));
-    const list = () => inScope().filter((it) => FILTERS[state.filter](it.sheet));
+      || (state.scope[0] === "c" && "c" + it.concept.id === state.scope));
+    const rebuild = () => {
+      state.scope = scopeSel.value;
+      state.filter = filterSel.value;
+      queue = inScope().filter((it) => !pending.has(it.sheet.id) && FILTERS[state.filter](it.sheet)).map((it) => it.sheet.id);
+    };
+    const items = () => {
+      const map = byId();
+      return queue.filter((id) => !pending.has(id) && map.has(id)).map((id) => map.get(id));
+    };
 
     const counter = el("span", { class: "dm-review-count", role: "status" });
     const stage = el("div", { class: "dm-review-stage" });
     const side = el("div", { class: "dm-review-side" });
-    const undoBar = el("div", { class: "dm-review-undo", hidden: true });
+    const strip = el("div", { class: "dm-review-strip", role: "list", "aria-label": "Toutes les feuilles de la revue",
+      "data-new": "0.60.134-review-strip" });
+    const bar = el("div", { class: "dm-review-undo", hidden: true, role: "status" });
     const root = el("div", { class: "dm-review", role: "dialog", "aria-modal": "true", "aria-label": "Revue des feuilles de concept",
       "data-new": "0.60.133-review" });
 
-    const flush = async () => {  // the deletions still waiting, sent now (closing the review)
-      const ids = [...pending.keys()];
-      ids.forEach((id) => clearTimeout(pending.get(id).timer));
-      await Promise.all(ids.map((id) => send(id)));
+    const say = (text, ms) => {  // the bar of the last action, with « Annuler »
+      clearTimeout(barTimer);
+      clear(bar);
+      bar.hidden = !text;
+      if (!text) return;
+      bar.append(el("span", null, text), el("button", { type: "button", class: "btn btn-small", onclick: undo }, "Annuler"),
+        el("span", { class: "dm-undo-hint" }, "Ctrl+Z"));
+      if (ms) barTimer = setTimeout(() => say(""), ms);
     };
+
     const send = async (id) => {
       const p = pending.get(id);
       if (!p) return;
@@ -77,28 +104,20 @@
       try {
         await api.del(D.base(ctx) + "/sheets/" + id);
         all = all.filter((it) => it.sheet.id !== id);
+        queue = queue.filter((x) => x !== id);
         changed = true;
       } catch (err) { toast(p.item.sheet.code + " : " + err.message, "error"); }
-      showUndo();
+      if (!pending.size) say("");
       draw();
     };
-    const showUndo = () => {
-      clear(undoBar);
-      undoBar.hidden = !pending.size;
-      if (!pending.size) return;
-      const last = [...pending.values()].pop();
-      undoBar.append(el("span", null, last.item.sheet.code + " supprimée" + (pending.size > 1 ? " (+" + (pending.size - 1) + ")" : "")),
-        el("button", { type: "button", class: "btn btn-small", onclick: () => {
-          clearTimeout(last.timer);
-          pending.delete(last.item.sheet.id);
-          state.id = last.item.sheet.id;
-          showUndo();
-          draw();
-        } }, "Annuler"));
+    const flush = async () => {  // the deletions still waiting, sent now (closing the review)
+      const ids = [...pending.keys()];
+      ids.forEach((id) => clearTimeout(pending.get(id).timer));
+      await Promise.all(ids.map((id) => send(id)));
     };
-
     const close = async () => {
       document.removeEventListener("keydown", onKey, true);
+      clearTimeout(barTimer);
       await flush();
       root.remove();
       document.body.classList.remove("dm-review-on");
@@ -106,49 +125,65 @@
     };
 
     const current = () => {
-      const items = list();
-      let i = items.findIndex((it) => it.sheet.id === state.id);
+      const list = items();
+      let i = list.findIndex((it) => it.sheet.id === state.id);
       if (i < 0) i = 0;
-      return { items, i, it: items[i] };
+      return { list, i, it: list[i] };
     };
+    const jump = (id) => { state.id = id; draw(); };
     const go = (step) => {
-      const { items, i } = current();
-      if (!items.length) return;
-      state.id = items[Math.max(0, Math.min(items.length - 1, i + step))].sheet.id;
-      draw();
-    };
-    const after = (id) => {  // the next one in the list, else the previous one
-      const items = list();
-      const i = items.findIndex((it) => it.sheet.id === id);
-      const next = items[i + 1] || items[i - 1];
-      state.id = next ? next.sheet.id : null;
+      const { list, i } = current();
+      if (list.length) jump(list[Math.max(0, Math.min(list.length - 1, i + step))].sheet.id);
     };
 
+    const post = async (it, action) => {
+      const r = await api.post(D.base(ctx) + "/sheets/" + it.sheet.id + "/review", { action });
+      Object.assign(it.sheet, r.sheet);
+      changed = true;
+    };
     const review = async (action) => {
-      const { it, i } = current();
+      const { list, i, it } = current();
       if (!it || !editable || it.concept.frozen) return;
+      const before = { status: it.sheet.status, seen: seen(it.sheet) };
       try {
-        const r = await api.post(D.base(ctx) + "/sheets/" + it.sheet.id + "/review", { action });
-        Object.assign(it.sheet, r.sheet);
-        changed = true;
-        if (action !== "reopen") {  // on to the next one; when the sheet left the list (« À revoir »), the next slid into its place
-          const items = list();
-          const still = items.findIndex((x) => x.sheet.id === it.sheet.id);
-          const next = still >= 0 ? items[still + 1] || items[still] : items[i] || items[items.length - 1];
-          state.id = next ? next.sheet.id : null;
-        }
+        await post(it, action);
+        history.push({ kind: "review", id: it.sheet.id, before });
+        say(it.sheet.code + " " + DONE[action], BAR_MS);
+        if (action !== "reopen" && list[i + 1]) state.id = list[i + 1].sheet.id;  // the list is fixed: on to the next one
         draw();
       } catch (err) { toast(err.message, "error"); }
     };
     const remove = () => {
-      const { it, i } = current();
+      const { list, i, it } = current();
       if (!it || !editable || it.concept.frozen) return;
       if (it.sheet.status === "selected") { toast(it.sheet.code + " est retenue par une matrice de Pugh : elle ne peut pas être supprimée.", "error"); return; }
-      after(it.sheet.id);
-      pending.set(it.sheet.id, { item: it, index: i, timer: setTimeout(() => send(it.sheet.id), UNDO_MS) });
-      showUndo();
+      const next = list[i + 1] || list[i - 1];
+      state.id = next ? next.sheet.id : null;
+      pending.set(it.sheet.id, { item: it, timer: setTimeout(() => send(it.sheet.id), UNDO_MS) });
+      history.push({ kind: "delete", id: it.sheet.id });
+      say(it.sheet.code + " supprimée" + (pending.size > 1 ? " (+" + (pending.size - 1) + " en attente)" : ""));
       draw();
     };
+    async function undo() {
+      const last = history.pop();
+      if (!last) { say(""); return; }
+      if (last.kind === "delete") {
+        const p = pending.get(last.id);
+        if (!p) { toast("Déjà supprimée : seule une sauvegarde du Space peut la rendre.", "error"); say(""); return; }
+        clearTimeout(p.timer);
+        pending.delete(last.id);
+        say(p.item.sheet.code + " gardée (suppression annulée)", BAR_MS);
+        jump(last.id);
+        return;
+      }
+      const it = byId().get(last.id);
+      if (!it) { say(""); return; }
+      try {
+        await post(it, reverse(last.before));
+        say(it.sheet.code + " remise comme avant", BAR_MS);
+        jump(last.id);
+      } catch (err) { toast(err.message, "error"); }
+    }
     const edit = () => {
       const { it } = current();
       if (!it || !editable || it.concept.frozen) return;
@@ -167,8 +202,9 @@
       if (ev.key === "Escape") { ev.preventDefault(); close(); return; }
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
       const k = ev.key.toLowerCase();
-      const run = { arrowright: () => go(1), arrowleft: () => go(-1), g: () => review("keep"), e: () => review("drop"),
-        delete: remove, m: edit }[k];
+      if (k === "z" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); undo(); return; }
+      const run = { arrowright: () => go(1), arrowleft: () => go(-1), home: () => go(-1e6), end: () => go(1e6),
+        g: () => review("keep"), e: () => review("drop"), delete: remove, m: edit }[k];
       if (run && !ev.ctrlKey && !ev.metaKey && !ev.altKey) { ev.preventDefault(); run(); }
     }
 
@@ -183,18 +219,50 @@
     const lines = (label, text, cls) => (text ? el("div", { class: "dm-review-field " + (cls || "") }, el("strong", null, label),
       String(text).split("\n").filter(Boolean).map((l) => el("div", null, l))) : null);
 
+    /* The actions of a sheet, by its state: a dropped sheet offers to come back */
+    function actions(s, frozen) {
+      if (!editable || frozen) return el("p", { class: "muted" }, frozen ? "Brique figée : lecture seule." : "Lecture seule.");
+      const dropped = s.status === "dropped";
+      const keptOne = seen(s) && !dropped;
+      return el("div", { class: "dm-review-acts" },
+        el("button", { type: "button", class: "btn btn-primary", "data-new": dropped ? "0.60.134-review-back" : null, onclick: () => review("keep") },
+          el("kbd", null, "G"), dropped ? " Remettre en course" : keptOne ? " ✓ Gardée" : " Garder"),
+        dropped ? null : el("button", { type: "button", class: "btn", disabled: s.status === "selected" ? "" : null, onclick: () => review("drop") },
+          el("kbd", null, "E"), " Écarter"),
+        el("button", { type: "button", class: "btn btn-danger", disabled: s.status === "selected" ? "" : null, onclick: remove },
+          el("kbd", null, "Suppr"), " Supprimer"),
+        el("button", { type: "button", class: "btn", onclick: edit }, el("kbd", null, "M"), " Modifier"),
+        seen(s) || dropped ? el("button", { type: "button", class: "btn btn-small", onclick: () => review("reopen") }, "Rouvrir (à revoir)") : null);
+    }
+
+    function drawStrip(list, it) {
+      clear(strip);
+      let branch;
+      list.forEach((x) => {
+        const b = x.branch ? x.branch.id : 0;
+        if (b !== branch) {
+          branch = b;
+          strip.append(el("span", { class: "dm-review-strip-branch" }, x.branch ? "F" + x.branch.number : "—"));
+        }
+        const s = x.sheet;
+        strip.append(el("button", { type: "button", role: "listitem", class: "dm-chip dm-chip-" + chipState(s) + (x === it ? " dm-chip-on" : ""),
+          title: s.code + " · " + s.title, "aria-current": x === it ? "true" : null, onclick: () => jump(s.id) }, s.code));
+      });
+      const on = strip.querySelector(".dm-chip-on");
+      if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "center" });
+    }
+
     function draw() {
-      state.scope = scopeSel.value;
-      state.filter = filterSel.value;
-      const { items, i, it } = current();
+      const { list, i, it } = current();
       if (it) state.id = it.sheet.id;
       remember(ctx, { scope: state.scope, filter: state.filter, id: state.id });
-      const scope = inScope();
+      const scope = inScope().filter((x) => !pending.has(x.sheet.id));
       clear(counter);
-      counter.append((items.length ? (i + 1) + " / " + items.length : "0 / 0") + " · vues " + scope.filter((x) => seen(x.sheet)).length
-        + " / " + scope.length);
+      counter.append((list.length ? (i + 1) + " / " + list.length : "0 / 0") + " · vues " + scope.filter((x) => seen(x.sheet)).length
+        + " / " + scope.length + " · écartées " + scope.filter((x) => x.sheet.status === "dropped").length);
       clear(stage);
       clear(side);
+      drawStrip(list, it);
       if (!it) {
         stage.append(el("p", { class: "muted" }, state.filter === "todo" ? "Tout est revu dans cette portée." : "Aucune feuille ici."));
         return;
@@ -213,32 +281,27 @@
           s.badge ? el("span", { class: "badge badge-warn" }, s.badge) : null,
           seen(s) ? el("span", { class: "badge badge-ok" }, "Vue" + (s.reviewer_name ? " · " + s.reviewer_name : "")) : null,
           frozen ? el("span", { class: "badge badge-ok" }, "Brique figée") : null),
-        editable && !frozen ? el("div", { class: "dm-review-acts" },
-          el("button", { type: "button", class: "btn btn-primary", onclick: () => review("keep") }, el("kbd", null, "G"), " Garder"),
-          el("button", { type: "button", class: "btn", onclick: () => review("drop") }, el("kbd", null, "E"), " Écarter"),
-          el("button", { type: "button", class: "btn btn-danger", disabled: s.status === "selected" ? "" : null, onclick: remove },
-            el("kbd", null, "Suppr"), " Supprimer"),
-          el("button", { type: "button", class: "btn", onclick: edit }, el("kbd", null, "M"), " Modifier"),
-          seen(s) || s.status === "dropped" ? el("button", { type: "button", class: "btn btn-small", onclick: () => review("reopen") }, "Rouvrir") : null)
-          : el("p", { class: "muted" }, frozen ? "Brique figée : lecture seule." : "Lecture seule."),
+        actions(s, frozen),
         lines("Principe", s.principle), lines("Description", s.description), lines("+", s.pros, "dm-review-pros"),
         lines("−", s.cons, "dm-review-cons"), lines("?", s.questions, "dm-review-q"));
     }
 
-    scopeSel.addEventListener("change", () => { state.id = null; draw(); });
-    filterSel.addEventListener("change", () => { state.id = null; draw(); });
+    const restart = () => { state.id = null; rebuild(); draw(); };
+    scopeSel.addEventListener("change", restart);
+    filterSel.addEventListener("change", restart);
     root.append(
       el("div", { class: "dm-review-bar" }, el("strong", null, "Revue des feuilles de concept"), scopeSel, filterSel, counter,
-        el("span", { class: "dm-review-keys muted" }, "← → · G garder · E écarter · Suppr supprimer · M modifier · Échap"),
+        el("span", { class: "dm-review-keys muted" }, "← → · G garder · E écarter · Suppr supprimer · M modifier · Ctrl+Z annuler · Échap"),
         el("button", { type: "button", class: "btn btn-small", onclick: close }, "Fermer")),
       el("div", { class: "dm-review-body" },
         el("button", { type: "button", class: "dm-review-nav", "aria-label": "Feuille précédente", onclick: () => go(-1) }, "‹"),
         stage, side,
         el("button", { type: "button", class: "dm-review-nav", "aria-label": "Feuille suivante", onclick: () => go(1) }, "›")),
-      undoBar);
+      strip, bar);
     document.body.append(root);
     document.body.classList.add("dm-review-on");
     document.addEventListener("keydown", onKey, true);
+    rebuild();
     draw();
   }
 
