@@ -1,4 +1,7 @@
 {
+"Questions fréquentes": "FAQ",
+"Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
+"Questions fréquentes sur ": "Frequently asked questions about ",
 "Questions ouvertes (?)": "Open questions (?)",
 "Qui a fait Dynamite | Agile, et comment": "Who made Dynamite | Agile, and how",
 "Qui contacter ?": "Who to contact?",
@@ -376,6 +379,7 @@
 "Rien trouvé. Essaie un autre mot, ou « summary » pour l'état du Space et ses liens.": "Nothing found. Try another word, or “summary” for the Space's state and its links.",
 "Rien à ajouter : tout est déjà dans le DFMEA.": "Nothing to add: everything is already in the DFMEA.",
 "Rien à annuler : seule une question rouverte qui a déjà une réponse revient à « Answered ».": "Nothing to cancel: only a reopened question that already has an answer goes back to “Answered”.",
+"Rien à changer : ce .zip est déjà dans le Space (ou ses feuilles sont refusées, voir les raisons).": "Nothing to change: this .zip is already in the Space (or its sheets are refused, see the reasons).",
 "Rien à changer.": "Nothing to change.",
 "Rien à confirmer : la norme de ce requirement n'est pas « À vérifier ».": "Nothing to confirm: this requirement's standard is not “To verify”.",
 "Rien à importer : ce Space a déjà tout ce que contient la réponse.": "Nothing to import: this Space already has everything the answer contains.",
@@ -1273,6 +1277,7 @@
 "Toutes (brouillons compris)": "All (including drafts)",
 "Toutes les Budget Lines": "All Budget Lines",
 "Toutes les Q&R du projet dans un seul tableau, quel que soit leur status ; le client modifie réponses et statuses": "All the project's Q&As in a single table, whatever their status; the customer edits answers and statuses",
+"Toutes les branches": "All branches",
 "Toutes les briques": "All building blocks",
 "Toutes les caractéristiques": "All characteristics",
 "Toutes les caractéristiques (": "All characteristics (",
@@ -1290,6 +1295,7 @@
 "Toutes les références réservées dans ce projet. Un numéro n'est jamais réutilisé.": "All references reserved in this project. A number is never reused.",
 "Toutes les sessions ouvertes de ce compte seront fermées.": "Every open session of this account will be closed.",
 "Toutes les solutions dessinées, brique par brique : feuilles numériques, générées avec l'IA ou scannées après une séance de créativité. Elles nourrissent les matrices de Pugh.": "All the solutions drawn, building block by building block: digital sheets, generated with AI or scanned after a creativity session. They feed the Pugh matrices.",
+"Toutes les solutions dessinées, brique par brique, sur le gabarit de la plateforme. « ↔ IA : feuilles de concept » : choisissez une branche ou toutes, copiez le prompt pour votre assistant IA, puis déposez le .zip qu'il rend ; recommencez à chaque tour de créativité. Elles nourrissent le tableau morphologique et les matrices de Pugh.": "Every solution drawn, brick by brick, on the platform's template. « ↔ IA : feuilles de concept » (AI: concept sheets): choose a branch or all of them, copy the prompt for your AI assistant, then drop the .zip it hands back; go again at each creativity round. They feed the morphological chart and the Pugh matrices.",
 "Toutes les sub-tasks doivent être terminées avant la vérification.": "All sub-tasks must be completed before verification.",
 "Toutes les étapes": "All steps",
 "Toutes révisions": "All revisions",
@@ -1370,6 +1376,7 @@
 "Télécharger": "Download",
 "Télécharger ": "Download ",
 "Télécharger le .json": "Download the .json",
+"Télécharger le contexte (.zip)": "Download the context (.zip)",
 "Télécharger le fichier Excel": "Download the Excel file",
 "Télécharger une sauvegarde complète (une copie reste aussi sur le serveur)": "Download a full backup (a copy also stays on the server)",
 "Téléchargée": "Downloaded",
@@ -1416,9 +1423,5 @@
 "Un exemple complet sur un vrai produit : bête à cornes, pieuvre, SADT (A-0) et FAST.": "A complete example on a real product: bête à cornes, pieuvre, SADT (A-0) and FAST.",
 "Un exemple concret…": "A concrete example…",
 "Un extrait des heures des Budget Lines cochées ci-dessus, au gabarit Word de l'outil (le même que Goldmine et Testing) : destinataire et périmètre, sommaire par Budget Line, heures par employé, détail des justifications, attestation, Definitions et Acronyms. Le destinataire personnalise la page de titre et le texte.": "An extract of the hours of the Budget Lines ticked above, in the tool's Word template (the same as Goldmine and Testing): recipient and scope, summary by Budget Line, hours per employee, detail of the justifications, attestation, Definitions and Acronyms. The recipient personalises the title page and the text.",
-"Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)",
-"Un fichier .md léger : confidentialité, comptes et droits, Timesheet, préférences des comptes ": "A light .md file: privacy, accounts and rights, Timesheet, account preferences ",
-"Un fichier arrive dans vos Téléchargements, par exemple « Dynamite_Agile_v0.41.0_code_pour_Claude.zip ». Il ne contient aucune donnée des employés : seulement le programme, la lettre de départ (UPDATE_PROMPT.md) et la description de la base.": "A file arrives in your Downloads, for example “Dynamite_Agile_v0.41.0_code_pour_Claude.zip”. It contains no employee data: only the program, the starting letter (UPDATE_PROMPT.md) and the description of the database.",
-"Un flux qui va d'une entrée directement à une sortie ne traverse aucune fonction. Correctif : faites-le passer par la fonction qui le traite.": "A flow that goes from an input straight to an output passes through no function. Fix: route it through the function that processes it.",
-"Un flux relie deux éléments différents. Correctif : choisissez une autre cible.": "A flow connects two different elements. Fix: choose another target."
+"Un fait, un progrès, une question, un retour… (visible par vous deux)": "A fact, progress, a question, feedback… (visible to both of you)"
 }

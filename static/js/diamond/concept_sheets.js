@@ -3,7 +3,9 @@
    #/diamond/KEY/csheets: every sheet of the Space, brick by brick (« Feuilles de concept »).
    0.60.125 (D-O-138): a sheet has its badge and its open questions (?), a drawing placed in the platform's template, and is shown
    on that template (PNG, PDF: concept_sheet_tools.js); « Feuilles de concept » creates sheets itself -- by hand for a chosen brick,
-   by batch from a .zip of cards with their pictures and PDF, or with an AI, one branch of the tree at a time. */
+   by batch from a .zip of cards with their pictures and PDF, or with an AI, one branch of the tree at a time.
+   0.60.132 (D-O-145): the AI tools of the page are one button, « ↔ IA : feuilles de concept » (concept_round.js): the prompt and
+   the context .zip out, the .zip of the AI back in at once; « Importer un lot (.zip) » and « IA : une branche » are gone. */
 (function () {
   "use strict";
 
@@ -42,8 +44,7 @@
       el("div", { class: "dm-panel-head" }, el("h2", null, "Feuilles de concept (" + sheets.length + ")"),
         editable ? el("div", { class: "dm-actions" },
           el("button", { type: "button", class: "btn btn-small btn-primary", onclick: () => openSheet(ctx, c.id, null, state.reload) }, "Feuille numérique"),
-          el("button", { type: "button", class: "btn btn-small", onclick: () => openScan(ctx, c.id, state.reload) }, "Scanner une feuille"),
-          el("button", { type: "button", class: "btn btn-small", onclick: () => D.openSheetImport(ctx, [c], state.reload) }, "Importer un lot (.zip)")) : null),
+          el("button", { type: "button", class: "btn btn-small", onclick: () => openScan(ctx, c.id, state.reload) }, "Scanner une feuille")) : null),
       c.frozen && A.canEdit(ctx) ? frozenNote(ctx, c, state.reload) : null,
       sheets.length ? el("div", { class: "dm-sheets" }, sheets.map((s) => card(ctx, s, editable, state.reload)))
         : el("p", { class: "muted" }, c.kind === "existing" ? "Concept existant : une feuille n'est utile que pour comparer des variantes."
@@ -140,15 +141,15 @@
         editable && open.length ? [
           el("button", { type: "button", class: "btn btn-small btn-primary", "data-new": "0.60.125-sheets-new",
             onclick: () => openSheet(ctx, null, null, reload, open) }, "Nouvelle feuille"),
-          el("button", { type: "button", class: "btn btn-small", onclick: () => D.openSheetImport(ctx, open, reload) }, "Importer un lot (.zip)"),
-          el("button", { type: "button", class: "btn btn-small", onclick: () => D.openBranchAi(ctx, cdata, reload) }, "IA : une branche")] : null),
+          el("button", { type: "button", class: "btn btn-small", "data-new": "0.60.132-round",
+            onclick: () => D.openConceptRound(ctx, reload) }, "↔ IA : feuilles de concept")] : null),
         el("div", { class: "page-head dm-intro" }, el("h1", { "data-new": "0.60.105-csheets" }, "Feuilles de concept"),
-          el("p", { class: "muted" }, "Toutes les solutions dessinées, brique par brique : feuilles numériques (dessinées sur le gabarit de la "
-            + "plateforme), générées avec l'IA branche par branche, importées par lot (cartes .md, images et PDF) ou scannées après une "
-            + "séance de créativité. Elles nourrissent le tableau morphologique et les matrices de Pugh.")));
+          el("p", { class: "muted" }, "Toutes les solutions dessinées, brique par brique, sur le gabarit de la plateforme. « ↔ IA : feuilles "
+            + "de concept » : choisissez une branche ou toutes, copiez le prompt pour votre assistant IA, puis déposez le .zip qu'il rend ; "
+            + "recommencez à chaque tour de créativité. Elles nourrissent le tableau morphologique et les matrices de Pugh.")));
       if (!data.sheets.length) {
         holder.append(el("div", { class: "empty" }, el("p", null, open.length
-          ? "Aucune feuille pour l'instant : « Nouvelle feuille », « Importer un lot (.zip) » ou « IA : une branche » (en haut à droite)."
+          ? "Aucune feuille pour l'instant : « Nouvelle feuille » ou « ↔ IA : feuilles de concept » (en haut à droite)."
           : "Aucune brique où dessiner une feuille : créez d'abord les briques technologiques."),
         el("a", { class: "btn" + (open.length ? "" : " btn-primary"), href: A.href(ctx, "concepts") }, "Briques technologiques")));
         return;

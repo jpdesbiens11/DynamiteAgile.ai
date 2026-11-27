@@ -2,18 +2,20 @@
   "changes": [
     {
       "id": "C1",
-      "title": "Diamond : « Importer un lot (.zip) » lit le reponse.json de l'IA — feuilles IA sur le gabarit, codes existants mis à jour, rapport par feuille",
-      "why": "« Importer un lot (.zip) » laissait de côté le reponse.json du .zip : un lot de codes nouveaux CB-6.6 à CB-6.10 ne donnait qu'une feuille CB-6.10 « Scan » titrée « Schema », sans texte, l'image brute (doublon jugé au titre, tri « CB-6.10 » avant « CB-6.6 »). Le reponse.json est maintenant lu : un code nouveau crée la feuille « ai » avec tout son texte (principle, description, pros, cons, questions et badge facultatifs) et son croquis dessiné sur le gabarit de la plateforme, comme par « ↔ IA » ; un code existant met sa feuille à jour, sans doublon (rien de changé → « Déjà là ») ; une feuille Scan que la réponse dit « ai » redevient « ai ». Lignes triées par numéro, chaque feuille de la réponse a sa ligne (nouvelle, mise à jour, déjà là, refusée avec sa raison) et l'import se termine sur un rapport par feuille. Cartes .md et images seules inchangées.",
+      "title": "Diamond : « ↔ IA : feuilles de concept », un seul aller-retour avec l'IA (une branche ou toutes, prompt, contexte .zip, retour .zip importé d'un coup)",
+      "why": "La page « Feuilles de concept » offrait trois outils qui se recoupaient (« Importer un lot (.zip) » avec aperçu à cocher, « IA : une branche », « IA : cette branche ») : trop complexe et flou. Il n'en reste qu'un, « ↔ IA : feuilles de concept » : une branche ou toutes ; le prompt en entier dans un encadré et « Copier le prompt » ; « Télécharger le contexte (.zip) » (contexte.json, croquis et PDF des feuilles déjà dessinées, PROMPT.md) quand il y a des feuilles. Le prompt donne le prochain code libre de chaque brique, demande un seul .zip en retour (reponse.json + images/<code>_….png), des pivots pour une branche de concepts existants, laisse de côté les briques figées. Le .zip de l'IA (ou son reponse.json seul) s'importe d'un coup : sauvegarde du Space, feuilles créées sur le gabarit, codes existants mis à jour, rapport par feuille. Pour 4 ou 5 tours de raffinement et de créativité.",
       "files": [
         "CLAUDE.md",
         "UPDATE_CHANGES.json",
         "UPDATE_LOG.md",
         "core/__init__.py",
+        "core/modules.py",
         "docs/DECISIONS.md",
         "docs/ETAT_PROJET.md",
-        "docs/releases/0.60.131.json",
+        "docs/releases/0.60.132.json",
+        "modules/diamond/__init__.py",
         "modules/diamond/concept_cards.py",
-        "modules/diamond/concept_cards_json.py",
+        "modules/diamond/concept_round.py",
         "site/en/guide.html",
         "site/en/home.html",
         "site/en/index.html",
@@ -33,9 +35,11 @@
         "static/i18n/en_4.json",
         "static/i18n/en_5.json",
         "static/i18n/en_6.json",
+        "static/js/diamond/concept_round.js",
+        "static/js/diamond/concept_sheet_fold.js",
         "static/js/diamond/concept_sheet_tools.js",
-        "tests/test_diamond_concept_cards.py",
-        "tests/test_diamond_sheets_json_import.py",
+        "static/js/diamond/concept_sheets.js",
+        "tests/test_diamond_concept_round.py",
         "tests/test_open_v060.py"
       ]
     }

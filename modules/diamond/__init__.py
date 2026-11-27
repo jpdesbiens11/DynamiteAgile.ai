@@ -35,6 +35,7 @@ from . import docx_pages, pdf_pages  # noqa: E402  (0.60.123, D-O-136; Word 0.60
 from . import ai_io, ai_prompts, ai_prompts_process, cp_io, dfmea_io, pfmea_io  # noqa: E402,F401 (0.60.104, D-O-116)
 from . import concept_ai, concept_pugh, concept_sheets, concepts  # noqa: E402 (0.60.105, D-O-117)
 from . import concept_cards, concept_sheet_api  # noqa: E402 (0.60.125, D-O-138: sheets by batch, the sheet on its template)
+from . import concept_round  # noqa: E402 (0.60.132, D-O-145: « ↔ IA : feuilles de concept », the round trip with the AI)
 from . import rt  # noqa: E402 (0.60.111, D-O-124: « ↔ IA », the round trip of every page)
 from . import competencies, competency_catalog, competency_export, competency_profiles, concept_freeze  # noqa: E402 (0.60.116, D-O-129: competencies, frozen bricks)
 from . import actions, capability, char_export, characteristics, classes_api, company_pn, control_plans, impact, pfmea, pfmea_ai, pn_ai, prio, process, costs, costs_budget, costs_import, costs_prompt, dfmea, dfmea_complete, example, export_api, functions, parts, risks, story, story_ai, story_docx, structure
@@ -90,6 +91,9 @@ ROUTES = [
     ("POST", P + r"/concepts/order", concepts.api_move, "user"),
     ("GET", P + r"/concepts/prompt", concept_ai.api_prompt, "user"),
     ("GET", P + r"/concepts/branch-prompt", concept_ai.api_branch_prompt, "user"),  # 0.60.125 (D-O-138)
+    ("GET", P + r"/concepts/round", concept_round.api_round, "user"),  # 0.60.132 (D-O-145)
+    ("GET", P + r"/concepts/round/context\.zip", concept_round.api_context, "user"),
+    ("POST", P + r"/concepts/round/import", concept_round.api_import, "user"),
     ("POST", P + r"/concepts/ai", concept_ai.api_import, "user"),
     ("GET", CB, concepts.api_get, "user"),
     ("PATCH", CB, concepts.api_update, "user"),
