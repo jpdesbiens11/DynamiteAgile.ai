@@ -1,4 +1,7 @@
 {
+"Bloc d'alimentation externe certifié CSA / UL (classe 2, ES1 / PS2) plutôt qu'une alimentation secteur intégrée": "CSA / UL certified external power supply (class 2, ES1 / PS2) rather than an integrated mains supply",
+"Bloc de code": "Code block",
+"Bloc secteur 12 V certifié et regulator de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc secteur 12 V certifié et régulateur de la carte": "Certified 12 V mains adapter and board regulator",
 "Bloc « ": "Block “ ",
 "Bloquant": "Blocking",
@@ -43,6 +46,7 @@
 "Brainstorming, brainwriting et carte mentale pour diverger ; la matrice de Pugh et l'analyse Kepner-Tregoe pour choisir, avec la méthode et une FAQ à côté de chaque outil.": "Brainstorming, brainwriting and mind map to diverge; the Pugh matrix and Kepner-Tregoe analysis to choose, with the method and an FAQ next to each tool.",
 "Brainwriting : chacun écrit ses idées, puis les enrichit ; SCAMPER et la matrice morphologique aident.": "Brainwriting: everyone writes their ideas, then builds on them; SCAMPER and the morphological matrix help.",
 "Branche": "Branch",
+"Branche inconnue. Correctif : choisissez une branche dans la liste, ou « Toutes les branches ».": "Unknown branch. Fix: choose a branch in the list, or « Toutes les branches » (All branches).",
 "Branche inconnue. Correctif : choisissez une fonction de l'arbre.": "Unknown branch. Fix: choose a function of the tree.",
 "Bras articulé à friction": "Friction articulated arm",
 "Brique": "Brick",
@@ -429,6 +433,7 @@
 "Choisissez un Space.": "Choose a Space.",
 "Choisissez un requirement, une phase ou une category à ajouter.": "Choose a requirement, a phase or a category to add.",
 "Choisissez un requirement, une phase ou une category.": "Choose a requirement, a phase or a category.",
+"Choisissez une branche ou toutes les branches, copiez le prompt et collez-le dans votre assistant IA, avec le fichier de contexte s'il y a déjà des feuilles (leurs croquis et PDF).": "Choose a branch or all branches, copy the prompt and paste it in your AI assistant, with the context file when there are sheets already (their sketches and PDF).",
 "Choisissez une personne.": "Choose a person.",
 "Choisissez une version à comparer.": "Choose a version to compare.",
 "Choisissez votre mot de passe": "Choose your password",
@@ -1318,6 +1323,7 @@
 "Déploiement de la fonction qualité (Quality Function Deployment, QFD)": "Quality Function Deployment (QFD)",
 "Déposer": "Upload",
 "Déposer des fichiers…": "Upload files…",
+"Déposez le .zip rendu par l'assistant (reponse.json et images/<code>_….png ; PDF facultatif), ou son reponse.json seul. L'import se fait d'un coup : une sauvegarde du Space d'abord, chaque code nouveau crée sa feuille dessinée sur le gabarit, chaque code existant met sa feuille à jour. Recommencez autant de tours que la séance le demande.": "Drop the .zip the assistant handed back (reponse.json and images/<code>_….png; PDF optional), or its reponse.json alone. The import runs in one go: a backup of the Space first, each new code creates its sheet drawn on the template, each existing code updates its sheet. Go round as many times as the session needs.",
 "Déposez tout ce que le fournisseur envoie, de tout type : rapport du plan rempli, rapports de laboratoire, données brutes, Excel, photos, vidéos, archives. ": "Upload everything the supplier sends, of any type: completed plan report, lab reports, raw data, Excel, photos, videos, archives. ",
 "Déposez-le ci-dessous avec « Vérifier un zip de mise à jour… » : une étape de revue par version, puis ": "Drop it below with “Check an update zip…”: one review step per version, then ",
 "Déposez-le ci-dessous avec « Vérifier un zip de mise à jour… » : une étape de revue par version, puis « Appliquer », ou « Plus tard ».": "Drop it below with “Check an update zip…”: one review step per version, then “Apply”, or “Later”.",
@@ -1417,8 +1423,5 @@
 "En service : ": "In service: ",
 "En une phrase :": "In one sentence:",
 "En vrac": "Loose",
-"En vrac : tout ce que la scène fait penser, sans filtrer.": "Brain dump: everything the scene makes you think of, unfiltered.",
-"En vérification": "Under verification",
-"En-tête Content-Length invalide.": "Invalid Content-Length header.",
-"En-tête oui / non": "Header on / off"
+"En vrac : tout ce que la scène fait penser, sans filtrer.": "Brain dump: everything the scene makes you think of, unfiltered."
 }

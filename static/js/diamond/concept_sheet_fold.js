@@ -1,7 +1,6 @@
 /* Diamond · « Feuilles de concept » by branch (0.60.128, D-O-141): when the sheets pile up, the page reads like the tree -- one
    foldable block per branch (the secondary function above the brick's functions), one foldable block per brick inside it, the
-   sheets as cards. Each branch has « IA : cette branche » (the prompt of its bricks, concept_sheet_tools.js) so the team opens the
-   branch it works on and iterates with the assistant there. « Tout ouvrir / Tout fermer » at the top; what is open is remembered in
+   sheets as cards (0.60.132, D-O-145: the AI of a branch is chosen in « ↔ IA : feuilles de concept », concept_round.js). « Tout ouvrir / Tout fermer » at the top; what is open is remembered in
    this browser for the Space (a convenience: nothing is written on the server). Closed by default past 12 sheets. */
 (function () {
   "use strict";
@@ -64,8 +63,6 @@
     groups.forEach((g) => {
       const bid = "b" + (g.branch ? g.branch.id : 0);
       const count = g.bricks.reduce((n, b) => n + b.sheets.length, 0);
-      const ai = editable && g.branch ? el("button", { type: "button", class: "btn btn-small", "data-tip": "Le prompt des briques de cette branche",
-        onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); D.openBranchAi(ctx, cdata, reload, g.branch.id); } }, "IA : cette branche") : null;
       const bricks = g.bricks.map(({ concept: c, sheets }) => fold("c" + c.id, isOpen("c" + c.id),
         [el("a", { class: "dm-code", href: A.href(ctx, "concepts/" + c.code), onclick: (ev) => ev.stopPropagation() }, c.code),
           " " + (c.initial_name ? "« " + c.initial_name + " » " : "") + c.name,
@@ -74,7 +71,7 @@
         el("div", { class: "dm-sheets" }, sheets.map((s) => card(s))), save));
       holder.append(fold(bid, isOpen(bid),
         [el("strong", null, g.branch ? "F" + g.branch.number + " " + g.branch.text : "Briques sans fonction de l'arbre"),
-          el("span", { class: "muted" }, " · " + g.bricks.length + " brique(s) · " + count + " feuille(s)"), ai],
+          el("span", { class: "muted" }, " · " + g.bricks.length + " brique(s) · " + count + " feuille(s)")],
         el("div", { class: "dm-fold-body" }, bricks), save));
     });
     return holder;

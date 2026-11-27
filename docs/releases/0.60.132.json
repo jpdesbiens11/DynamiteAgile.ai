@@ -1,0 +1,53 @@
+{
+  "version": "0.60.132",
+  "date": "2026-11-27",
+  "summary": {
+    "fr": "Diamond : « ↔ IA : feuilles de concept », un seul aller-retour avec l'IA — une branche ou toutes, prompt et contexte .zip, le .zip de l'IA importé d'un coup.",
+    "en": "Diamond: « ↔ IA : feuilles de concept » (AI: concept sheets), one round trip with the AI — one branch or all, prompt and context .zip, the AI's .zip imported in one go."
+  },
+  "changes": [
+    {
+      "id": "C1",
+      "title": "Diamond : « ↔ IA : feuilles de concept », un seul aller-retour avec l'IA (une branche ou toutes, prompt, contexte .zip, retour .zip importé d'un coup)",
+      "why": "La page « Feuilles de concept » offrait trois outils qui se recoupaient (« Importer un lot (.zip) » avec aperçu à cocher, « IA : une branche », « IA : cette branche ») : trop complexe et flou. Il n'en reste qu'un, « ↔ IA : feuilles de concept » : une branche ou toutes ; le prompt en entier dans un encadré et « Copier le prompt » ; « Télécharger le contexte (.zip) » (contexte.json, croquis et PDF des feuilles déjà dessinées, PROMPT.md) quand il y a des feuilles. Le prompt donne le prochain code libre de chaque brique, demande un seul .zip en retour (reponse.json + images/<code>_….png), des pivots pour une branche de concepts existants, laisse de côté les briques figées. Le .zip de l'IA (ou son reponse.json seul) s'importe d'un coup : sauvegarde du Space, feuilles créées sur le gabarit, codes existants mis à jour, rapport par feuille. Pour 4 ou 5 tours de raffinement et de créativité.",
+      "files": [
+        "CLAUDE.md",
+        "UPDATE_CHANGES.json",
+        "UPDATE_LOG.md",
+        "core/__init__.py",
+        "core/modules.py",
+        "docs/DECISIONS.md",
+        "docs/ETAT_PROJET.md",
+        "docs/releases/0.60.132.json",
+        "modules/diamond/__init__.py",
+        "modules/diamond/concept_cards.py",
+        "modules/diamond/concept_round.py",
+        "site/en/guide.html",
+        "site/en/home.html",
+        "site/en/index.html",
+        "site/en/installation.html",
+        "site/en/modules.html",
+        "site/en/versions.html",
+        "site/guide.html",
+        "site/home.html",
+        "site/index.html",
+        "site/installation.html",
+        "site/modules.html",
+        "site/versions.html",
+        "static/apps/vitrine/index.html",
+        "static/i18n/en_1.json",
+        "static/i18n/en_2.json",
+        "static/i18n/en_3.json",
+        "static/i18n/en_4.json",
+        "static/i18n/en_5.json",
+        "static/i18n/en_6.json",
+        "static/js/diamond/concept_round.js",
+        "static/js/diamond/concept_sheet_fold.js",
+        "static/js/diamond/concept_sheet_tools.js",
+        "static/js/diamond/concept_sheets.js",
+        "tests/test_diamond_concept_round.py",
+        "tests/test_open_v060.py"
+      ]
+    }
+  ]
+}

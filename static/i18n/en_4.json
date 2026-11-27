@@ -1,4 +1,8 @@
 {
+"Les vagues existent déjà. Correctif : renommez-les ou datez-les.": "The waves already exist. Fix: rename or date them.",
+"Les échelles de 1 à 10": "The 1-to-10 scales",
+"Les écrans de configuration, réservés aux administrateurs. Ils n'apparaissent ": "The configuration screens, restricted to administrators. They only appear ",
+"Les écrans de configuration, réservés aux administrateurs. Ils n'apparaissent plus dans les menus des autres comptes : chaque module les regroupe sous « ⚙ Admin » dans sa marge gauche.": "The configuration screens, reserved for administrators. They no longer appear in other accounts' menus: each module groups them under “⚙ Admin” in its left margin.",
 "Les éléments d'une scène et des exemples de storyboards faits en équipe, sans talent de dessin.": "The elements of a scene and examples of storyboards made in a team, with no drawing talent.",
 "Les équipes de forage, par quarts": "The drilling crews, by shift",
 "Les étapes et les points de décision go / kill expliqués par l'auteur de la méthode.": "The steps and the go / kill decision points explained by the method's author.",
@@ -1307,10 +1311,12 @@
 "Prompt copié : ": "Prompt copied: ",
 "Prompt copié : collez-le dans une nouvelle conversation avec l'assistant IA.": "Prompt copied: paste it into a new conversation with the AI assistant.",
 "Prompt copié : collez-le dans votre assistant IA (": "Prompt copied: paste it into your AI assistant (",
+"Prompt copié : collez-le dans votre assistant IA.": "Prompt copied: paste it in your AI assistant.",
 "Prompt copié : l'extrait du DFMEA et ": "Prompt copied: the DFMEA extract and ",
 "Prompt copié.": "Prompt copied.",
 "Prompt pour l'IA": "Prompt for the AI",
 "Prompt pour l'IA · ": "Prompt for the AI · ",
+"Prompt pour l'assistant IA": "Prompt for the AI assistant",
 "Proposée": "Proposed",
 "Proposée : S ": "Proposed: S ",
 "Proposée : S # (# à #) et O # ≥ #": "Proposed: S # (# to #) and O # ≥ #",
@@ -1417,8 +1423,5 @@
 "Question à laquelle il répond": "Question it answers",
 "Questionner et supprimer": "Question and delete",
 "Questions / réponses client": "Customer Q&A",
-"Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)",
-"Questions fréquentes": "FAQ",
-"Questions fréquentes : voir la sous-page « ": "Frequently asked questions: see the sub-page “ ",
-"Questions fréquentes sur ": "Frequently asked questions about "
+"Questions client à traiter (Goldmine)": "Customer questions to handle (Goldmine)"
 }

@@ -230,33 +230,35 @@ def _store(ctx, pid, name, data, mime):
     return row["id"]
 
 
-@uploads.large_body("max_evidence_mb")  # 0.60.129 (D-O-142): a batch of 40 sketches is bigger than « max_upload_mb »
-def api_import(ctx):
-    pid = F.access(ctx, "editor")
-    data = getattr(getattr(ctx, "upload", None), "data", b"") or b""
-    if not data:
-        raise ApiError(400, "Aucun fichier reçu. Correctif : choisissez le .zip des feuilles de concept.")
-    q = ctx.query or {}
-    target = None
-    if q.get("cid"):
-        target = next((c for c in C.rows(ctx.conn, pid) if c["id"] == validate.int_param(q, "cid")), None)
-        if target is None:
-            raise ApiError(404, "Brique cible introuvable dans ce Space (archivée ?). Correctif : rechargez la page.")
-    pack = read_zip(data)
+def read_any(data):
+    """0.60.132 (D-O-145): the .zip of the AI, or its reponse.json alone (an assistant that cannot hand back a file)."""
+    if data[:2] == b"PK":
+        return read_zip(data)
+    cards, warnings = J.read("reponse.json", data)
+    return {"cards": cards, "files": {}, "warnings": warnings}
+
+
+def run(ctx, pid, pack, target=None, extras=False, apply=False, skip=frozenset(), strict=True):
+    """The preview, or the import, of a pack (read_zip): one line per sheet or file. strict: nothing to do is a 409 (the screen
+    asked to apply something); else the report says it (0.60.132, D-O-145: the round trip with the AI applies without a preview)."""
     if not pack["cards"] and not pack["files"]:
         raise ApiError(400, "Le .zip ne contient ni carte (.md ou reponse.json) ni image ni PDF." + "".join(" ⚠ " + w for w in pack["warnings"]))
-    entries, left = plan(ctx.conn, pid, pack, target, str(q.get("extras") or "") in ("1", "true"))
+    entries, left = plan(ctx.conn, pid, pack, target, extras)
     counts = {k: sum(1 for e in entries if e["status"] == k) for k in ("new", "update", "attach", "exists", "refused")}
     view = [{k: e.get(k) for k in ("key", "code", "title", "files", "status", "reason", "brick", "kind", "action", "replaces",
                                    "warning", "changes")} for e in entries]
     warnings = pack["warnings"] + [e["warning"] for e in entries if e.get("warning")]
-    if q.get("mode") != "apply":
+    if not apply:
         return {"entries": view, "left": left, "counts": counts, "cards": len(pack["cards"]), "files": len(pack["files"]),
                 "warnings": warnings}
-    skip = AT.skip_keys(q.get("skip"))
     todo = [e for e in entries if e["status"] in ("new", "update", "attach") and e["key"] not in skip]
     if not todo:
-        raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).")
+        if strict:
+            raise ApiError(409, "Rien à importer : ces feuilles sont déjà dans le Space, refusées ou décochées (voir l'aperçu).")
+        for line in view:
+            line["outcome"] = "rien à faire : " + (line["reason"] or "")
+        return {"entries": view, "left": left, "counts": counts, "created": 0, "updated": 0, "attached": 0, "backup": None,
+                "warnings": warnings, "imported": False}
     from .import_merge import backup
     saved = backup(ctx, pid)  # 0.60.129 (D-O-142): as for the other imports, a backup of the Space first
     attached = AT.apply(ctx, pid, [e for e in todo if e["status"] == "attach"], pack["files"], _store)
@@ -291,3 +293,21 @@ def api_import(ctx):
         line["outcome"] = outcome.get(line["key"]) or ("décochée" if line["key"] in skip else "rien à faire : " + (line["reason"] or ""))
     return {"entries": view, "left": left, "counts": counts, "created": len(created), "updated": len(updated),
             "attached": len(attached), "backup": saved, "warnings": warnings, "imported": True}
+
+
+@uploads.large_body("max_evidence_mb")  # 0.60.129 (D-O-142): a batch of 40 sketches is bigger than « max_upload_mb »
+def api_import(ctx):
+    """The import screen of 0.60.125-0.60.131, kept for the routes and the older .zip (the screen is now concept_round.js)."""
+    pid = F.access(ctx, "editor")
+    data = getattr(getattr(ctx, "upload", None), "data", b"") or b""
+    if not data:
+        raise ApiError(400, "Aucun fichier reçu. Correctif : choisissez le .zip des feuilles de concept.")
+    q = ctx.query or {}
+    target = None
+    if q.get("cid"):
+        target = next((c for c in C.rows(ctx.conn, pid) if c["id"] == validate.int_param(q, "cid")), None)
+        if target is None:
+            raise ApiError(404, "Brique cible introuvable dans ce Space (archivée ?). Correctif : rechargez la page.")
+    apply = q.get("mode") == "apply"
+    return run(ctx, pid, read_zip(data), target, str(q.get("extras") or "") in ("1", "true"), apply,
+               AT.skip_keys(q.get("skip")) if apply else frozenset())

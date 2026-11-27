@@ -1,4 +1,15 @@
-# Journal de mise à jour — 0.60.131
+# Journal de mise à jour — 0.60.132
+
+- **Version :** 0.60.131 → 0.60.132 (2026-11-27)
+- **Changements :**
+  1. **Diamond : « ↔ IA : feuilles de concept », un seul aller-retour avec l'IA — une branche ou toutes, prompt et contexte .zip, le .zip de l'IA importé d'un coup** (D-O-145).
+- **Base de données :** aucune migration.
+- **Champs [new] :** `0.60.132-round`, `0.60.132-round-scope`, `0.60.132-round-context`, `0.60.132-round-report`.
+- **Tests :** `tests/test_diamond_concept_round.py` (nouveau), suite complète.
+
+## Précédent
+
+### Journal de mise à jour — 0.60.131
 
 - **Version :** 0.60.130 → 0.60.131 (2026-11-27)
 - **Changements :**
@@ -6,8 +17,6 @@
 - **Base de données :** aucune migration.
 - **Champs [new] :** `0.60.131-sheets-json`, `0.60.131-sheets-import-report`.
 - **Tests :** `tests/test_diamond_sheets_json_import.py` (nouveau), `tests/test_diamond_concept_cards.py`, suite complète.
-
-## Précédent
 
 ### Journal de mise à jour — 0.60.130
 
